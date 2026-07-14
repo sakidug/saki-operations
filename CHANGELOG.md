@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Web production deploy: `start` serves Vite `dist` with `serve` (SPA fallback on `$PORT`); Railway must not use `vite` / `dev` — see [docs/railway.md](./docs/railway.md)
+- Web build builds `@saki-operations/types` + `@saki-operations/constants` first; those packages expose `types` from `src` while runtime still uses `dist`
+
 ### Planned
 
 - Phase 7.3 / Phase 8 — HHCO Helmet Delivery Operations — awaiting approval

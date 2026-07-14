@@ -6,8 +6,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit -p tsconfig.json && vite build",
+    "build": "pnpm --filter @saki-operations/types build && pnpm --filter @saki-operations/constants build && tsc --noEmit -p tsconfig.json && vite build",
     "preview": "vite preview",
+    "start": "serve dist -s -n -l tcp://0.0.0.0:${PORT:-4173}",
+    "start:prod": "pnpm run start",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -27,7 +29,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-i18next": "^17.0.9",
-    "react-router-dom": "^7.18.1"
+    "react-router-dom": "^7.18.1",
+    "serve": "^14.2.4"
   },
   "devDependencies": {
     "@saki-operations/eslint-config": "workspace:*",

@@ -53,7 +53,7 @@ Operational trip logs are created **manually by drivers**. They have **no bookin
 - Two operational product modules only (Tours Ops + HHCO Ops), sharing one domain engine
 - Clear separation from desktop booking/office management
 - Shared design system, forms, auth, and sync infrastructure
-- Production path via Docker to sakitours.app
+- Production path via Docker (nginx) or Railway Node (`serve` static SPA) to sakitours.app
 
 ---
 

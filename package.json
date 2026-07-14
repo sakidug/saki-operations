@@ -13,6 +13,8 @@
     "dev:web": "turbo run dev --filter=@saki-operations/web",
     "dev:api": "turbo run dev --filter=@saki-operations/api",
     "build": "turbo run build",
+    "start:web": "pnpm --filter=@saki-operations/web start",
+    "start:api": "pnpm --filter=@saki-operations/api start",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",

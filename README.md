@@ -51,6 +51,8 @@ pnpm dev
 |---------|-------------|
 | `pnpm dev` | Start all apps in development |
 | `pnpm build` | Build all packages and apps |
+| `pnpm start:web` | Serve web production build (`apps/web/dist`) — use on Railway |
+| `pnpm start:api` | Start API production build |
 | `pnpm lint` | Lint the monorepo |
 | `pnpm format` | Format with Prettier |
 | `pnpm typecheck` | Type-check all packages |
@@ -58,6 +60,16 @@ pnpm dev
 | `pnpm db:migrate` | Run Prisma migrations (dev) |
 | `pnpm db:seed` | Seed development sample users (`ALLOW_DEV_SEED=true`) |
 | `pnpm db:studio` | Open Prisma Studio |
+
+## Production (Railway)
+
+Web must use a **static production serve**, not Vite dev:
+
+- Preferred build: `pnpm exec turbo run build --filter=@saki-operations/web` (builds `types` + `constants` then web)
+- Or: `pnpm --filter @saki-operations/web build` (script builds `types` / `constants` first)
+- Start: `pnpm --filter @saki-operations/web start` (or `pnpm start:web`)
+
+Full service settings: [docs/railway.md](./docs/railway.md).
 
 ## Documentation
 
@@ -74,12 +86,13 @@ pnpm dev
 | [DECISIONS.md](./DECISIONS.md) | Architecture Decision Records |
 | [SECURITY.md](./SECURITY.md) | Security policies |
 | [KNOWN_ISSUES.md](./KNOWN_ISSUES.md) | Bugs and technical debt tracker |
+| [docs/railway.md](./docs/railway.md) | Railway build/start for web + API |
 
 ### Product docs
 
 Numbered folders under `docs/` (detailed content to be added per phase).
 
-**Current version:** v0.3.0 — Authentication
+**Current version:** see [VERSIONING.md](./VERSIONING.md)
 
 ## License
 

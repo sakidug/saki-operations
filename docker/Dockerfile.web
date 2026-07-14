@@ -22,6 +22,7 @@ COPY apps/web ./apps/web
 COPY packages ./packages
 WORKDIR /app
 RUN pnpm --filter=@saki-operations/types build
+RUN pnpm --filter=@saki-operations/constants build
 RUN pnpm --filter=@saki-operations/web build
 
 FROM nginx:1.27-alpine AS runner
