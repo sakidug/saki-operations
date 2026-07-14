@@ -1,0 +1,12 @@
+{
+  "extends": "@saki-operations/typescript-config/base.json",
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "outDir": "./dist-node",
+    "rootDir": ".",
+    "types": ["node"]
+  },
+  "include": ["vite.config.ts"]
+}

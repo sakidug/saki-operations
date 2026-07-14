@@ -1,0 +1,34 @@
+# syntax=docker/dockerfile:1.7
+
+FROM node:22-alpine AS base
+RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
+WORKDIR /app
+
+FROM base AS deps
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json .npmrc ./
+COPY packages ./packages
+COPY database/package.json ./database/package.json
+COPY apps/api/package.json ./apps/api/package.json
+RUN pnpm install --frozen-lockfile --filter=@saki-operations/api...
+
+FROM base AS build
+COPY --from=deps /app /app
+COPY apps/api ./apps/api
+COPY packages ./packages
+COPY database ./database
+WORKDIR /app
+RUN pnpm --filter=@saki-operations/types build
+RUN pnpm --filter=@saki-operations/database db:generate
+RUN pnpm --filter=@saki-operations/api build
+
+FROM node:22-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+RUN addgroup -S saki && adduser -S saki -G saki
+COPY --from=build /app/apps/api/dist ./dist
+COPY --from=build /app/apps/api/package.json ./package.json
+COPY --from=build /app/database ./database
+COPY --from=build /app/node_modules ./node_modules
+USER saki
+EXPOSE 3000
+CMD ["node", "dist/main.js"]

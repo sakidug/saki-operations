@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: saki-operations-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-saki}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-saki}
+      POSTGRES_DB: ${POSTGRES_DB:-saki_operations}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - saki_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-saki} -d ${POSTGRES_DB:-saki_operations}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    container_name: saki-operations-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ../.env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-saki}:${POSTGRES_PASSWORD:-saki}@postgres:5432/${POSTGRES_DB:-saki_operations}?schema=public
+      PORT: 3000
+    ports:
+      - "3000:3000"
+
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.web
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000/api/v1}
+        VITE_APP_NAME: ${VITE_APP_NAME:-Saki Operations}
+        VITE_APP_TAGLINE: ${VITE_APP_TAGLINE:-Powered by Saki Tours & Weddings}
+    container_name: saki-operations-web
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+
+volumes:
+  saki_postgres_data:

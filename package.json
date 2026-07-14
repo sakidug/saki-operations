@@ -1,0 +1,33 @@
+{
+  "name": "saki-operations",
+  "version": "0.7.8",
+  "private": true,
+  "description": "Saki Operations — Operations & Workforce Management PWA for Saki Tours & Weddings and HHCO",
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:web": "turbo run dev --filter=@saki-operations/web",
+    "dev:api": "turbo run dev --filter=@saki-operations/api",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "typecheck": "turbo run typecheck",
+    "db:generate": "turbo run db:generate --filter=@saki-operations/database",
+    "db:migrate": "turbo run db:migrate --filter=@saki-operations/database",
+    "db:seed": "pnpm --filter=@saki-operations/database db:seed",
+    "db:studio": "turbo run db:studio --filter=@saki-operations/database",
+    "clean": "turbo run clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "@saki-operations/prettier-config": "workspace:*",
+    "prettier": "^3.5.3",
+    "turbo": "^2.4.4",
+    "typescript": "^5.8.2"
+  }
+}

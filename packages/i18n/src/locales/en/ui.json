@@ -1,0 +1,19 @@
+{
+  "button": {
+    "loading": "Loading"
+  },
+  "input": {
+    "required": "Required"
+  },
+  "toast": {
+    "success": "Success",
+    "error": "Something went wrong"
+  },
+  "skeleton": {
+    "loading": "Loading content"
+  },
+  "search": {
+    "placeholder": "Search",
+    "clear": "Clear search"
+  }
+}

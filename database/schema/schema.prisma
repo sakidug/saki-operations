@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Auth (Phase 4)
+// ---------------------------------------------------------------------------
+
+enum Role {
+  driver
+  assistant
+  office
+  admin
+}
+
+/// Authentication identity — workforce foundation (employeeId).
+model User {
+  id                  String               @id @default(cuid())
+  employeeId          String               @unique @map("employee_id")
+  phone               String?              @unique
+  displayName         String               @map("display_name")
+  passwordHash        String               @map("password_hash")
+  role                Role                 @default(driver)
+  isActive            Boolean              @default(true) @map("is_active")
+  failedLoginAttempts Int                  @default(0) @map("failed_login_attempts")
+  lockedUntil         DateTime?            @map("locked_until")
+  passwordChangedAt   DateTime?            @map("password_changed_at")
+  createdAt           DateTime             @default(now()) @map("created_at")
+  updatedAt           DateTime             @updatedAt @map("updated_at")
+  refreshTokens       RefreshToken[]
+  passwordResets      PasswordResetToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
+  tokenHash String    @unique @map("token_hash")
+  expiresAt DateTime  @map("expires_at")
+  revokedAt DateTime? @map("revoked_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
+  tokenHash String    @unique @map("token_hash")
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("password_reset_tokens")
+}
+
+// ---------------------------------------------------------------------------
+// Fleet registry (kept for Tours Ops, HHCO, and Service Records)
+// ---------------------------------------------------------------------------
+
+/// Fleet vehicle — no booking assignments. Service fields added in a later phase.
+model Vehicle {
+  id                 String   @id @default(uuid())
+  registrationNumber String   @unique @map("registration_number")
+  label              String?
+  make               String?
+  model              String?
+  isActive           Boolean  @default(true) @map("is_active")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  @@map("vehicles")
+}

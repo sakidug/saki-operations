@@ -1,0 +1,13 @@
+{
+  "extends": "@saki-operations/typescript-config/base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "baseUrl": ".",
+    "paths": {
+      "@saki-operations/operations-session/*": ["./src/*"]
+    },
+    "noEmit": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

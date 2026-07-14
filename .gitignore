@@ -1,0 +1,67 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Builds
+dist/
+build/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
+.project
+.classpath
+.settings/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Database
+database/backups/*
+!database/backups/.gitkeep
+*.db
+*.db-journal
+
+# Storage (runtime / Saki Sync)
+storage/uploads/*
+!storage/uploads/.gitkeep
+storage/temp/*
+!storage/temp/.gitkeep
+storage/offline-cache/*
+!storage/offline-cache/.gitkeep
+
+# PWA / Vite
+apps/web/dev-dist/
+
+# Docker
+*.pid
+
+# Misc
+*.local
+.cache/
+tmp/
+temp/

@@ -1,0 +1,16 @@
+---
+description: Require CHANGELOG and docs updates on phase deliveries
+alwaysApply: true
+---
+
+# Changelog & documentation gate
+
+When completing a development phase or shipping a user-visible / structural change set:
+
+1. Update `CHANGELOG.md` in the same change set (`Added` / `Changed` / `Fixed` / `Security` as appropriate)
+2. Update `ROADMAP.md` status when a phase starts or finishes
+3. Update `KNOWN_ISSUES.md` when introducing or resolving tracked debt
+4. Update `DECISIONS.md` only for approved architectural decisions
+5. Bump root `package.json` version when cutting a release per `VERSIONING.md`
+
+Do not mark phase work complete without the changelog entry.

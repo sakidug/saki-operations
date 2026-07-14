@@ -1,0 +1,39 @@
+{
+  "name": "@saki-operations/ocr",
+  "version": "0.0.1",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./core": "./src/core.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "clean": "rm -rf dist .turbo"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "@saki-operations/ui": "workspace:*",
+    "framer-motion": "^12.5.0",
+    "lucide-react": "^0.483.0",
+    "tesseract.js": "^6.0.1"
+  },
+  "devDependencies": {
+    "@saki-operations/eslint-config": "workspace:*",
+    "@saki-operations/typescript-config": "workspace:*",
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
+    "eslint": "^9.22.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.8.2"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "@saki-operations/constants",
+  "version": "0.0.1",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@saki-operations/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@saki-operations/eslint-config": "workspace:*",
+    "@saki-operations/typescript-config": "workspace:*",
+    "eslint": "^9.22.0",
+    "typescript": "^5.8.2"
+  }
+}

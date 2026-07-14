@@ -1,0 +1,8 @@
+{
+  "extends": "@saki-operations/typescript-config/react.json",
+  "compilerOptions": {
+    "rootDir": "./src"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

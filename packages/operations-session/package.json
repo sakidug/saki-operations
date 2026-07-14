@@ -1,0 +1,27 @@
+{
+  "name": "@saki-operations/operations-session",
+  "version": "0.0.1",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@saki-operations/ocr": "workspace:*"
+  },
+  "devDependencies": {
+    "@saki-operations/eslint-config": "workspace:*",
+    "@saki-operations/typescript-config": "workspace:*",
+    "eslint": "^9.22.0",
+    "typescript": "^5.8.2"
+  }
+}

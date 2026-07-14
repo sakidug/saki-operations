@@ -1,0 +1,558 @@
+{
+  "app": {
+    "name": "Saki Operations",
+    "tagline": "Powered by Saki Tours & Weddings"
+  },
+  "languages": {
+    "en": "English",
+    "si": "Sinhala",
+    "selector": "Language"
+  },
+  "theme": {
+    "dark": "Dark",
+    "light": "Light",
+    "toggle": "Toggle theme"
+  },
+  "actions": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "search": "Search",
+    "clear": "Clear",
+    "retry": "Retry",
+    "loading": "Loading"
+  },
+  "status": {
+    "online": "Online",
+    "offline": "Offline",
+    "busy": "Busy",
+    "error": "Error",
+    "idle": "Idle"
+  },
+  "empty": {
+    "title": "Nothing here yet",
+    "description": "Content will appear once available."
+  },
+  "nav": {
+    "bottom": "Bottom navigation",
+    "sidebar": "Sidebar",
+    "menu": "Open menu"
+  },
+  "brands": {
+    "tours": "Saki Tours & Weddings",
+    "hhco": "HHCO Helmet Delivery",
+    "office": "Office",
+    "admin": "Admin"
+  },
+  "roles": {
+    "driver": "Driver",
+    "assistant": "Assistant",
+    "office": "Office",
+    "admin": "Admin"
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "header": {
+      "region": "Welcome",
+      "date": "Current date",
+      "time": "Current time"
+    },
+    "status": {
+      "region": "System status",
+      "network": "Network",
+      "pendingSync": "Pending sync",
+      "version": "App version",
+      "connection": "Connection",
+      "connectionOnline": "Connected",
+      "connectionOffline": "Disconnected"
+    },
+    "modules": {
+      "region": "Main modules",
+      "tapToEnter": "Tap to enter",
+      "tours": {
+        "title": "Saki Tours & Weddings",
+        "description": "Field trip operations for wedding hires, airport transfers, and tours.",
+        "features": {
+          "weddings": "Wedding Hires",
+          "airport": "Airport Transfers",
+          "tours": "Tours"
+        }
+      },
+      "hhco": {
+        "title": "HHCO Helmet Delivery",
+        "description": "Daily helmet delivery operations for HHCO.",
+        "features": {
+          "deliveries": "Daily Deliveries"
+        }
+      }
+    },
+    "quickActions": {
+      "region": "Quick actions",
+      "title": "Quick actions"
+    },
+    "topBar": {
+      "notifications": "Notifications",
+      "notificationsUnread": "Notifications, {{count}} unread",
+      "profile": "Open profile"
+    }
+  },
+  "shell": {
+    "nav": {
+      "home": "Home",
+      "profile": "Profile",
+      "notifications": "Notifications",
+      "settings": "Settings",
+      "closeMenu": "Close menu",
+      "skipToContent": "Skip to content"
+    },
+    "network": {
+      "offline": "You are offline",
+      "restored": "Connection restored"
+    },
+    "pwa": {
+      "installTitle": "Install Saki Operations",
+      "installDescription": "Add the app to your home screen for faster access.",
+      "installAction": "Install app",
+      "updateTitle": "Update available",
+      "updateDescription": "Version {{version}} is ready. Reload when convenient."
+    },
+    "language": {
+      "title": "Choose your language",
+      "description": "You can change this later in settings.",
+      "optionSi": "සිංහල",
+      "optionEn": "English"
+    },
+    "loading": {
+      "workspace": "Preparing your workspace...",
+      "application": "Loading application...",
+      "connection": "Checking connection...",
+      "authentication": "Checking your session...",
+      "language": "Preparing language...",
+      "dashboard": "Loading dashboard...",
+      "route": "Loading page...",
+      "module": "Preparing module..."
+    },
+    "errors": {
+      "notFoundTitle": "Page not found",
+      "notFoundDescription": "The page you requested does not exist or has moved.",
+      "offlineTitle": "You are offline",
+      "offlineDescription": "Check your connection, then try again. Offline sync arrives in a later phase.",
+      "maintenanceTitle": "Under maintenance",
+      "maintenanceDescription": "Saki Operations is temporarily unavailable. Please try again shortly.",
+      "genericTitle": "Something went wrong",
+      "genericDescription": "An unexpected error occurred. Please try again.",
+      "goHome": "Go to home",
+      "reloadApplication": "Reload Application",
+      "returnHome": "Return Home",
+      "errorId": "Error ID"
+    },
+    "placeholder": {
+      "description": "This area is ready in the navigation shell and will be completed in a later phase.",
+      "login": "Login",
+      "home": "Home",
+      "profile": "Profile",
+      "notifications": "Notifications",
+      "settings": "Settings",
+      "sakiTours": "Saki Tours & Weddings",
+      "hhco": "HHCO Helmet Delivery"
+    }
+  },
+  "toursOps": {
+    "badge": "Saki Tours",
+    "home": {
+      "title": "Saki Tours Operations",
+      "description": "Start or continue a field operation. Complete the active session before starting another.",
+      "actionsRegion": "Tours operations actions",
+      "startNew": "Start New Operation",
+      "startNewHint": "Select vehicle, hire type, capture odometer and start time.",
+      "viewPrevious": "View Previous Operations",
+      "viewPreviousHint": "Browse completed operations on this device."
+    },
+    "current": {
+      "title": "Current Operation",
+      "vehicle": "Vehicle",
+      "hireType": "Hire type",
+      "started": "Started",
+      "status": "Status",
+      "continue": "Continue Operation"
+    },
+    "active": {
+      "blockedTitle": "Active Operation Found",
+      "blockedDescription": "You already have an operation in progress. Please complete it before starting another operation.",
+      "vehicle": "Vehicle",
+      "hireType": "Hire type",
+      "started": "Started",
+      "continue": "Continue Operation",
+      "cancel": "Cancel"
+    },
+    "continue": {
+      "title": "Continue Operation",
+      "description": "Review this session, then end the operation when the hire is finished.",
+      "vehicle": "Vehicle",
+      "hireType": "Hire type",
+      "startLocation": "Start location",
+      "destination": "Destination",
+      "endingLocation": "Ending location",
+      "numberOfDays": "Number of days",
+      "startedTime": "Started time",
+      "status": "Current status",
+      "endOperation": "End Operation",
+      "backHome": "Back to Tours Operations",
+      "notActive": "This session is not an active operation on this device."
+    },
+    "history": {
+      "title": "Previous Operations",
+      "description": "Read-only history of completed Tours operations stored on this device.",
+      "backHome": "Back to Tours Operations",
+      "backList": "Back to previous operations",
+      "listRegion": "Previous operations",
+      "searchPlaceholder": "Search by vehicle or hire type",
+      "searchClear": "Clear search",
+      "emptyTitle": "No previous operations",
+      "emptyDescription": "Completed operations will appear here. Queued and synced sessions stay available offline.",
+      "stats": {
+        "title": "This Month",
+        "operations": "Operations",
+        "workingHours": "Working Hours",
+        "totalKm": "Total KM"
+      },
+      "filters": {
+        "month": "Month",
+        "year": "Year",
+        "sync": "Sync status",
+        "allMonths": "All months",
+        "allYears": "All years",
+        "allSync": "All sync statuses",
+        "months": {
+          "1": "January",
+          "2": "February",
+          "3": "March",
+          "4": "April",
+          "5": "May",
+          "6": "June",
+          "7": "July",
+          "8": "August",
+          "9": "September",
+          "10": "October",
+          "11": "November",
+          "12": "December"
+        }
+      },
+      "sync": {
+        "waiting": "Waiting to Synchronize",
+        "uploading": "Uploading",
+        "synced": "Synchronized",
+        "failed": "Failed"
+      },
+      "card": {
+        "singleDay": "Single Day",
+        "multiDay": "Multi-Day",
+        "vehicle": "Vehicle",
+        "timeRange": "Time range",
+        "hours": "Working hours",
+        "km": "Total KM",
+        "daysCount": "{{count}} Days",
+        "open": "View details"
+      },
+      "detail": {
+        "summary": "Operation details",
+        "readOnly": "This record is read-only and cannot be edited.",
+        "startOdometer": "Start odometer",
+        "endOdometer": "End odometer",
+        "missingTitle": "Operation not found",
+        "missingDescription": "This completed operation is not available on this device."
+      },
+      "timeline": {
+        "title": "Timeline",
+        "started": "Operation Started",
+        "startOdometer": "Start Odometer",
+        "endOdometer": "End Odometer",
+        "completed": "Operation Completed",
+        "day": "Day {{day}}",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "done": "Done"
+      },
+      "photos": {
+        "title": "Photo evidence",
+        "readOnly": "Tap a photo to view full screen. Read only.",
+        "close": "Close photo",
+        "startOdometer": "Start Odometer",
+        "endOdometer": "End Odometer",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "dayStartTime": "Day {{day}} Start Time",
+        "dayEndTime": "Day {{day}} End Time",
+        "generic": "Evidence photo"
+      },
+      "filterEmptyTitle": "No matching operations",
+      "filterEmptyDescription": "Try clearing search or filters to see more operations.",
+      "clearFilters": "Clear filters"
+    },
+    "wizard": {
+      "title": "Start Operation",
+      "stepOf": "Step {{current}} of {{total}}",
+      "stepVehicle": "Select the vehicle for this hire.",
+      "stepHireType": "Choose the hire type.",
+      "stepTrip": "Enter route and number of days.",
+      "stepOdometer": "Capture the start odometer.",
+      "stepStartTime": "Capture start time with a photo.",
+      "stepConfirm": "Review and start the operation.",
+      "back": "Back",
+      "next": "Next",
+      "cancel": "Cancel",
+      "startOperation": "Start Operation",
+      "startFailed": "Could not start the operation. Your photos are still on this device — try again.",
+      "missingUser": "Sign in again to start an operation."
+    },
+    "vehicle": {
+      "label": "Vehicle",
+      "description": "Choose an available vehicle. Unavailable options stay disabled."
+    },
+    "hireType": {
+      "title": "Hire type",
+      "description": "Pick the operation category. No booking or customer details are needed.",
+      "wedding": "Wedding Hire",
+      "weddingHint": "Wedding day vehicle hire.",
+      "airport": "Airport Transfer",
+      "airportHint": "Airport pickup or drop-off.",
+      "tour": "Tour",
+      "tourHint": "Day tour or multi-day tour hire."
+    },
+    "trip": {
+      "title": "Trip details",
+      "description": "Locations and duration for this session.",
+      "startLocation": "Start location",
+      "startLocationPlaceholder": "Where work starts",
+      "destination": "Destination",
+      "destinationPlaceholder": "Main destination",
+      "endingLocation": "Ending location",
+      "endingLocationPlaceholder": "Where the hire ends",
+      "numberOfDays": "Number of days",
+      "singleDayHint": "Single-day operation.",
+      "multiDayBadge": "Multi-day operation"
+    },
+    "odometer": {
+      "title": "Start odometer",
+      "description": "Take a photo. OCR suggests a reading — accept, edit, or retake. Manual entry is always allowed.",
+      "capture": "Take photo",
+      "processing": "Reading odometer…",
+      "detected": "Detected",
+      "confidence": "Confidence",
+      "lowConfidence": "Low confidence — please verify the reading manually.",
+      "failed": "Could not read the odometer. Enter the value manually. Your photo is still attached.",
+      "accept": "Accept",
+      "edit": "Edit",
+      "saveEdit": "Save value",
+      "cancelEdit": "Cancel",
+      "retake": "Retake",
+      "unit": "KM",
+      "saved": "Saved",
+      "editedSuffix": "(edited)"
+    },
+    "startTime": {
+      "title": "Start time",
+      "description": "Take a photo. The device clock is recorded automatically.",
+      "capture": "Take photo",
+      "capturing": "Opening camera…",
+      "retake": "Retake",
+      "photoAlt": "Start time evidence photo",
+      "readOnlyHint": "Drivers cannot edit start time. Office correction comes later.",
+      "captureFailed": "Could not capture the photo. Try again."
+    },
+    "confirm": {
+      "title": "Ready to start",
+      "description": "Starting creates an offline session on this device immediately.",
+      "vehicle": "Vehicle",
+      "hireType": "Hire type",
+      "route": "Route",
+      "days": "Days",
+      "startOdometer": "Start odometer",
+      "startTime": "Start time",
+      "offlineNote": "Works offline — the session is saved locally and syncs when online."
+    },
+    "success": {
+      "title": "Operation Started Successfully",
+      "description": "Your session is live and stored on this device.",
+      "vehicle": "Vehicle",
+      "hireType": "Hire type",
+      "startTime": "Start time",
+      "status": "Current session status",
+      "inProgress": "In Progress",
+      "unknownHire": "Hire",
+      "backHome": "Back to Tours Operations",
+      "dashboard": "Home dashboard",
+      "missingTitle": "Session not found",
+      "missingDescription": "This operation session is not available on this device."
+    },
+    "endOdometer": {
+      "title": "End odometer",
+      "description": "Take a photo. OCR suggests a reading — accept, edit, or retake. Manual entry is always allowed.",
+      "capture": "Take photo",
+      "processing": "Reading odometer…",
+      "detected": "Detected",
+      "confidence": "Confidence",
+      "lowConfidence": "Low confidence — please verify the reading manually.",
+      "failed": "Could not read the odometer. Enter the value manually. Your photo is still attached.",
+      "accept": "Accept",
+      "edit": "Edit manually",
+      "saveEdit": "Save value",
+      "cancelEdit": "Cancel",
+      "retake": "Retake photo"
+    },
+    "endTime": {
+      "title": "End work time",
+      "description": "Take a photo. The device clock is recorded automatically.",
+      "capture": "Take photo",
+      "capturing": "Opening camera…",
+      "retake": "Retake",
+      "photoAlt": "End time evidence photo",
+      "readOnlyHint": "Drivers cannot edit end time. Office correction comes later.",
+      "captureFailed": "Could not capture the photo. Try again."
+    },
+    "endTotals": {
+      "title": "Totals",
+      "description": "Working hours and total KM are calculated from start and end captures.",
+      "workingHours": "Total working hours",
+      "totalKm": "Total KM",
+      "calcFailed": "Could not calculate totals. Check that end time is after start and end odometer is not lower than start."
+    },
+    "endReview": {
+      "title": "Review",
+      "description": "Confirm details before finishing this operation.",
+      "vehicle": "Vehicle",
+      "hireType": "Hire type",
+      "startTime": "Start time",
+      "endTime": "End time",
+      "workingHours": "Working hours",
+      "startOdometer": "Start odometer",
+      "endOdometer": "End odometer",
+      "totalKm": "Total KM",
+      "offlineNote": "You are offline — the completed session will wait to synchronize.",
+      "onlineNote": "You are online — finishing prepares immediate synchronization."
+    },
+    "endWizard": {
+      "title": "End Operation",
+      "stepOdometer": "Capture the end odometer.",
+      "stepEndTime": "Capture end work time with a photo.",
+      "stepTotals": "Review calculated working hours and KM.",
+      "stepReview": "Confirm and finish the operation.",
+      "finish": "Finish Operation",
+      "finishFailed": "Could not finish the operation. Your photos are still on this device — try again.",
+      "notActive": "This session cannot be ended. It may already be completed."
+    },
+    "completed": {
+      "title": "Operation Completed Successfully",
+      "description": "This session is closed and stored on this device.",
+      "vehicle": "Vehicle",
+      "workingHours": "Working hours",
+      "totalKm": "Total KM",
+      "syncStatus": "Sync status",
+      "syncWaiting": "Waiting to Synchronize",
+      "syncSynced": "Successfully Synchronized",
+      "returnHome": "Return Home",
+      "viewOperation": "View Operation",
+      "missingDescription": "This completed session is not available on this device."
+    },
+    "multiDay": {
+      "tourLabel": "{{days}}-Day {{hire}}",
+      "dayOf": "Day {{current}} of {{total}}",
+      "dayLabel": "Day {{day}}",
+      "finalDay": "Final Day",
+      "percentComplete": "{{percent}}% Complete",
+      "todaysTasks": "Today's Tasks",
+      "taskDone": "Completed",
+      "taskPending": "Pending",
+      "hoursTitle": "Working hours",
+      "totalHours": "Total working hours",
+      "continueDescription": "Complete today's tasks for this multi-day operation. One session spans all days.",
+      "continueTasks": "Continue Today's Tasks",
+      "continueFinish": "Finish Operation",
+      "noPendingTask": "No pending capture for today. Return to the operation overview.",
+      "backToContinue": "Back to operation",
+      "captureFailed": "Could not save today's capture. Your photo is still on this device — try again.",
+      "finishFailed": "Could not finish the multi-day operation. Try again.",
+      "tasks": {
+        "startWorkTime": "Capture Start Work Time",
+        "startOdometer": "Capture Start Odometer",
+        "endWorkTime": "Capture End Work Time",
+        "endOdometer": "Capture End Odometer",
+        "finish": "Finish Operation"
+      },
+      "captureTitle": {
+        "start_work_time": "Start work time",
+        "end_work_time": "End work time",
+        "end_odometer": "End odometer & finish",
+        "finish": "Finish operation",
+        "start_odometer": "Start odometer"
+      },
+      "captureHint": {
+        "start_work_time": "Take a photo. Device time is recorded automatically.",
+        "end_work_time": "Take a photo to close out today's work.",
+        "end_odometer": "Capture the end odometer, then finish this multi-day operation.",
+        "finish": "Confirm totals and finish the operation.",
+        "start_odometer": "Start odometer was captured when the operation began."
+      },
+      "endOdometerAlreadySaved": "End odometer already saved: {{value}} {{unit}}"
+    }
+  },
+  "auth": {
+    "logout": "Log out",
+    "session": {
+      "restoring": "Restoring your session..."
+    },
+    "errors": {
+      "required": "Please fill in all required fields.",
+      "generic": "Unable to complete authentication. Please try again.",
+      "passwordMismatch": "Passwords do not match.",
+      "passwordLength": "Password must be at least {{min}} characters.",
+      "sessionExpired": "Your session has expired. Please sign in again."
+    },
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in with your Employee ID or phone number.",
+      "identifier": "Employee ID or phone number",
+      "identifierPlaceholder": "Employee ID or phone",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign in"
+    },
+    "forgot": {
+      "title": "Forgot password",
+      "subtitle": "We will send reset instructions if an account exists.",
+      "submit": "Send reset link",
+      "success": "If an account exists, reset instructions were sent.",
+      "backToLogin": "Back to login",
+      "continueReset": "Continue to reset",
+      "devToken": "Development reset token"
+    },
+    "reset": {
+      "title": "Reset password",
+      "subtitle": "Choose a new secure password.",
+      "token": "Reset token",
+      "password": "New password",
+      "confirmPassword": "Confirm new password",
+      "submit": "Reset password",
+      "success": "Your password was reset. Please sign in."
+    },
+    "change": {
+      "title": "Change password",
+      "subtitle": "Update your password to keep your account secure.",
+      "short": "Password",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "submit": "Update password",
+      "success": "Password updated. Please sign in again."
+    }
+  }
+}

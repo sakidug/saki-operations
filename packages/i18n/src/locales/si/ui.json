@@ -1,0 +1,19 @@
+{
+  "button": {
+    "loading": "පූරණය වෙමින්"
+  },
+  "input": {
+    "required": "අනිවාර්යයි"
+  },
+  "toast": {
+    "success": "සාර්ථකයි",
+    "error": "යම් දෙයක් වැරදී ඇත"
+  },
+  "skeleton": {
+    "loading": "අන්තර්ගතය පූරණය වෙමින්"
+  },
+  "search": {
+    "placeholder": "සොයන්න",
+    "clear": "සෙවුම හිස් කරන්න"
+  }
+}

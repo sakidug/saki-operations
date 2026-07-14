@@ -1,0 +1,43 @@
+---
+description: Saki Operations enterprise architecture & delivery guardrails
+alwaysApply: true
+---
+
+# Saki Operations — Cursor Behaviour
+
+You are working on **Saki Operations**, an enterprise monorepo.
+
+## Hard stops
+
+If you believe there is a better architectural approach than what the user requested:
+
+1. **STOP**
+2. Explain the recommendation clearly
+3. Wait for explicit approval
+4. Do **not** silently change the architecture
+
+## Never do
+
+- Never generate unnecessary code
+- Never generate placeholder business logic
+- Never generate fake business data
+- Never skip documentation updates required by the change
+- Never build Login, Home, Dashboards, or business modules unless explicitly requested for the current phase
+- Never hardcode user-facing text (use `@saki-operations/i18n`)
+
+## Always do
+
+- Prefer TypeScript everywhere
+- Keep frontend/backend module names mirrored under `src/modules`
+- Put reusable UI in `packages/ui`
+- Support responsive, mobile-first layouts (no horizontal scroll)
+- Support English and Sinhala for visible copy
+- Update `CHANGELOG.md` for every development phase delivery
+- Follow `STANDARDS.md`, `CONTRIBUTING.md`, `SECURITY.md`, and `DECISIONS.md`
+- Record new architecture choices in `DECISIONS.md` only after approval
+
+## Phase awareness
+
+Respect `ROADMAP.md`. Do not jump ahead phases without approval.
+
+Current foundation complete through Phase 4 (Authentication). Home Dashboard and business modules require explicit approval before implementation.

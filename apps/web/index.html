@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" class="dark" data-theme="dark" data-brand="tours">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b1220" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="description" content="Saki Operations — Powered by Saki Tours & Weddings" />
+    <meta name="application-name" content="Saki Operations" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Saki Ops" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <title>Saki Operations</title>
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem('saki-operations.theme') || 'dark';
+          var brand = localStorage.getItem('saki-operations.brand') || 'tours';
+          var locale = localStorage.getItem('saki-operations.locale') || 'en';
+          var root = document.documentElement;
+          root.classList.toggle('dark', theme !== 'light');
+          root.classList.toggle('light', theme === 'light');
+          root.dataset.theme = theme === 'light' ? 'light' : 'dark';
+          root.dataset.brand = brand;
+          root.lang = locale;
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
