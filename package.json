@@ -24,6 +24,7 @@
     "db:migrate": "turbo run db:migrate --filter=@saki-operations/database",
     "db:seed": "pnpm --filter=@saki-operations/database db:seed",
     "db:studio": "turbo run db:studio --filter=@saki-operations/database",
+    "create-admin": "pnpm db:generate && pnpm --filter=@saki-operations/database exec tsx ../scripts/create-admin.ts",
     "clean": "turbo run clean && rm -rf node_modules"
   },
   "devDependencies": {
