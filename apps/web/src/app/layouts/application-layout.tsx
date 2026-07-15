@@ -103,7 +103,7 @@ export function ApplicationLayout({ children }: ApplicationLayoutProps) {
         <UpdateBanner />
         <InstallPrompt />
         <main
-          className={`min-w-0 flex-1 ${showBottomNav ? 'pb-24' : 'pb-6'}`}
+          className={`min-w-0 flex-1 overflow-x-hidden ${showBottomNav ? 'pb-24' : 'pb-6'}`}
           id="main-content"
           tabIndex={-1}
         >

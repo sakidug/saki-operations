@@ -51,7 +51,7 @@ export function ErrorLayout({ children, className }: LayoutProps) {
 /** Responsive page container used inside application chrome. */
 export function ResponsiveLayout({ children, className }: LayoutProps) {
   return (
-    <div className={cn('container-app w-full max-w-full overflow-x-hidden py-4 sm:py-6', className)}>
+    <div className={cn('container-app w-full max-w-full overflow-x-hidden py-3 sm:py-6', className)}>
       {children}
     </div>
   );

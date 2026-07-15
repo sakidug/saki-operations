@@ -34,7 +34,8 @@ export {
 
 export { capturePhotoFromCamera, type CapturedPhoto, type CapturePhotoOptions } from './image/capture';
 export { savePhotoToGallery, type GallerySaveResult } from './image/gallery';
-export { preprocessForDigitalOdometer, blobToImageBitmap, canvasToBlob } from './image/preprocess';
+export { preprocessForDigitalOdometer, blobToImageBitmap, canvasToBlob, materializeFile, normalizeCapturedImage } from './image/preprocess';
+
 
 export {
   enqueueEvidence,

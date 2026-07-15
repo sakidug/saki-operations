@@ -32,7 +32,7 @@ export function TopNavigation({
         className,
       )}
     >
-      <div className="container-app flex min-h-14 items-center gap-3 py-2">
+      <div className="container-app flex min-h-12 items-center gap-2.5 py-1.5 sm:gap-3 sm:py-2">
         {showMenuButton ? (
           <Button
             type="button"

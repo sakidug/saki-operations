@@ -4,7 +4,7 @@
 
 Format: `MAJOR.MINOR.PATCH` → `vMAJOR.MINOR.PATCH`
 
-**Current version:** **v0.7.8** — Saki Tours Polish & QA (Phase 7.2E)
+**Current version:** **v0.7.8** — Saki Tours Polish & Production QA (Phases 7.2E + 7.2F)
 
 **Product direction:** Operations & Workforce Management PWA — see [ROADMAP.md](./ROADMAP.md) and [ARCHITECTURE.md](./ARCHITECTURE.md)
 
@@ -28,7 +28,7 @@ Format: `MAJOR.MINOR.PATCH` → `vMAJOR.MINOR.PATCH`
 | Tours End Ops | `v0.7.5` | Phase 7.2B End Operation + active-op guard |
 | Tours Multi-Day | `v0.7.6` | Phase 7.2C multi-day daily records |
 | Tours History | `v0.7.7` | Phase 7.2D Previous Operations |
-| Tours Ops polish | `v0.7.8` | Phase 7.2E Polish & QA |
+| Tours Ops polish | `v0.7.8` | Phase 7.2E Polish & QA + 7.2F Production QA |
 | HHCO Ops | planned | Phase 7.3 / Phase 8 |
 | First production | `v1.0.0` | Hardened ops PWA on sakitours.app |
 

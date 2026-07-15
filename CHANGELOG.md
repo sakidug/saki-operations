@@ -24,7 +24,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.7.8] — 2026-07-14
 
-### Fixed
+### Fixed — Phase 7.2F (Production QA)
+
+- Mobile camera capture no longer fails with Safari “I/O read operation failed” (materialize File bytes before detaching input; JPEG-normalize capture)
+- Data-URL encoding uses `ArrayBuffer` + base64 instead of FileReader (iOS-safe)
+- Offline evidence queue write is best-effort so OCR review still works if IDB persistence fails
+- Gallery auto-download disabled by default / skipped on coarse-pointer devices (no longer races camera teardown)
+- Top navigation slightly shorter for more usable viewport height; safe-area top padding tightened
+- Notifications / Profile / Settings show intentional “ready” shell screens (session identity on Profile; no Construction placeholders)
+
+### Fixed — Phase 7.2E
 
 - `Button asChild` now respects `disabled` / `loading` (blocks navigation on Continue CTAs)
 - Multi-day current-day selection prefers `in_progress` / `pending` over stale `currentDay`
@@ -42,10 +51,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - History list entrance animation capped for longer lists
 - Today’s tasks use icon + sr-only status (no hardcoded checkmark)
 - Current Operation progressbar includes `aria-label`
+- Main content uses `overflow-x-hidden` and slightly tighter mobile vertical padding
 
 ### Notes
 
-- No new Tours business features; polish & QA only
+- Version remains **v0.7.8** (7.2E + 7.2F production QA). No new Tours/HHCO business features.
 - Orphan `draft` sessions after mid-start failure still documented (KI-018)
 - History list virtualization deferred (KI-019)
 - Await approval before Phase 7.3 — HHCO Operations

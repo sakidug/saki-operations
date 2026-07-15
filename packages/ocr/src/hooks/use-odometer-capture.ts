@@ -83,7 +83,12 @@ export function useOdometerCapture(options: UseOdometerCaptureOptions = {}) {
         setPhase('idle');
         return;
       }
-      setError(cause instanceof Error ? cause.message : 'Capture failed');
+      const raw = cause instanceof Error ? cause.message : 'Capture failed';
+      const friendly =
+        /I\/O read operation failed|NotReadableError|Could not read the photo/i.test(raw)
+          ? 'Could not read the photo. Please try again.'
+          : raw;
+      setError(friendly);
       setPhase('idle');
     } finally {
       setProgress(null);

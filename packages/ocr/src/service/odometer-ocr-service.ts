@@ -18,7 +18,7 @@ import { OCR_LOW_CONFIDENCE_THRESHOLD } from '../types';
 
 export type OdometerOcrServiceOptions = {
   registry?: OcrProviderRegistry;
-  /** Save a gallery copy after capture (best-effort). Default true. */
+  /** Save a gallery copy after capture (best-effort). Default false — intrusive on mobile. */
   saveToGallery?: boolean;
   /** Persist to offline IndexedDB queue. Default true. */
   enqueueOffline?: boolean;
@@ -55,7 +55,9 @@ export class OdometerOcrService {
 
   constructor(options: OdometerOcrServiceOptions = {}) {
     this.registry = options.registry ?? createOcrProviderRegistry();
-    this.saveToGalleryEnabled = options.saveToGallery !== false;
+    // Auto gallery download is intrusive on mobile and raced camera teardown;
+    // callers can opt in. Offline queue remains on by default.
+    this.saveToGalleryEnabled = options.saveToGallery === true;
     this.enqueueOfflineEnabled = options.enqueueOffline !== false;
     this.lowConfidenceThreshold =
       options.lowConfidenceThreshold ?? OCR_LOW_CONFIDENCE_THRESHOLD;
@@ -93,8 +95,12 @@ export class OdometerOcrService {
     let gallerySaved = false;
     if (this.saveToGalleryEnabled) {
       onProgress?.({ phase: 'persisting', message: 'gallery' });
-      const gallery = await savePhotoToGallery(captured.file, fileName);
-      gallerySaved = gallery.ok;
+      try {
+        const gallery = await savePhotoToGallery(captured.file, fileName);
+        gallerySaved = gallery.ok;
+      } catch {
+        gallerySaved = false;
+      }
     }
 
     onProgress?.({ phase: 'preprocessing' });
@@ -122,20 +128,25 @@ export class OdometerOcrService {
 
     if (this.enqueueOfflineEnabled) {
       onProgress?.({ phase: 'persisting', message: 'offline_queue' });
-      const dataUrl = await blobToDataUrl(captured.file);
-      await enqueueEvidence({
-        clientLocalId,
-        fileName,
-        mimeType,
-        byteSize: captured.file.size,
-        capturedAt: photo.capturedAt,
-        attachmentKey: options.attachmentKey ?? null,
-        dataUrl,
-        odometerValue: ocr.value,
-        confidence: ocr.ok ? ocr.confidence : null,
-        syncStatus: 'queued',
-      });
-      photo.syncStatus = 'queued';
+      try {
+        const dataUrl = await blobToDataUrl(captured.file);
+        await enqueueEvidence({
+          clientLocalId,
+          fileName,
+          mimeType,
+          byteSize: captured.file.size,
+          capturedAt: photo.capturedAt,
+          attachmentKey: options.attachmentKey ?? null,
+          dataUrl,
+          odometerValue: ocr.value,
+          confidence: ocr.ok ? ocr.confidence : null,
+          syncStatus: 'queued',
+        });
+        photo.syncStatus = 'queued';
+      } catch {
+        // Capture + OCR must still succeed offline even if durable queue write fails.
+        photo.syncStatus = 'local';
+      }
     }
 
     onProgress?.({ phase: 'done', progress: 1 });

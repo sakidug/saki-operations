@@ -263,7 +263,7 @@
   }
 
   .safe-pt {
-    padding-top: max(0.75rem, env(safe-area-inset-top));
+    padding-top: max(0.5rem, env(safe-area-inset-top));
   }
 
   .no-scrollbar {

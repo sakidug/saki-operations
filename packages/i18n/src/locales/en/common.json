@@ -152,7 +152,7 @@
       "errorId": "Error ID"
     },
     "placeholder": {
-      "description": "This area is ready in the navigation shell and will be completed in a later phase.",
+      "description": "This section of the app is reserved for a future release.",
       "login": "Login",
       "home": "Home",
       "profile": "Profile",
@@ -160,6 +160,30 @@
       "settings": "Settings",
       "sakiTours": "Saki Tours & Weddings",
       "hhco": "HHCO Helmet Delivery"
+    },
+    "ready": {
+      "footnote": "Language and theme are available from the top bar. More personal tools arrive in a later phase.",
+      "notifications": {
+        "badge": "Inbox",
+        "title": "Notifications",
+        "description": "Operational alerts will land here when workforce messaging is enabled.",
+        "body": "You're all caught up. Trip and delivery alerts will appear in this inbox once that channel is switched on."
+      },
+      "profile": {
+        "badge": "Account",
+        "title": "Profile",
+        "description": "Your signed-in workforce identity on this device.",
+        "name": "Display name",
+        "employeeId": "Employee ID",
+        "role": "Role",
+        "body": "Sign in to view your workforce profile."
+      },
+      "settings": {
+        "badge": "Preferences",
+        "title": "Settings",
+        "description": "Core preferences stay in the top bar for quick access while you work.",
+        "body": "Use the language control in the top bar for now. Expanded settings arrive with later operations phases."
+      }
     }
   },
   "toursOps": {

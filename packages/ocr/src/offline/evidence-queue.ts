@@ -50,13 +50,19 @@ function txDone(tx: IDBTransaction): Promise<void> {
 }
 
 export async function blobToDataUrl(blob: Blob): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(reader.error ?? new Error('FileReader failed'));
-    reader.readAsDataURL(blob);
-  });
+  // Prefer ArrayBuffer + base64 — FileReader frequently throws
+  // "The I/O read operation failed." on iOS Safari for camera Files.
+  const buffer = await blob.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
+  const chunkSize = 0x2000;
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+  const mime = blob.type || 'application/octet-stream';
+  return `data:${mime};base64,${btoa(binary)}`;
 }
+
 
 export async function dataUrlToBlob(dataUrl: string): Promise<Blob> {
   const response = await fetch(dataUrl);

@@ -24,13 +24,14 @@ Tracking list for bugs, limitations, and technical debt in **Saki Operations**.
 | KI-001 | Web / PWA   | Low      | Service worker not implemented yet | Intentional until Saki Sync phase |
 | KI-004 | Assets      | Low      | PWA icons are temporary solid placeholders | Replace with final brand assets from `assets/` before production |
 | KI-005 | Tooling     | Low      | Local `pnpm` may require `corepack`/`npx pnpm` depending on machine PATH | Documented in README setup |
-| KI-010 | Web / UX    | Low      | Profile, Notifications, Settings are shell placeholders | Rebuild in later phases after Trips Ops |
+| KI-010 | Web / UX    | Low      | Profile, Notifications, Settings are intentional shell-ready screens (not full modules yet) | Softened in 7.2F; full tools later |
 | KI-011 | Web / UX    | Low      | Offline / maintenance / generic error routes exist but are not auto-routed from network state | Banner covers offline; full-page routes reserved for deep links / future |
 | KI-012 | UI package  | Low      | Domain cards (`ModuleCard`, `TripCard`, …) unused by current screens | Reuse in Phase 7.1+ instead of one-offs where practical |
 | KI-013 | Forms       | Low      | `@saki-operations/forms` partially used (VehicleSelector); broader form kit still unused | Expand when HHCO / service forms need shared patterns |
 | KI-018 | Tours / Session | Medium | Orphan `draft` sessions if Start commit fails after `createDraft` | Does not block Start (`findActive` ignores drafts). Engine has no public delete; purge UI/API later |
 | KI-019 | Tours / Perf | Low | Previous Operations list is not virtualized | Animation capped at 12 items in 7.2E; virtualize if histories grow large |
 | KI-020 | Sync | Medium | “Synced” is local mark / queue status — true cloud drain still Saki Sync phase | Tours finish marks synced when online; offline stays Ready for Sync |
+| KI-024 | OCR / Mobile | Low | True “save to Photos” gallery insert still unavailable in standard browser PWAs | Capture persist uses IndexedDB; gallery auto-download opt-in only |
 
 ---
 
@@ -64,6 +65,7 @@ _None at this time._
 | KI-021 | UI / Button | `Button asChild` ignored `disabled` (links still navigated) | v0.7.8 |
 | KI-022 | Tours / Multi-Day | Stale `currentDay` could open wrong day task | v0.7.8 |
 | KI-023 | Tours / Multi-Day | Overnight wall-clock hours inflated multi-day totals | v0.7.8 |
+| KI-025 | OCR / Safari | Camera FileReader “I/O read operation failed” on mobile Start Operation | v0.7.8 (7.2F) |
 
 ---
 

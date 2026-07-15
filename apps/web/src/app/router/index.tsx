@@ -39,6 +39,11 @@ const RoutePlaceholder = lazy(() =>
     default: m.RoutePlaceholder,
   })),
 );
+const ShellReadyScreen = lazy(() =>
+  import('@/app/screens/placeholders/shell-ready-screen').then((m) => ({
+    default: m.ShellReadyScreen,
+  })),
+);
 const SakiToursHomeScreen = lazy(() =>
   import('@/modules/saki-tours/screens/saki-tours-home-screen').then((m) => ({
     default: m.SakiToursHomeScreen,
@@ -178,7 +183,7 @@ export const appRouter = createBrowserRouter([
                 path: paths.profile,
                 element: (
                   <Suspend>
-                    <RoutePlaceholder titleKey="shell.placeholder.profile" />
+                    <ShellReadyScreen kind="profile" />
                   </Suspend>
                 ),
               },
@@ -186,7 +191,7 @@ export const appRouter = createBrowserRouter([
                 path: paths.notifications,
                 element: (
                   <Suspend>
-                    <RoutePlaceholder titleKey="shell.placeholder.notifications" />
+                    <ShellReadyScreen kind="notifications" />
                   </Suspend>
                 ),
               },
@@ -194,7 +199,7 @@ export const appRouter = createBrowserRouter([
                 path: paths.settings,
                 element: (
                   <Suspend>
-                    <RoutePlaceholder titleKey="shell.placeholder.settings" />
+                    <ShellReadyScreen kind="settings" />
                   </Suspend>
                 ),
               },

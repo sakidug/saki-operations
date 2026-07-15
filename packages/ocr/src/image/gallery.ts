@@ -52,6 +52,16 @@ export async function savePhotoToGallery(
 
   try {
     const url = URL.createObjectURL(typed);
+    // Avoid auto-download on touch devices — it interrupts field capture and
+    // has raced Safari camera teardown. Caller can still opt into file picker above.
+    const coarsePointer =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(pointer: coarse)').matches;
+    if (coarsePointer) {
+      URL.revokeObjectURL(url);
+      return { method: 'noop', ok: true, detail: 'skipped_mobile_auto_download' };
+    }
+
     const anchor = document.createElement('a');
     anchor.href = url;
     anchor.download = fileName;
@@ -65,3 +75,4 @@ export async function savePhotoToGallery(
     return { method: 'noop', ok: false, detail: 'gallery_unavailable' };
   }
 }
+

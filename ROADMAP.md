@@ -59,6 +59,7 @@ That desktop system remains the **only** booking and office management system fo
 | 7.2C  | Saki Tours Operations — Multi-Day         | Completed |
 | 7.2D  | Saki Tours Operations — Previous Ops      | Completed |
 | 7.2E  | Saki Tours Operations — Polish & QA       | Completed |
+| 7.2F  | Saki Tours Operations — Production QA     | Completed |
 | 7.2   | Saki Tours Operations (module complete)   | Completed |
 | 7.3 / 8 | HHCO Helmet Delivery Operations         | Pending   |
 | 9     | Photo Evidence & Offline Sync (Saki Sync) | Pending   |
@@ -66,7 +67,7 @@ That desktop system remains the **only** booking and office management system fo
 | 11    | Operational History & OT Surfaces         | Pending   |
 | 12    | Production Release                        | Pending   |
 
-> Do not start **HHCO Operations** until Tours Polish & QA (7.2E) is accepted and leadership approves.
+> Do not start **HHCO Operations** until Tours Production QA (7.2F) is accepted and leadership approves.
 
 ---
 
@@ -296,9 +297,26 @@ UX polish, accessibility, edge-case hardening, and QA for Tours Start / End / Mu
 
 - HHCO, Leave, Reports, Vehicles module, Office dashboards
 
+## Phase 7.2F — Saki Tours Operations (Production QA Fixes)
+
+**Status:** Completed (still **v0.7.8**)
+
+Final production QA for Tours — camera/OCR mobile fixes, mobile chrome, intentional shell placeholders, performance/a11y polish. **No new business features. No HHCO implementation.**
+
+### Delivered
+
+- Safari/iOS-safe camera capture + OCR pipeline (no I/O read failures)
+- Mobile safe-area / top-nav density improvements
+- Intentional Profile / Notifications / Settings shell screens
+- Docs updated; version remains **v0.7.8**
+
+### Explicitly not in 7.2F
+
+- HHCO Operations, Leave, Reports, Vehicles module, Office dashboards
+
 ## Phase 7.2 — Saki Tours Operations (module)
 
-**Status:** Completed (through 7.2E)
+**Status:** Completed (through 7.2F)
 
 Drivers **manually create a Trip Log**. No booking reference. No customer details. No booking assignment.
 
