@@ -1,5 +1,5 @@
 import type { AcceptedOdometerReading } from '@saki-operations/ocr';
-import type { VehicleSelectorItem } from '@saki-operations/types';
+import type { CompanySelectorItem, EmployeeSelectorItem, VehicleSelectorItem } from '@saki-operations/types';
 
 export type ToursHireType = 'wedding_hire' | 'airport_transfer' | 'tour';
 
@@ -13,14 +13,21 @@ export type TimeEvidenceCapture = {
 };
 
 export type StartOperationDraft = {
+  companyId: string | null;
+  company: CompanySelectorItem | null;
   vehicleId: string | null;
   vehicle: VehicleSelectorItem | null;
+  driverId: string | null;
+  driver: EmployeeSelectorItem | null;
+  assistantIds: string[];
+  assistants: EmployeeSelectorItem[];
+  destination: string;
+  startOdometer: AcceptedOdometerReading | null;
+  /** Legacy Tours fields retained for historical/session compatibility. */
   hireType: ToursHireType | null;
   startLocation: string;
-  destination: string;
   endingLocation: string;
   numberOfDays: number;
-  startOdometer: AcceptedOdometerReading | null;
   startTime: TimeEvidenceCapture | null;
 };
 
@@ -31,11 +38,17 @@ export type EndOperationDraft = {
 
 export function createEmptyStartDraft(): StartOperationDraft {
   return {
+    companyId: null,
+    company: null,
     vehicleId: null,
     vehicle: null,
+    driverId: null,
+    driver: null,
+    assistantIds: [],
+    assistants: [],
+    destination: '',
     hireType: null,
     startLocation: '',
-    destination: '',
     endingLocation: '',
     numberOfDays: 1,
     startOdometer: null,

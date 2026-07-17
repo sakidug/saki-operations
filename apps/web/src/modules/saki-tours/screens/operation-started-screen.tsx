@@ -16,9 +16,13 @@ import {
 
 import {
   formatOperationDateTime,
-  getSessionHireTypeKey,
   getSessionVehicleLabel,
 } from '../lib/session-display';
+
+function stringField(session: OperationsSession, key: string): string | null {
+  const value = session.customFields[key];
+  return typeof value === 'string' && value.trim().length > 0 ? value : null;
+}
 
 /**
  * Post-start confirmation — status In Progress from Session Engine.
@@ -100,10 +104,26 @@ export function OperationStartedScreen() {
           </div>
           <div className="rounded-xl bg-muted/40 px-3 py-2.5">
             <dt className="text-xs uppercase tracking-wide text-muted-foreground">
-              {t('toursOps.success.hireType')}
+              {t('toursOps.confirm.company')}
             </dt>
             <dd className="mt-1 font-medium text-foreground">
-              {t(getSessionHireTypeKey(session))}
+              {stringField(session, 'companyShortName') ?? stringField(session, 'companyName') ?? session.companyId ?? '—'}
+            </dd>
+          </div>
+          <div className="rounded-xl bg-muted/40 px-3 py-2.5">
+            <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+              {t('toursOps.confirm.driver')}
+            </dt>
+            <dd className="mt-1 font-medium text-foreground">
+              {stringField(session, 'driverName') ?? session.driverId ?? '—'}
+            </dd>
+          </div>
+          <div className="rounded-xl bg-muted/40 px-3 py-2.5">
+            <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+              {t('toursOps.confirm.destination')}
+            </dt>
+            <dd className="mt-1 font-medium text-foreground">
+              {stringField(session, 'destination') ?? '—'}
             </dd>
           </div>
           <div className="rounded-xl bg-muted/40 px-3 py-2.5">

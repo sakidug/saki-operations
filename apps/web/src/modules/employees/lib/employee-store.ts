@@ -3,7 +3,7 @@ import type { AppPermission } from '@saki-operations/types';
 
 import { readJson, writeJson } from '@/lib/local-persist';
 
-export type EmployeeRole = 'driver' | 'office' | 'admin';
+export type EmployeeRole = 'driver' | 'assistant' | 'office' | 'admin';
 
 export type EmployeeRecord = {
   id: string;
@@ -32,7 +32,7 @@ const SEED_EMPLOYEES: EmployeeRecord[] = [
     displayName: 'Demo Driver',
     phone: '0770000001',
     email: 'driver@saki.local',
-    role: 'driver',
+    role: 'assistant',
     permissions: ['operations.start', 'operations.end', 'leave.apply', 'profile.view'],
     emergencyContactName: 'Nimal Perera',
     emergencyContactPhone: '0771111001',
@@ -85,10 +85,17 @@ const SEED_EMPLOYEES: EmployeeRecord[] = [
   },
 ];
 
+function normalizeEmployee(record: EmployeeRecord): EmployeeRecord {
+  if (record.employeeId === 'EMP-AST-001' && record.role === 'driver') {
+    return { ...record, role: 'assistant' };
+  }
+  return { ...record };
+}
+
 function load(): EmployeeStoreState {
   const existing = readJson<EmployeeStoreState | null>(STORAGE_KEY, null);
   if (existing?.employees?.length) {
-    return existing;
+    return { employees: existing.employees.map(normalizeEmployee) };
   }
   const seeded = { employees: SEED_EMPLOYEES };
   writeJson(STORAGE_KEY, seeded);
@@ -99,11 +106,13 @@ function save(state: EmployeeStoreState): void {
   writeJson(STORAGE_KEY, state);
 }
 
-export function listEmployees(filter?: 'driver' | 'office' | 'all'): EmployeeRecord[] {
+export function listEmployees(filter?: 'driver' | 'assistant' | 'office' | 'all'): EmployeeRecord[] {
   const list = [...load().employees];
   const filtered =
     filter === 'driver'
       ? list.filter((e) => e.role === 'driver')
+      : filter === 'assistant'
+        ? list.filter((e) => e.role === 'assistant')
       : filter === 'office'
         ? list.filter((e) => e.role === 'office' || e.role === 'admin')
         : list;

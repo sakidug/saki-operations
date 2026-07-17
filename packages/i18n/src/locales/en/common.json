@@ -409,7 +409,13 @@
     "wizard": {
       "title": "Start Operation",
       "stepOf": "Step {{current}} of {{total}}",
+      "stepCompany": "Select the company.",
       "stepVehicle": "Select the vehicle for this hire.",
+      "stepDriver": "Select the driver.",
+      "stepAssistants": "Select assistants.",
+      "stepDestination": "Enter the destination.",
+      "stepOdometerPhoto": "Take the start odometer photo.",
+      "stepStartKm": "Confirm the start KM.",
       "stepHireType": "Choose the hire type.",
       "stepTrip": "Enter route and number of days.",
       "stepOdometer": "Capture the start odometer.",
@@ -422,9 +428,33 @@
       "startFailed": "Could not start the operation. Your photos are still on this device — try again.",
       "missingUser": "Sign in again to start an operation."
     },
+    "company": {
+      "title": "Select company",
+      "description": "Choose the company this operation belongs to."
+    },
     "vehicle": {
+      "title": "Select vehicle",
       "label": "Vehicle",
-      "description": "Choose an available vehicle. Unavailable options stay disabled."
+      "description": "Choose the vehicle for this operation.",
+      "selectorDescription": "Choose an available vehicle. Unavailable options stay disabled."
+    },
+    "driver": {
+      "title": "Select driver",
+      "description": "Choose the driver assigned to this operation.",
+      "label": "Driver",
+      "selectorDescription": "Only available drivers are shown."
+    },
+    "assistants": {
+      "title": "Select assistants",
+      "description": "Choose any assistants travelling with the driver. This step can be skipped.",
+      "label": "Assistants",
+      "selectorDescription": "Select one or more available assistants."
+    },
+    "destination": {
+      "title": "Enter destination",
+      "description": "Enter the main destination for this operation.",
+      "label": "Destination",
+      "placeholder": "Main destination"
     },
     "hireType": {
       "title": "Hire type",
@@ -487,16 +517,28 @@
       "readOnlyHint": "Drivers cannot edit start time. Office correction comes later.",
       "captureFailed": "Could not capture the photo. Try again."
     },
+    "startKm": {
+      "title": "Enter start KM",
+      "description": "Confirm the final start odometer reading before review.",
+      "confirmed": "Confirmed start KM",
+      "changeHint": "To change this reading, go back and retake or edit the odometer photo."
+    },
     "confirm": {
       "title": "Ready to start",
       "description": "Starting creates an offline session on this device immediately.",
+      "company": "Company",
       "vehicle": "Vehicle",
+      "driver": "Driver",
+      "assistants": "Assistants",
+      "noAssistants": "No assistants",
+      "destination": "Destination",
       "hireType": "Hire type",
       "route": "Route",
       "days": "Days",
       "startOdometer": "Start odometer",
       "startTime": "Start time",
-      "offlineNote": "Works offline — the session is saved locally and syncs when online."
+      "offlineNote": "Works offline — the session is saved locally and syncs when online.",
+      "autoTimeNote": "Works offline. The device time is recorded automatically when you start."
     },
     "success": {
       "title": "Operation Started Successfully",

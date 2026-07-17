@@ -1,54 +1,202 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { VehicleSelector } from '@saki-operations/forms';
+import { EmployeeSelector, VehicleSelector } from '@saki-operations/forms';
 import { OdometerCapture } from '@saki-operations/ocr';
 import { useAppTranslation } from '@saki-operations/i18n';
-import { Badge, Button, Card, cn, LoadingSpinner } from '@saki-operations/ui';
-import { ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Badge, Button, Card, Input, Label, LoadingSpinner, cn } from '@saki-operations/ui';
+import type { CompanySelectorItem, EmployeeSelectorItem } from '@saki-operations/types';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Building2,
+  Car,
+  Check,
+  CheckCircle2,
+  ClipboardCheck,
+  Gauge,
+  MapPin,
+  UserRound,
+  UsersRound,
+} from 'lucide-react';
 
 import { useSession } from '@/app/bootstrap/session-provider';
 import { FadeIn } from '@/app/screens/loading/fade-in';
 import { paths, buildSakiToursOperationStartedPath } from '@/app/router/paths';
+import { listCompanies } from '@/modules/companies/data/company-catalog';
+import { listEmployees } from '@/modules/employees/lib/employee-store';
 
 import { ActiveOperationBlocked } from '../components/active-operation-blocked';
-import { HireTypeStep } from '../components/hire-type-step';
-import { StartTimeCaptureStep } from '../components/start-time-capture-step';
-import { TripDetailsStep } from '../components/trip-details-step';
 import { TOURS_FLEET_CATALOG } from '../data/fleet-catalog';
 import { useActiveToursSession } from '../hooks/use-active-tours-session';
 import { commitStartOperation } from '../lib/commit-start-operation';
 import { findActiveToursSession } from '../lib/find-active-session';
-import {
-  createEmptyStartDraft,
-  hireTypeLabelKey,
-  isMultiDay,
-  type StartOperationDraft,
-} from '../types';
+import { createEmptyStartDraft, type StartOperationDraft } from '../types';
 
-const STEP_COUNT = 6;
+const STEP_COUNT = 8;
 
 function canAdvance(step: number, draft: StartOperationDraft): boolean {
   switch (step) {
     case 1:
-      return Boolean(draft.vehicleId);
+      return Boolean(draft.companyId);
     case 2:
-      return Boolean(draft.hireType);
+      return Boolean(draft.vehicleId);
     case 3:
-      return (
-        draft.startLocation.trim().length > 0 &&
-        draft.destination.trim().length > 0 &&
-        draft.endingLocation.trim().length > 0 &&
-        draft.numberOfDays >= 1
-      );
+      return Boolean(draft.driverId);
     case 4:
-      return Boolean(draft.startOdometer);
+      return true;
     case 5:
-      return Boolean(draft.startTime);
+      return draft.destination.trim().length > 0;
     case 6:
+      return Boolean(draft.startOdometer);
+    case 7:
+      return Boolean(draft.startOdometer);
+    case 8:
       return true;
     default:
       return false;
   }
+}
+
+function employeeItems(role: 'driver' | 'assistant'): EmployeeSelectorItem[] {
+  return listEmployees(role).map((employee) => ({
+    id: employee.employeeId,
+    employeeId: employee.employeeId,
+    displayName: employee.displayName,
+    phone: employee.phone || null,
+    role: employee.role,
+    available: true,
+    photoUrl: employee.photoDataUrl ?? null,
+  }));
+}
+
+function StepShell({
+  icon,
+  title,
+  description,
+  children,
+}: {
+  icon: ReactNode;
+  title: string;
+  description: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="space-y-5">
+      <div className="flex items-start gap-3">
+        <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+          {icon}
+        </div>
+        <div className="space-y-1">
+          <h2 className="text-xl font-semibold tracking-tight text-foreground">{title}</h2>
+          <p className="text-sm leading-6 text-muted-foreground">{description}</p>
+        </div>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function CompanyStep({
+  companies,
+  value,
+  onChange,
+}: {
+  companies: CompanySelectorItem[];
+  value: string | null;
+  onChange: (company: CompanySelectorItem) => void;
+}) {
+  const { t } = useAppTranslation();
+  return (
+    <StepShell
+      icon={<Building2 className="size-5" aria-hidden />}
+      title={t('toursOps.company.title')}
+      description={t('toursOps.company.description')}
+    >
+      <div className="grid gap-3">
+        {companies.map((company) => {
+          const selected = value === company.id;
+          return (
+            <button
+              key={company.id}
+              type="button"
+              onClick={() => onChange(company)}
+              className={cn(
+                'flex min-h-20 w-full items-center justify-between gap-4 rounded-2xl border px-4 py-4 text-left',
+                'bg-background text-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                selected ? 'border-primary ring-2 ring-primary/35' : 'border-border hover:bg-accent',
+              )}
+            >
+              <span>
+                <span className="block text-base font-semibold">{company.shortName ?? company.name}</span>
+                <span className="mt-1 block text-sm text-muted-foreground">{company.name}</span>
+              </span>
+              {selected ? <Check className="size-5 text-primary" aria-hidden /> : null}
+            </button>
+          );
+        })}
+      </div>
+    </StepShell>
+  );
+}
+
+function DestinationStep({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const { t } = useAppTranslation();
+  return (
+    <StepShell
+      icon={<MapPin className="size-5" aria-hidden />}
+      title={t('toursOps.destination.title')}
+      description={t('toursOps.destination.description')}
+    >
+      <div className="space-y-2">
+        <Label htmlFor="tours-v2-destination">{t('toursOps.destination.label')}</Label>
+        <Input
+          id="tours-v2-destination"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder={t('toursOps.destination.placeholder')}
+          autoComplete="off"
+          className="min-h-14 text-base"
+        />
+      </div>
+    </StepShell>
+  );
+}
+
+function StartKmStep({ draft }: { draft: StartOperationDraft }) {
+  const { t } = useAppTranslation();
+  return (
+    <StepShell
+      icon={<Gauge className="size-5" aria-hidden />}
+      title={t('toursOps.startKm.title')}
+      description={t('toursOps.startKm.description')}
+    >
+      <div className="rounded-2xl border border-border bg-background p-5 text-center">
+        <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+          {t('toursOps.startKm.confirmed')}
+        </p>
+        <p className="mt-3 font-display text-4xl font-bold tabular-nums text-foreground">
+          {draft.startOdometer?.displayValue ?? '—'}
+          <span className="ml-2 text-lg text-muted-foreground">{t('toursOps.odometer.unit')}</span>
+        </p>
+        <p className="mt-3 text-sm text-muted-foreground">{t('toursOps.startKm.changeHint')}</p>
+      </div>
+    </StepShell>
+  );
+}
+
+function ReviewItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-border bg-background px-4 py-3">
+      <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</dt>
+      <dd className="mt-1 text-sm font-semibold text-foreground">{value}</dd>
+    </div>
+  );
 }
 
 /**
@@ -65,19 +213,26 @@ export function StartOperationWizardScreen() {
   const [draft, setDraft] = useState<StartOperationDraft>(createEmptyStartDraft);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const companies = useMemo(() => listCompanies(), []);
+  const drivers = useMemo(() => employeeItems('driver'), []);
+  const assistants = useMemo(() => employeeItems('assistant'), []);
 
   const stepTitle = useMemo(() => {
     switch (step) {
       case 1:
-        return t('toursOps.wizard.stepVehicle');
+        return t('toursOps.wizard.stepCompany');
       case 2:
-        return t('toursOps.wizard.stepHireType');
+        return t('toursOps.wizard.stepVehicle');
       case 3:
-        return t('toursOps.wizard.stepTrip');
+        return t('toursOps.wizard.stepDriver');
       case 4:
-        return t('toursOps.wizard.stepOdometer');
+        return t('toursOps.wizard.stepAssistants');
       case 5:
-        return t('toursOps.wizard.stepStartTime');
+        return t('toursOps.wizard.stepDestination');
+      case 6:
+        return t('toursOps.wizard.stepOdometerPhoto');
+      case 7:
+        return t('toursOps.wizard.stepStartKm');
       default:
         return t('toursOps.wizard.stepConfirm');
     }
@@ -100,6 +255,7 @@ export function StartOperationWizardScreen() {
       }
       const session = await commitStartOperation({
         employeeId: user.employeeId,
+        operatorId: user.employeeId,
         draft,
       });
       navigate(buildSakiToursOperationStartedPath(session.id), { replace: true });
@@ -159,41 +315,100 @@ export function StartOperationWizardScreen() {
         })}
       </ol>
 
-      <Card variant="glass" padding="lg" className="space-y-5">
+      <Card variant="glass" padding="lg" className="space-y-5 pb-0">
         {step === 1 ? (
-          <VehicleSelector
-            items={TOURS_FLEET_CATALOG}
-            value={draft.vehicleId}
-            onChange={(vehicleId, vehicle) =>
+          <CompanyStep
+            companies={companies}
+            value={draft.companyId}
+            onChange={(company) =>
               setDraft((prev) => ({
                 ...prev,
-                vehicleId,
-                vehicle: vehicle ?? null,
+                companyId: company.id,
+                company,
               }))
             }
-            label={t('toursOps.vehicle.label')}
-            description={t('toursOps.vehicle.description')}
           />
         ) : null}
 
         {step === 2 ? (
-          <HireTypeStep
-            value={draft.hireType}
-            onChange={(hireType) => setDraft((prev) => ({ ...prev, hireType }))}
-          />
+          <StepShell
+            icon={<Car className="size-5" aria-hidden />}
+            title={t('toursOps.vehicle.title')}
+            description={t('toursOps.vehicle.description')}
+          >
+            <VehicleSelector
+              items={TOURS_FLEET_CATALOG}
+              value={draft.vehicleId}
+              onChange={(vehicleId, vehicle) =>
+                setDraft((prev) => ({
+                  ...prev,
+                  vehicleId,
+                  vehicle: vehicle ?? null,
+                }))
+              }
+              label={t('toursOps.vehicle.label')}
+              description={t('toursOps.vehicle.selectorDescription')}
+            />
+          </StepShell>
         ) : null}
 
         {step === 3 ? (
-          <TripDetailsStep
-            startLocation={draft.startLocation}
-            destination={draft.destination}
-            endingLocation={draft.endingLocation}
-            numberOfDays={draft.numberOfDays}
-            onChange={(patch) => setDraft((prev) => ({ ...prev, ...patch }))}
-          />
+          <StepShell
+            icon={<UserRound className="size-5" aria-hidden />}
+            title={t('toursOps.driver.title')}
+            description={t('toursOps.driver.description')}
+          >
+            <EmployeeSelector
+              items={drivers}
+              value={draft.driverId}
+              roleFilter="driver"
+              availabilityFilter="available"
+              onChange={(driverId, employees) =>
+                setDraft((prev) => ({
+                  ...prev,
+                  driverId: typeof driverId === 'string' ? driverId : null,
+                  driver: employees?.[0] ?? null,
+                }))
+              }
+              label={t('toursOps.driver.label')}
+              description={t('toursOps.driver.selectorDescription')}
+            />
+          </StepShell>
         ) : null}
 
         {step === 4 ? (
+          <StepShell
+            icon={<UsersRound className="size-5" aria-hidden />}
+            title={t('toursOps.assistants.title')}
+            description={t('toursOps.assistants.description')}
+          >
+            <EmployeeSelector
+              items={assistants}
+              value={draft.assistantIds}
+              multiple
+              roleFilter="assistant"
+              availabilityFilter="available"
+              onChange={(assistantIds, employees) =>
+                setDraft((prev) => ({
+                  ...prev,
+                  assistantIds: Array.isArray(assistantIds) ? assistantIds : [],
+                  assistants: employees ?? [],
+                }))
+              }
+              label={t('toursOps.assistants.label')}
+              description={t('toursOps.assistants.selectorDescription')}
+            />
+          </StepShell>
+        ) : null}
+
+        {step === 5 ? (
+          <DestinationStep
+            value={draft.destination}
+            onChange={(destination) => setDraft((prev) => ({ ...prev, destination }))}
+          />
+        ) : null}
+
+        {step === 6 ? (
           <OdometerCapture
             kind="digital"
             labels={{
@@ -228,89 +443,51 @@ export function StartOperationWizardScreen() {
           />
         ) : null}
 
-        {step === 5 ? (
-          <StartTimeCaptureStep
-            value={draft.startTime}
-            onChange={(startTime) => setDraft((prev) => ({ ...prev, startTime }))}
-          />
+        {step === 7 ? (
+          <StartKmStep draft={draft} />
         ) : null}
 
-        {step === 6 ? (
+        {step === 8 ? (
           <div className="space-y-4">
-            <div>
-              <h2 className="text-base font-semibold text-foreground">
+            <div className="flex items-start gap-3">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+                <ClipboardCheck className="size-5" aria-hidden />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold tracking-tight text-foreground">
                 {t('toursOps.confirm.title')}
               </h2>
-              <p className="mt-1 text-sm text-muted-foreground">{t('toursOps.confirm.description')}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{t('toursOps.confirm.description')}</p>
+              </div>
             </div>
             <dl className="grid gap-3 text-sm sm:grid-cols-2">
-              <div className="rounded-xl bg-muted/40 px-3 py-2.5">
-                <dt className="text-xs uppercase tracking-wide text-muted-foreground">
-                  {t('toursOps.confirm.vehicle')}
-                </dt>
-                <dd className="mt-1 font-medium text-foreground">
-                  {draft.vehicle?.name ?? '—'}
-                  {draft.vehicle?.registrationNumber
-                    ? ` · ${draft.vehicle.registrationNumber}`
-                    : null}
-                </dd>
-              </div>
-              <div className="rounded-xl bg-muted/40 px-3 py-2.5">
-                <dt className="text-xs uppercase tracking-wide text-muted-foreground">
-                  {t('toursOps.confirm.hireType')}
-                </dt>
-                <dd className="mt-1 font-medium text-foreground">
-                  {draft.hireType ? t(hireTypeLabelKey(draft.hireType)) : '—'}
-                </dd>
-              </div>
-              <div className="rounded-xl bg-muted/40 px-3 py-2.5">
-                <dt className="text-xs uppercase tracking-wide text-muted-foreground">
-                  {t('toursOps.confirm.route')}
-                </dt>
-                <dd className="mt-1 font-medium text-foreground">
-                  {draft.startLocation} → {draft.destination} → {draft.endingLocation}
-                </dd>
-              </div>
-              <div className="rounded-xl bg-muted/40 px-3 py-2.5">
-                <dt className="text-xs uppercase tracking-wide text-muted-foreground">
-                  {t('toursOps.confirm.days')}
-                </dt>
-                <dd className="mt-1 font-medium text-foreground">
-                  {draft.numberOfDays}
-                  {isMultiDay(draft.numberOfDays) ? (
-                    <Badge variant="warning" className="ml-2 rounded-md">
-                      {t('toursOps.trip.multiDayBadge')}
-                    </Badge>
-                  ) : null}
-                </dd>
-              </div>
-              <div className="rounded-xl bg-muted/40 px-3 py-2.5">
-                <dt className="text-xs uppercase tracking-wide text-muted-foreground">
-                  {t('toursOps.confirm.startOdometer')}
-                </dt>
-                <dd className="mt-1 font-medium text-foreground">
-                  {draft.startOdometer
+              <ReviewItem label={t('toursOps.confirm.company')} value={draft.company?.shortName ?? draft.company?.name ?? '—'} />
+              <ReviewItem
+                label={t('toursOps.confirm.vehicle')}
+                value={`${draft.vehicle?.name ?? '—'}${draft.vehicle?.registrationNumber ? ` · ${draft.vehicle.registrationNumber}` : ''}`}
+              />
+              <ReviewItem label={t('toursOps.confirm.driver')} value={draft.driver?.displayName ?? '—'} />
+              <ReviewItem
+                label={t('toursOps.confirm.assistants')}
+                value={
+                  draft.assistants.length
+                    ? draft.assistants.map((assistant) => assistant.displayName).join(', ')
+                    : t('toursOps.confirm.noAssistants')
+                }
+              />
+              <ReviewItem label={t('toursOps.confirm.destination')} value={draft.destination.trim() || '—'} />
+              <ReviewItem
+                label={t('toursOps.confirm.startOdometer')}
+                value={
+                  draft.startOdometer
                     ? `${draft.startOdometer.displayValue} ${t('toursOps.odometer.unit')}`
-                    : '—'}
-                </dd>
-              </div>
-              <div className="rounded-xl bg-muted/40 px-3 py-2.5">
-                <dt className="text-xs uppercase tracking-wide text-muted-foreground">
-                  {t('toursOps.confirm.startTime')}
-                </dt>
-                <dd className="mt-1 font-medium text-foreground">
-                  {draft.startTime
-                    ? new Intl.DateTimeFormat(undefined, {
-                        dateStyle: 'medium',
-                        timeStyle: 'medium',
-                      }).format(new Date(draft.startTime.capturedAt))
-                    : '—'}
-                </dd>
-              </div>
+                    : '—'
+                }
+              />
             </dl>
             <p className="flex items-start gap-2 text-xs text-muted-foreground">
               <CheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-primary" aria-hidden />
-              {t('toursOps.confirm.offlineNote')}
+              {t('toursOps.confirm.autoTimeNote')}
             </p>
           </div>
         ) : null}
@@ -321,10 +498,11 @@ export function StartOperationWizardScreen() {
           </p>
         ) : null}
 
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-4">
+        <div className="sticky bottom-0 -mx-6 flex flex-wrap items-center justify-between gap-3 border-t border-border/60 bg-card/95 px-6 py-4 backdrop-blur">
           <Button
             type="button"
             variant="secondary"
+            size="lg"
             disabled={step === 1 || submitting}
             onClick={() => {
               setError(null);
@@ -338,6 +516,7 @@ export function StartOperationWizardScreen() {
           {step < STEP_COUNT ? (
             <Button
               type="button"
+              size="lg"
               disabled={!nextEnabled}
               onClick={() => {
                 setError(null);
@@ -352,7 +531,7 @@ export function StartOperationWizardScreen() {
               type="button"
               size="lg"
               loading={submitting}
-              disabled={!canAdvance(5, draft) || submitting}
+              disabled={!canAdvance(7, draft) || submitting}
               onClick={() => void onStart()}
             >
               {t('toursOps.wizard.startOperation')}

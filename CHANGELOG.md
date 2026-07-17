@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Operations V2 — **Phase 2 Employee Start Operation Wizard** (Start workflow only)
+  - Rebuilt primary Start Operation order: Company → Vehicle → Driver → Assistants → Destination → Start Odometer Photo → Start KM → Review & Start
+  - Removed Hire Type, Trip Details, and Start Time Photo from the primary Start workflow while preserving legacy display compatibility
+  - Start now records device time automatically through the session engine; Finish, GPS, sync payloads, vehicle locking, routing, auth, reports, and admin screens remain unchanged
+
 - Operations V2 — **Phase 1 data model foundation** (no UI / wizard / routing / auth / sync / reports changes)
   - Temporary company catalog (`apps/web/src/modules/companies/data/company-catalog.ts`: Saki Tours, HHCO) + `CompanySelectorItem`
   - Session fields: `companyId`, `driverId`, `assistantIds`, `operatorId`, `distanceKm` on `OperationsSession` / `CreateSessionInput`
