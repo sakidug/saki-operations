@@ -26,6 +26,18 @@ export function getSessionVehicleLabel(session: OperationsSession): string {
   return name ?? registration ?? session.vehicleId ?? '—';
 }
 
+export function getSessionVehicleRegistration(session: OperationsSession): string {
+  if (typeof session.customFields.vehicleRegistration === 'string') {
+    const reg = session.customFields.vehicleRegistration.trim();
+    if (reg) return reg;
+  }
+  return (
+    findFleetVehicle(session.vehicleId ?? '')?.registrationNumber ??
+    session.vehicleId ??
+    '—'
+  );
+}
+
 export function getSessionVehicleName(session: OperationsSession): string {
   if (typeof session.customFields.vehicleName === 'string') {
     return session.customFields.vehicleName;

@@ -5,8 +5,10 @@ import {
 } from '@saki-operations/operations-session';
 
 import { emitSyncEvent, emitSyncFile, operationEventType } from '@/modules/sync/emit';
+import { setVehicleStatus } from '@/modules/vehicles/lib/vehicle-store';
 
 import type { EndOperationDraft } from '../types';
+import { stopGpsTracking } from './gps-tracking';
 
 /**
  * Attach end odometer evidence, auto-stamp device completion time, complete the session.
@@ -49,6 +51,17 @@ export async function commitEndOperation(input: {
   session = await engine.setEndTime(session.id, endTime);
   // Engine complete() also sets totalKm / distanceKm from start/end odometers.
   session = await engine.complete(session.id, endTime);
+  stopGpsTracking(session.id);
+
+  // Operations V2 — release the vehicle back to AVAILABLE once the operation finishes.
+  // Local-first side effect; failure here must not fail the completed operation.
+  if (session.vehicleId) {
+    try {
+      setVehicleStatus(session.vehicleId, 'AVAILABLE');
+    } catch {
+      // vehicle-store is best-effort; the session repository remains the lock source of truth.
+    }
+  }
 
   const odoFileId = await emitSyncFile({
     mimeType: draft.endOdometer.photo.mimeType || 'image/jpeg',

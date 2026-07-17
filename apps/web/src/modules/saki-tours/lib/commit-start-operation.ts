@@ -1,8 +1,23 @@
 import { getDefaultOperationsSessionEngine, type OperationsSession } from '@saki-operations/operations-session';
 
 import { emitSyncEvent, operationEventType } from '@/modules/sync/emit';
+import { setVehicleStatus } from '@/modules/vehicles/lib/vehicle-store';
 
 import type { StartOperationDraft } from '../types';
+import { startGpsTracking } from './gps-tracking';
+import { findActiveSessionByVehicle } from './vehicle-operational-status';
+
+/**
+ * Thrown when the selected vehicle already has an active operation.
+ * No draft or session is created when this is raised (Operations V2 lock).
+ */
+export class VehicleActiveOperationError extends Error {
+  readonly code = 'vehicle_active';
+  constructor(readonly activeSession: OperationsSession) {
+    super('This vehicle already has an active operation.');
+    this.name = 'VehicleActiveOperationError';
+  }
+}
 
 /**
  * Persist a fully collected Start Operation draft into the Session Engine.
@@ -27,6 +42,13 @@ export async function commitStartOperation(input: {
     draft.destination.trim().length === 0
   ) {
     throw new Error('Start Operation draft is incomplete');
+  }
+
+  // Operations V2 lock — one active operation per vehicle. Checked before any
+  // draft/session is created so a locked vehicle never produces an orphan draft.
+  const vehicleActive = await findActiveSessionByVehicle(draft.vehicleId);
+  if (vehicleActive) {
+    throw new VehicleActiveOperationError(vehicleActive);
   }
 
   const engine = getDefaultOperationsSessionEngine();
@@ -70,6 +92,18 @@ export async function commitStartOperation(input: {
   session = await engine.setStartTime(session.id, startTime);
   session = await engine.start(session.id, startTime);
   session = await engine.markInProgress(session.id);
+
+  // Operations V2 — denormalized vehicle status for the fleet catalog/admin views.
+  // Local-first side effect; failure here must not fail the started operation.
+  try {
+    setVehicleStatus(draft.vehicleId, 'ON_TRIP');
+  } catch {
+    // vehicle-store is best-effort; the session repository remains the lock source of truth.
+  }
+
+  // Operations V2 Phase 5 — request location permission and begin local GPS
+  // tracking only after the session has started successfully.
+  startGpsTracking(session);
 
   await emitSyncEvent({
     entityType: 'operation',

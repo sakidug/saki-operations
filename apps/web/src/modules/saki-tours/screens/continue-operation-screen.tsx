@@ -16,6 +16,7 @@ import {
 } from '@/app/router/paths';
 
 import { DailyHoursSummary } from '../components/daily-hours-summary';
+import { GpsStatusIndicator } from '../components/gps-status-indicator';
 import { MultiDayProgressCard } from '../components/multi-day-progress-card';
 import { TodayTasksCard } from '../components/today-tasks-card';
 import {
@@ -33,6 +34,7 @@ import {
   isMultiDaySession,
 } from '../lib/session-display';
 import { isMultiDay } from '../types';
+import { ensureGpsTrackingForActiveSession } from '../lib/gps-tracking';
 
 /**
  * Continue Operation — single-day End CTA or multi-day progress + today's tasks.
@@ -75,6 +77,7 @@ export function ContinueOperationScreen() {
       }
 
       setSession(found);
+      ensureGpsTrackingForActiveSession(found);
       setLoading(false);
     }
     void load();
@@ -135,6 +138,8 @@ export function ContinueOperationScreen() {
         ) : null}
 
         <Card variant="glass" padding="lg" className="space-y-4">
+          <GpsStatusIndicator session={session} />
+
           <dl className="grid gap-3 text-sm sm:grid-cols-2">
             <Detail
               label={t('toursOps.continue.vehicle')}

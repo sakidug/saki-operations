@@ -317,6 +317,18 @@
       "backHome": "Back to Tours Operations",
       "notActive": "This session is not an active operation on this device."
     },
+    "gps": {
+      "title": "GPS Tracking",
+      "connected": "GPS Connected",
+      "waiting": "Waiting for GPS",
+      "accuracy": "Accuracy",
+      "battery": "Battery",
+      "network": "Network",
+      "online": "Online",
+      "offline": "Offline",
+      "poorAccuracy": "GPS accuracy is poor. Move to an open area if possible.",
+      "lowBattery": "Battery is below 15%. Connect a charger if possible."
+    },
     "history": {
       "title": "Previous Operations",
       "description": "Read-only history of completed Tours operations stored on this device.",
@@ -436,7 +448,20 @@
       "title": "Select vehicle",
       "label": "Vehicle",
       "description": "Choose the vehicle for this operation.",
-      "selectorDescription": "Choose an available vehicle. Unavailable options stay disabled."
+      "selectorDescription": "Choose an available vehicle. Unavailable options stay disabled.",
+      "checking": "Checking vehicle availability…",
+      "seats": "Seats {{count}}",
+      "statusAvailable": "Available",
+      "statusOnTrip": "On Trip",
+      "statusService": "Service",
+      "serviceNote": "This vehicle is in service and cannot start an operation."
+    },
+    "vehicleBlocked": {
+      "title": "This vehicle already has an active operation.",
+      "registration": "Vehicle Registration",
+      "driver": "Driver",
+      "started": "Started Time",
+      "destination": "Destination"
     },
     "driver": {
       "title": "Select driver",

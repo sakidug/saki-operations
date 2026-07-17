@@ -1,6 +1,6 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { EmployeeSelector, VehicleSelector } from '@saki-operations/forms';
+import { EmployeeSelector } from '@saki-operations/forms';
 import { OdometerCapture } from '@saki-operations/ocr';
 import { useAppTranslation } from '@saki-operations/i18n';
 import { Badge, Button, Card, Input, Label, LoadingSpinner, cn } from '@saki-operations/ui';
@@ -26,20 +26,32 @@ import { listCompanies } from '@/modules/companies/data/company-catalog';
 import { listEmployees } from '@/modules/employees/lib/employee-store';
 
 import { ActiveOperationBlocked } from '../components/active-operation-blocked';
+import { ToursVehicleStep } from '../components/tours-vehicle-step';
 import { TOURS_FLEET_CATALOG } from '../data/fleet-catalog';
 import { useActiveToursSession } from '../hooks/use-active-tours-session';
-import { commitStartOperation } from '../lib/commit-start-operation';
+import {
+  VehicleActiveOperationError,
+  commitStartOperation,
+} from '../lib/commit-start-operation';
 import { findActiveToursSession } from '../lib/find-active-session';
+import {
+  resolveToursVehicleStatuses,
+  type ToursVehicleStatus,
+} from '../lib/vehicle-operational-status';
 import { createEmptyStartDraft, type StartOperationDraft } from '../types';
 
 const STEP_COUNT = 8;
 
-function canAdvance(step: number, draft: StartOperationDraft): boolean {
+function canAdvance(
+  step: number,
+  draft: StartOperationDraft,
+  opts?: { vehicleAvailable?: boolean },
+): boolean {
   switch (step) {
     case 1:
       return Boolean(draft.companyId);
     case 2:
-      return Boolean(draft.vehicleId);
+      return Boolean(draft.vehicleId) && (opts?.vehicleAvailable ?? false);
     case 3:
       return Boolean(draft.driverId);
     case 4:
@@ -213,9 +225,34 @@ export function StartOperationWizardScreen() {
   const [draft, setDraft] = useState<StartOperationDraft>(createEmptyStartDraft);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [vehicleStatuses, setVehicleStatuses] = useState<Map<string, ToursVehicleStatus>>(
+    () => new Map(),
+  );
+  const [vehicleStatusLoading, setVehicleStatusLoading] = useState(false);
   const companies = useMemo(() => listCompanies(), []);
   const drivers = useMemo(() => employeeItems('driver'), []);
   const assistants = useMemo(() => employeeItems('assistant'), []);
+
+  // Refresh vehicle lock state whenever the operator opens the vehicle step so the
+  // ordering, status badges, and one-active-per-vehicle rule reflect current data.
+  useEffect(() => {
+    if (step !== 2) return;
+    let cancelled = false;
+    setVehicleStatusLoading(true);
+    void resolveToursVehicleStatuses(TOURS_FLEET_CATALOG.map((vehicle) => vehicle.id))
+      .then((statuses) => {
+        if (!cancelled) setVehicleStatuses(statuses);
+      })
+      .finally(() => {
+        if (!cancelled) setVehicleStatusLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [step]);
+
+  const selectedVehicleAvailable =
+    Boolean(draft.vehicleId) && vehicleStatuses.get(draft.vehicleId ?? '')?.status === 'AVAILABLE';
 
   const stepTitle = useMemo(() => {
     switch (step) {
@@ -238,7 +275,7 @@ export function StartOperationWizardScreen() {
     }
   }, [step, t]);
 
-  const nextEnabled = canAdvance(step, draft);
+  const nextEnabled = canAdvance(step, draft, { vehicleAvailable: selectedVehicleAvailable });
 
   const onStart = async () => {
     if (!user) {
@@ -259,8 +296,13 @@ export function StartOperationWizardScreen() {
         draft,
       });
       navigate(buildSakiToursOperationStartedPath(session.id), { replace: true });
-    } catch {
-      setError(t('toursOps.wizard.startFailed'));
+    } catch (err) {
+      if (err instanceof VehicleActiveOperationError) {
+        setError(t('toursOps.vehicleBlocked.title'));
+        setStep(2);
+      } else {
+        setError(t('toursOps.wizard.startFailed'));
+      }
     } finally {
       setSubmitting(false);
     }
@@ -336,18 +378,18 @@ export function StartOperationWizardScreen() {
             title={t('toursOps.vehicle.title')}
             description={t('toursOps.vehicle.description')}
           >
-            <VehicleSelector
+            <ToursVehicleStep
               items={TOURS_FLEET_CATALOG}
+              statuses={vehicleStatuses}
+              loading={vehicleStatusLoading}
               value={draft.vehicleId}
               onChange={(vehicleId, vehicle) =>
                 setDraft((prev) => ({
                   ...prev,
                   vehicleId,
-                  vehicle: vehicle ?? null,
+                  vehicle,
                 }))
               }
-              label={t('toursOps.vehicle.label')}
-              description={t('toursOps.vehicle.selectorDescription')}
             />
           </StepShell>
         ) : null}

@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Operations V2 — **Phase 5 GPS Tracking** (local-only; no sync/server/admin map changes)
+  - Starts browser GPS tracking immediately after a successful Start Operation and stops it immediately after Finish Operation
+  - Stores GPS points locally in IndexedDB with latitude, longitude, timestamp, accuracy, battery level, and online/offline network status
+  - Resumes tracking automatically when an active Tours operation is loaded after reopening the app
+  - Active Operation screen now shows GPS Connected / Waiting for GPS plus poor-accuracy and low-battery warnings
+  - Sync payloads, routing, admin dashboard, authentication, reports, and vehicle locking unchanged
+
+- Operations V2 — **Phase 4 Vehicle Active Operation Lock** (local-first business rule; no sync payload or server-side changes)
+  - Enforces **one active operation per vehicle**: Start checks the selected vehicle via the Phase 1 engine method `listActiveByVehicle` before any draft/session is created (`VehicleActiveOperationError`)
+  - Blocked message "This vehicle already has an active operation." with Vehicle Registration, Driver, Started Time, and Destination
+  - Vehicle picker now orders **AVAILABLE → ON_TRIP → SERVICE** with status badges (🟢 Available / 🔴 On Trip / 🟡 Service); on-trip and service vehicles remain viewable but cannot start an operation
+  - Vehicle status transitions automatically: `ON_TRIP` when an operation starts, `AVAILABLE` when it finishes (denormalized to the local vehicle store; session repository stays the source of truth)
+  - Backward compatible; sync payloads, GPS, admin dashboard, auth, reports, and routing unchanged
+
 - Operations V2 — **Phase 3 Finish Operation Wizard** (Finish workflow only)
   - Rebuilt primary Finish Operation order: End Odometer Photo → End KM → Review → Finish
   - Removed End Time Photo from the primary Finish workflow; device date/time recorded automatically

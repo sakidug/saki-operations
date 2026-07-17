@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { OperationsSession } from '@saki-operations/operations-session';
 
 import { findActiveToursSession } from '../lib/find-active-session';
+import { ensureGpsTrackingForActiveSession } from '../lib/gps-tracking';
 
 export function useActiveToursSession(employeeId: string | null | undefined) {
   const [session, setSession] = useState<OperationsSession | null>(null);
@@ -16,6 +17,7 @@ export function useActiveToursSession(employeeId: string | null | undefined) {
     setLoading(true);
     try {
       const active = await findActiveToursSession(employeeId);
+      ensureGpsTrackingForActiveSession(active);
       setSession(active);
       return active;
     } finally {
