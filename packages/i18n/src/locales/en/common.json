@@ -589,6 +589,12 @@
       "readOnlyHint": "Drivers cannot edit end time. Office correction comes later.",
       "captureFailed": "Could not capture the photo. Try again."
     },
+    "endKm": {
+      "title": "Enter end KM",
+      "description": "Confirm the final end odometer reading before review.",
+      "confirmed": "Confirmed end KM",
+      "changeHint": "To change this reading, go back and retake or edit the odometer photo."
+    },
     "endTotals": {
       "title": "Totals",
       "description": "Working hours and total KM are calculated from start and end captures.",
@@ -599,23 +605,33 @@
     "endReview": {
       "title": "Review",
       "description": "Confirm details before finishing this operation.",
+      "finishDescription": "Finish to close this operation. Device date and time are recorded automatically.",
+      "company": "Company",
       "vehicle": "Vehicle",
+      "driver": "Driver",
+      "assistants": "Assistants",
+      "destination": "Destination",
       "hireType": "Hire type",
       "startTime": "Start time",
       "endTime": "End time",
       "workingHours": "Working hours",
-      "startOdometer": "Start odometer",
-      "endOdometer": "End odometer",
+      "startOdometer": "Start KM",
+      "endOdometer": "End KM",
       "totalKm": "Total KM",
+      "distanceKm": "Distance KM",
       "offlineNote": "You are offline — the completed session will wait to synchronize.",
-      "onlineNote": "You are online — finishing prepares immediate synchronization."
+      "onlineNote": "You are online — finishing prepares immediate synchronization.",
+      "autoTimeNote": "Works offline. The device date and time are recorded automatically when you finish."
     },
     "endWizard": {
-      "title": "End Operation",
+      "title": "Finish Operation",
       "stepOdometer": "Capture the end odometer.",
+      "stepOdometerPhoto": "Take the end odometer photo.",
+      "stepEndKm": "Confirm the end KM.",
       "stepEndTime": "Capture end work time with a photo.",
       "stepTotals": "Review calculated working hours and KM.",
-      "stepReview": "Confirm and finish the operation.",
+      "stepReview": "Review operation details.",
+      "stepFinish": "Finish the operation.",
       "finish": "Finish Operation",
       "finishFailed": "Could not finish the operation. Your photos are still on this device — try again.",
       "notActive": "This session cannot be ended. It may already be completed."

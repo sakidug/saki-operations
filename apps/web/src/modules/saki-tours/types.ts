@@ -33,6 +33,10 @@ export type StartOperationDraft = {
 
 export type EndOperationDraft = {
   endOdometer: AcceptedOdometerReading | null;
+  /**
+   * Legacy optional field — V2 Finish records device time automatically
+   * and no longer captures an end-time photo.
+   */
   endTime: TimeEvidenceCapture | null;
 };
 

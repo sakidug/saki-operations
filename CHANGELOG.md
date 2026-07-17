@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Operations V2 — **Phase 3 Finish Operation Wizard** (Finish workflow only)
+  - Rebuilt primary Finish Operation order: End Odometer Photo → End KM → Review → Finish
+  - Removed End Time Photo from the primary Finish workflow; device date/time recorded automatically
+  - Calculates and stores `distanceKm = endKm - startKm` on completed sessions via the session engine
+  - Start workflow, GPS, vehicle locking, sync payloads, routing, auth, reports, and admin screens unchanged
+
 - Operations V2 — **Phase 2 Employee Start Operation Wizard** (Start workflow only)
   - Rebuilt primary Start Operation order: Company → Vehicle → Driver → Assistants → Destination → Start Odometer Photo → Start KM → Review & Start
   - Removed Hire Type, Trip Details, and Start Time Photo from the primary Start workflow while preserving legacy display compatibility

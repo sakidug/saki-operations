@@ -42,6 +42,36 @@ export function getSessionStringField(session: OperationsSession, key: string): 
   return typeof value === 'string' && value.trim() ? value : '—';
 }
 
+function optionalCustomString(session: OperationsSession, key: string): string | null {
+  const value = session.customFields[key];
+  return typeof value === 'string' && value.trim() ? value.trim() : null;
+}
+
+export function getSessionCompanyLabel(session: OperationsSession): string {
+  return (
+    optionalCustomString(session, 'companyShortName') ??
+    optionalCustomString(session, 'companyName') ??
+    session.companyId ??
+    '—'
+  );
+}
+
+export function getSessionDriverLabel(session: OperationsSession): string {
+  return optionalCustomString(session, 'driverName') ?? session.driverId ?? '—';
+}
+
+export function getSessionAssistantsLabel(session: OperationsSession, emptyLabel = '—'): string {
+  const names = session.customFields.assistantNames;
+  if (Array.isArray(names) && names.length > 0) {
+    const cleaned = names.filter((name): name is string => typeof name === 'string' && name.trim().length > 0);
+    if (cleaned.length > 0) return cleaned.join(', ');
+  }
+  if (Array.isArray(session.assistantIds) && session.assistantIds.length > 0) {
+    return session.assistantIds.join(', ');
+  }
+  return emptyLabel;
+}
+
 export function getSessionNumberOfDays(session: OperationsSession): number {
   const value = session.customFields.numberOfDays;
   return typeof value === 'number' && value >= 1 ? value : 1;

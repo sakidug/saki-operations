@@ -1,6 +1,6 @@
 import {
-  BUILTIN_EVIDENCE_TYPES,
   getDefaultOperationsSessionEngine,
+  parseOdometerNumber,
   type OperationsSession,
 } from '@saki-operations/operations-session';
 
@@ -9,7 +9,8 @@ import { emitSyncEvent, emitSyncFile, operationEventType } from '@/modules/sync/
 import type { EndOperationDraft } from '../types';
 
 /**
- * Attach end evidence, complete the session, enqueue Saki Sync events.
+ * Attach end odometer evidence, auto-stamp device completion time, complete the session.
+ * Sync event payloads are intentionally unchanged (Phase 3 scope).
  * Session stays `completed` + queued until the server acks `operation.completed`.
  */
 export async function commitEndOperation(input: {
@@ -19,11 +20,17 @@ export async function commitEndOperation(input: {
 }): Promise<OperationsSession> {
   const { sessionId, draft, employeeId } = input;
 
-  if (!draft.endOdometer || !draft.endTime) {
+  if (!draft.endOdometer) {
     throw new Error('End Operation draft is incomplete');
   }
 
+  const endKm = parseOdometerNumber(draft.endOdometer.value);
+  if (endKm == null) {
+    throw new Error('End odometer reading is invalid');
+  }
+
   const engine = getDefaultOperationsSessionEngine();
+  const endTime = new Date().toISOString();
 
   const attached = await engine.attachOdometerReading({
     sessionId,
@@ -32,19 +39,16 @@ export async function commitEndOperation(input: {
   });
   let session = attached.session;
 
-  const withTimeEvidence = await engine.addEvidence({
-    sessionId: session.id,
-    type: BUILTIN_EVIDENCE_TYPES.endTime,
-    photoBlob: draft.endTime.photoBlob,
-    mimeType: draft.endTime.mimeType,
-    fileName: draft.endTime.fileName,
-    timestamp: draft.endTime.capturedAt,
-    metadata: { source: 'device_clock', editableByDriver: false },
-  });
-  session = withTimeEvidence.session;
+  if (session.startOdometer != null) {
+    const distanceKm = endKm - session.startOdometer;
+    if (!Number.isFinite(distanceKm) || distanceKm < 0) {
+      throw new Error('End KM must be greater than or equal to Start KM');
+    }
+  }
 
-  session = await engine.setEndTime(session.id, draft.endTime.capturedAt);
-  session = await engine.complete(session.id, draft.endTime.capturedAt);
+  session = await engine.setEndTime(session.id, endTime);
+  // Engine complete() also sets totalKm / distanceKm from start/end odometers.
+  session = await engine.complete(session.id, endTime);
 
   const odoFileId = await emitSyncFile({
     mimeType: draft.endOdometer.photo.mimeType || 'image/jpeg',
@@ -73,7 +77,7 @@ export async function commitEndOperation(input: {
     version: session.revision ?? 1,
     payload: {
       moduleId: 'saki_tours',
-      endTime: draft.endTime.capturedAt,
+      endTime,
       totalKm: session.totalKm,
       workingDurationMs: session.workingDurationMs,
     },
