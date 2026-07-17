@@ -55,12 +55,13 @@ export class AuthService {
     user.lockedUntil = null;
     await this.store.updateUser(user);
 
-    const { tokens, refreshJti } = await this.tokens.issueTokens(user);
+    const issued = await this.tokens.issueTokens(user);
+    const refreshToken = requireIssuedRefresh(issued.tokens.refreshToken);
     await this.store.registerRefresh({
-      jti: refreshJti,
+      jti: issued.refreshJti,
       userId: user.id,
-      tokenHash: this.tokens.hashToken(tokens.refreshToken),
-      expiresAt: new Date(Date.now() + parseExpiryMsFromToken(tokens.refreshToken)),
+      tokenHash: this.tokens.hashToken(refreshToken),
+      expiresAt: new Date(Date.now() + parseExpiryMsFromToken(refreshToken)),
       revokedAt: null,
     });
 
@@ -68,7 +69,7 @@ export class AuthService {
 
     return {
       user: this.tokens.toAuthUser(user),
-      tokens,
+      tokens: { ...issued.tokens, refreshToken },
     };
   }
 
@@ -97,18 +98,19 @@ export class AuthService {
 
     await this.store.revokeRefresh(payload.jti);
     const issued = await this.tokens.issueTokens(user);
+    const nextRefreshToken = requireIssuedRefresh(issued.tokens.refreshToken);
     await this.store.registerRefresh({
       jti: issued.refreshJti,
       userId: user.id,
-      tokenHash: this.tokens.hashToken(issued.tokens.refreshToken),
-      expiresAt: new Date(Date.now() + parseExpiryMsFromToken(issued.tokens.refreshToken)),
+      tokenHash: this.tokens.hashToken(nextRefreshToken),
+      expiresAt: new Date(Date.now() + parseExpiryMsFromToken(nextRefreshToken)),
       revokedAt: null,
     });
 
     this.audit.record('auth.token.refreshed', user.id);
     return {
       user: this.tokens.toAuthUser(user),
-      tokens: issued.tokens,
+      tokens: { ...issued.tokens, refreshToken: nextRefreshToken },
     };
   }
 
@@ -217,6 +219,13 @@ export class AuthService {
       );
     }
   }
+}
+
+function requireIssuedRefresh(token: string | undefined): string {
+  if (!token) {
+    throw new UnauthorizedException('Failed to issue refresh token');
+  }
+  return token;
 }
 
 function parseExpiryMsFromToken(token: string): number {

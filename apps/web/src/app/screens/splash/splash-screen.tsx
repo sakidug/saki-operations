@@ -1,21 +1,23 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { environmentLabel, formatBuiltAtLocal } from '@saki-operations/build-info';
 import { LoadingSpinner } from '@saki-operations/ui';
 import { useAppTranslation } from '@saki-operations/i18n';
 
 import { useBootstrap } from '@/app/bootstrap/bootstrap-provider';
+import { getClientBuildInfo } from '@/app/bootstrap/constants';
 import { useSession } from '@/app/bootstrap/session-provider';
 import { FullScreenLayout } from '@/app/layouts/shell-layouts';
 import { paths } from '@/app/router/paths';
-import { AnimatedLogo } from '@/app/screens/loading/loading-experience';
 
 export function SplashScreen() {
-  const { t } = useAppTranslation();
+  const { t, i18n } = useAppTranslation();
   const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
   const { splashComplete, snapshot, status } = useBootstrap();
   const { status: sessionStatus, isAuthenticated } = useSession();
+  const buildInfo = getClientBuildInfo();
 
   const waitingOnSession = sessionStatus === 'loading';
   const statusMessage = waitingOnSession
@@ -51,7 +53,9 @@ export function SplashScreen() {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={reduceMotion ? { duration: 0 } : { duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
       >
-        <AnimatedLogo />
+        <div className="flex size-20 items-center justify-center rounded-3xl bg-primary/10 p-3 ring-1 ring-primary/20">
+          <img src="/favicon.svg" alt={t('app.name')} className="size-14" />
+        </div>
         <div className="space-y-2">
           <motion.h1
             className="text-2xl font-bold tracking-tight sm:text-3xl"
@@ -71,7 +75,37 @@ export function SplashScreen() {
           </motion.p>
         </div>
         <LoadingSpinner label={statusMessage} size="md" />
-        <p className="text-sm text-muted-foreground">{statusMessage}</p>
+        <p className="text-sm font-medium text-muted-foreground">{statusMessage}</p>
+        <dl className="grid w-full grid-cols-3 gap-2 rounded-2xl border border-border/60 bg-background/35 p-3 text-left">
+          <div>
+            <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              {t('buildInfo.version')}
+            </dt>
+            <dd className="mt-1 font-mono text-xs font-semibold">v{buildInfo.version}</dd>
+          </div>
+          <div>
+            <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              {t('buildInfo.build')}
+            </dt>
+            <dd className="mt-1 font-mono text-xs font-semibold">{buildInfo.build}</dd>
+          </div>
+          <div>
+            <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              {t('buildInfo.environment')}
+            </dt>
+            <dd className="mt-1 text-xs font-semibold">
+              {environmentLabel(buildInfo.environment)}
+            </dd>
+          </div>
+          <div className="col-span-3 border-t border-border/50 pt-2">
+            <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              {t('buildInfo.built')}
+            </dt>
+            <dd className="mt-1 text-xs font-medium">
+              {formatBuiltAtLocal(buildInfo.builtAt, i18n.language)}
+            </dd>
+          </div>
+        </dl>
         <motion.div
           className="h-1 w-24 overflow-hidden rounded-full bg-muted"
           initial={reduceMotion ? false : { opacity: 0 }}

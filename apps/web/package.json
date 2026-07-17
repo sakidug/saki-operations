@@ -5,8 +5,8 @@
   "license": "UNLICENSED",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "pnpm --filter @saki-operations/types build && pnpm --filter @saki-operations/constants build && tsc --noEmit -p tsconfig.json && vite build",
+    "dev": "node ../../scripts/generate-build-meta.mjs && vite",
+    "build": "pnpm --filter @saki-operations/build-info build && pnpm --filter @saki-operations/types build && pnpm --filter @saki-operations/constants build && tsc --noEmit -p tsconfig.json && vite build",
     "preview": "vite preview",
     "start": "serve dist -s -n -l tcp://0.0.0.0:${PORT:-4173}",
     "start:prod": "pnpm run start",
@@ -16,11 +16,13 @@
     "clean": "rm -rf dist .turbo dev-dist"
   },
   "dependencies": {
+    "@saki-operations/build-info": "workspace:^",
     "@saki-operations/constants": "workspace:^",
     "@saki-operations/forms": "workspace:*",
     "@saki-operations/i18n": "workspace:*",
     "@saki-operations/ocr": "workspace:*",
     "@saki-operations/operations-session": "workspace:*",
+    "@saki-operations/sync": "workspace:*",
     "@saki-operations/types": "workspace:*",
     "@saki-operations/ui": "workspace:*",
     "framer-motion": "^12.5.0",
@@ -44,6 +46,8 @@
     "eslint": "^9.22.0",
     "tailwindcss": "^4.0.14",
     "typescript": "^5.8.2",
-    "vite": "^6.2.2"
+    "vite": "^6.2.2",
+    "vite-plugin-pwa": "^1.3.0",
+    "workbox-window": "^7.4.1"
   }
 }

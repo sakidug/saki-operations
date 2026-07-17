@@ -201,20 +201,30 @@ export function StartOperationWizardScreen() {
               description: t('toursOps.odometer.description'),
               capture: t('toursOps.odometer.capture'),
               processing: t('toursOps.odometer.processing'),
+              photoSaved: t('toursOps.odometer.photoSaved'),
               detected: t('toursOps.odometer.detected'),
               confidence: t('toursOps.odometer.confidence'),
               lowConfidenceWarning: t('toursOps.odometer.lowConfidence'),
               failedWarning: t('toursOps.odometer.failed'),
               accept: t('toursOps.odometer.accept'),
               edit: t('toursOps.odometer.edit'),
+              enterManually: t('toursOps.odometer.enterManually'),
               saveEdit: t('toursOps.odometer.saveEdit'),
+              confirmReading: t('toursOps.odometer.confirmReading'),
               cancel: t('toursOps.odometer.cancelEdit'),
               retake: t('toursOps.odometer.retake'),
-                unit: t('toursOps.odometer.unit'),
-                saved: t('toursOps.odometer.saved'),
-                editedSuffix: t('toursOps.odometer.editedSuffix'),
-              }}
-              onAccepted={(reading) => setDraft((prev) => ({ ...prev, startOdometer: reading }))}
+              unit: t('toursOps.odometer.unit'),
+              saved: t('toursOps.odometer.saved'),
+              editedSuffix: t('toursOps.odometer.editedSuffix'),
+              photoAlt: t('toursOps.odometer.photoAlt'),
+              previousReading: t('toursOps.odometer.previousReading'),
+              warningBelowPrevious: t('toursOps.odometer.warningBelowPrevious'),
+              warningLargeJump: t('toursOps.odometer.warningLargeJump'),
+              warningTooShort: t('toursOps.odometer.warningTooShort'),
+              acknowledgeWarning: t('toursOps.odometer.acknowledgeWarning'),
+              backspace: t('toursOps.odometer.backspace'),
+            }}
+            onAccepted={(reading) => setDraft((prev) => ({ ...prev, startOdometer: reading }))}
           />
         ) : null}
 

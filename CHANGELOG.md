@@ -11,14 +11,114 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Phase 10.2 — **Production Polish** (identity / professionalism only; no business logic)
+  - Branded splash with logo, version, build, environment, and reduced-motion-aware fade
+  - Full PWA / Apple / Android / maskable / Windows tile icon set under `apps/web/public/icons`
+  - Settings → About: support, license, live API/DB/sync status, technology stack, copyright, website
+  - System Information card + **Copy system information** for bug reports
+  - Richer `/health` payload: API status, database, sync engine, server time, uptime
+  - Client error diagnostics: device type, screen size, route, user role
+  - Docs: [ARCHITECTURE.md](./docs/ARCHITECTURE.md), [BUILD_SYSTEM.md](./docs/BUILD_SYSTEM.md), [DEPLOYMENT.md](./docs/DEPLOYMENT.md), [OPERATIONS_GUIDE.md](./docs/OPERATIONS_GUIDE.md), [ADMIN_GUIDE.md](./docs/ADMIN_GUIDE.md), [DRIVER_GUIDE.md](./docs/DRIVER_GUIDE.md), [PRODUCTION_POLISH_REPORT.md](./docs/PRODUCTION_POLISH_REPORT.md)
+
+- Phase 10.1 — **Enterprise Build Information** (`@saki-operations/build-info`, generated meta, About/health wiring)
+- Phase 10.0 — **Automated Application Versioning** (root `package.json` as version SoT)
+
 ### Changed
 
-- Web production deploy: `start` serves Vite `dist` with `serve` (SPA fallback on `$PORT`); Railway must not use `vite` / `dev` — see [docs/railway.md](./docs/railway.md)
-- Web build builds `@saki-operations/types` + `@saki-operations/constants` first; those packages expose `types` from `src` while runtime still uses `dist`
+- Application tagline / HTML identity aligned to **Saki Tours & Weddings (Pvt) Ltd**
+- Manifest, theme color, tile meta, and install/update surfaces reviewed for commercial PWA polish
 
 ### Planned
 
-- Phase 7.3 / Phase 8 — HHCO Helmet Delivery Operations — awaiting approval
+- Leadership approval → tag **v1.0.0** (Phase 9.5 re-audit: **READY FOR v1.0.0**)
+
+---
+
+## [0.9.3] — 2026-07-15
+
+### Fixed
+
+- Phase 9.4 — **Production Blocker Fixes** (Final Audit Critical + High)
+  - **C-01 / KI-030** — Sync events stamp `AuthUser.id` (resolver + server JWT overwrite); `employeeId` lives in payload only
+  - **C-02 / KI-031** — Sync uploads use server UUID storage keys; reject traversal / invalid meta; path boundary check
+  - **H-01** — Login/refresh JSON omits `refreshToken` (HttpOnly cookie only)
+  - **H-02** — Batch/event/file size caps + JSON body limit
+  - **H-03** — Allowlisted `eventType`; leave decision events require `leave.manage`
+  - **H-05** — Home Tours/HHCO module cards permission-filtered
+  - **H-04** — Documented accepted risk (local disk blobs / R2 deferred — architectural)
+
+See [PRODUCTION_BLOCKER_RESOLUTION_9_4.md](./docs/PRODUCTION_BLOCKER_RESOLUTION_9_4.md).
+
+### Changed
+
+- Phase 9.3 Final Production Audit status: blockers addressed in **v0.9.3**
+- Phase 9.5 Final Release Re-Audit — recommendation **READY FOR v1.0.0** (see [FINAL_RELEASE_RE_AUDIT.md](./docs/FINAL_RELEASE_RE_AUDIT.md)). No code changes in 9.5.
+
+---
+
+## [0.9.2] — 2026-07-15
+
+### Added
+
+- Phase 9.2 — **Enterprise Saki Sync**
+  - Package `@saki-operations/sync` (IndexedDB event/file/audit queue, SyncEngine drain + backoff)
+  - API `POST /sync/events/batch`, `POST /sync/files`, `GET /sync/delta`
+  - Postgres models: `sync_events`, `sync_entity_states`, `sync_audit_logs`, `sync_blobs`
+  - Web SyncProvider — auto-drain on reconnect; Home sync panel (pending / failed / retry / last sync)
+  - Tours / HHCO / Leave emit sync events; completed ops markSynced on server ack
+- Docs: [SAKI_SYNC_ARCHITECTURE.md](./docs/SAKI_SYNC_ARCHITECTURE.md), [OFFLINE_ENGINE.md](./docs/OFFLINE_ENGINE.md), [SYNC_EVENTS.md](./docs/SYNC_EVENTS.md), [CONFLICT_RESOLUTION.md](./docs/CONFLICT_RESOLUTION.md), [ENTERPRISE_SYNC_REPORT.md](./docs/ENTERPRISE_SYNC_REPORT.md)
+
+### Changed
+
+- Completing Tours/HHCO no longer locally forges “synced” when online — true upload ack required (closes KI-020 core)
+
+---
+
+## [0.9.1] — 2026-07-15
+
+### Security
+
+- **C-01** — Production API refuses to boot when `JWT_SECRET` is missing, a known placeholder, or shorter than 32 characters
+- Helmet security headers enabled on Nest API
+- Rate limiting applied to forgot-password / reset-password (same in-memory guard as login)
+
+### Added
+
+- Phase 9.1 Production Blockers close-out
+- Expanded `AppPermission` / `ROLE_PERMISSIONS` for Tours, HHCO, Leave, Vehicles, Employees, Office, Reports
+- API `ModulesController` with `@Roles` / `@Permissions` on every module gate
+- Web `RequirePermission` route guards for all module surfaces
+- PWA service worker via `vite-plugin-pwa` (precache, offline shell, install prompt, update detection)
+- Docs: [AUTH_TOKEN_STORAGE.md](./docs/AUTH_TOKEN_STORAGE.md), [PHASE_9_1_PRODUCTION_BLOCKERS.md](./docs/PHASE_9_1_PRODUCTION_BLOCKERS.md)
+
+### Changed
+
+- Refresh tokens no longer persisted in web storage — HttpOnly cookie is the refresh SoT (`credentials: 'include'`)
+- Home module cards / Operations tools filtered by session permissions
+- Leave / Employees manage checks use `leave.manage` / `employees.manage` permissions
+
+---
+
+## [0.9.0] — 2026-07-15
+
+### Added
+
+- Phase 7.3 — **HHCO Deliveries**: full parity with Tours (start/continue/end, multi-day, OCR, offline, session recovery, timeline, previous deliveries) plus dealer selection, route info, and delivery photos
+- Phase 7.4 — Leave Management (balances, apply, approval workflow, history) — local-first
+- Phase 7.5 — Vehicle Management (list/detail, odometer, service, insurance, license, docs/photos) — local-first
+- Phase 7.6 — Employee Management (drivers/office, roles, permissions, contacts) — local-first
+- Phase 7.7 — Office Dashboard (live ops/deliveries, KPIs, pending sync, recent activity)
+- Phase 7.8 — Reports (daily/monthly/employee/vehicle/Tours/HHCO + Export PDF/Excel)
+- Phase 7.9 / 8 / 9 — Polish pass + application-wide QA matrix + production hardening review
+- Docs: [PRODUCTION_READINESS_REPORT.md](./docs/PRODUCTION_READINESS_REPORT.md), [PHASE_8_QA.md](./docs/PHASE_8_QA.md), [PHASE_9_HARDENING.md](./docs/PHASE_9_HARDENING.md)
+- Home **Operations tools** for Leave, Vehicles, Employees, Office Dashboard, Reports
+
+### Changed
+
+- Master roadmap phases 7.3–9 marked complete; **v1.0.0** blocked pending approval
+- Web production deploy notes unchanged: serve Vite `dist` (see [docs/railway.md](./docs/railway.md))
 
 ---
 
@@ -32,6 +132,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Gallery auto-download disabled by default / skipped on coarse-pointer devices (no longer races camera teardown)
 - Top navigation slightly shorter for more usable viewport height; safe-area top padding tightened
 - Notifications / Profile / Settings show intentional “ready” shell screens (session identity on Profile; no Construction placeholders)
+
+### Fixed — Phase 7.2F (OCR Accuracy & Manual Verification)
+
+- Multi-pass digital OCR (band / LCD / full crops) with glare reduction, contrast stretch, and sharpening
+- Digit-only recognition; candidate scoring preserves leading digits and biases toward prior KM when known
+- Confidence gate raised to **95%** — below that Accept is disabled; uncertain digits are highlighted
+- Validation vs previous odometer (below previous / unusually large jump requires explicit acknowledgement)
+- **Enter Manually** keypad keeps the captured photo visible; OCR failure never forces a retake
+- Original photo persisted before OCR; evidence stores OCR value, confidence, final confirmed value, and OCR vs manual source
 
 ### Fixed — Phase 7.2E
 

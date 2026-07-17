@@ -5,7 +5,7 @@ import type { AppPermission, AuthUser } from '@saki-operations/types';
 
 import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
 
-/** Permission architecture guard — ready for future protected routes. */
+/** Enforces @Permissions(...) metadata on handlers/controllers (Phase 9.1). */
 @Injectable()
 export class PermissionsGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}

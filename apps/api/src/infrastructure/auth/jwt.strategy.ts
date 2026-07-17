@@ -14,10 +14,14 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     private readonly store: AuthStoreService,
     private readonly tokens: TokenService,
   ) {
+    const secret = config.get<string>('app.jwt.secret');
+    if (!secret) {
+      throw new Error('[FATAL] app.jwt.secret is not configured for JwtStrategy');
+    }
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: config.get<string>('app.jwt.secret', 'change-me'),
+      secretOrKey: secret,
     });
   }
 

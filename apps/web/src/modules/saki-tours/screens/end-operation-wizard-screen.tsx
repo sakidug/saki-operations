@@ -111,7 +111,7 @@ export function EndOperationWizardScreen() {
       await commitEndOperation({
         sessionId,
         draft,
-        isOnline,
+        employeeId: session!.employeeId,
       });
       navigate(buildSakiToursOperationCompletedPath(sessionId), { replace: true });
     } catch {
@@ -193,23 +193,34 @@ export function EndOperationWizardScreen() {
           {step === 1 ? (
             <OdometerCapture
               kind="digital"
+              previousOdometerKm={session.startOdometer}
               labels={{
                 title: t('toursOps.endOdometer.title'),
-                description: t('toursOps.endOdometer.description'),
+                description: t('toursOps.odometer.description'),
                 capture: t('toursOps.endOdometer.capture'),
                 processing: t('toursOps.endOdometer.processing'),
+                photoSaved: t('toursOps.odometer.photoSaved'),
                 detected: t('toursOps.endOdometer.detected'),
                 confidence: t('toursOps.endOdometer.confidence'),
-                lowConfidenceWarning: t('toursOps.endOdometer.lowConfidence'),
-                failedWarning: t('toursOps.endOdometer.failed'),
+                lowConfidenceWarning: t('toursOps.odometer.lowConfidence'),
+                failedWarning: t('toursOps.odometer.failed'),
                 accept: t('toursOps.endOdometer.accept'),
                 edit: t('toursOps.endOdometer.edit'),
-                saveEdit: t('toursOps.endOdometer.saveEdit'),
+                enterManually: t('toursOps.odometer.enterManually'),
+                saveEdit: t('toursOps.odometer.saveEdit'),
+                confirmReading: t('toursOps.odometer.confirmReading'),
                 cancel: t('toursOps.endOdometer.cancelEdit'),
                 retake: t('toursOps.endOdometer.retake'),
                 unit: t('toursOps.odometer.unit'),
                 saved: t('toursOps.odometer.saved'),
                 editedSuffix: t('toursOps.odometer.editedSuffix'),
+                photoAlt: t('toursOps.odometer.photoAlt'),
+                previousReading: t('toursOps.odometer.previousReading'),
+                warningBelowPrevious: t('toursOps.odometer.warningBelowPrevious'),
+                warningLargeJump: t('toursOps.odometer.warningLargeJump'),
+                warningTooShort: t('toursOps.odometer.warningTooShort'),
+                acknowledgeWarning: t('toursOps.odometer.acknowledgeWarning'),
+                backspace: t('toursOps.odometer.backspace'),
               }}
               onAccepted={(reading) => setDraft((prev) => ({ ...prev, endOdometer: reading }))}
             />

@@ -7,6 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { useRegisterSW } from 'virtual:pwa-register/react';
 
 import { APP_VERSION, STORAGE_KEYS } from '@/app/bootstrap/constants';
 
@@ -23,13 +24,14 @@ type PwaContextValue = {
   promptInstall: () => Promise<void>;
   dismissInstall: () => void;
   dismissUpdate: () => void;
+  applyUpdate: () => void;
 };
 
 const PwaContext = createContext<PwaContextValue | null>(null);
 
 /**
- * PWA shell helpers — install prompt + version awareness.
- * Service workers are intentionally not registered in this phase.
+ * PWA shell — service worker registration, install prompt, update detection (Phase 9.1 / H-05).
+ * Operational background sync (Saki Sync) remains Phase 9.2.
  */
 export function PwaProvider({ children }: { children: ReactNode }) {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
@@ -40,7 +42,20 @@ export function PwaProvider({ children }: { children: ReactNode }) {
       return false;
     }
   });
-  const [updateAvailable, setUpdateAvailable] = useState(false);
+  const [versionBump, setVersionBump] = useState(false);
+
+  const {
+    needRefresh: [needRefresh, setNeedRefresh],
+    updateServiceWorker,
+  } = useRegisterSW({
+    onRegisteredSW(_swUrl, registration) {
+      if (!registration) return;
+      // Periodic update checks while the app is open.
+      window.setInterval(() => {
+        void registration.update();
+      }, 60 * 60 * 1000);
+    },
+  });
 
   useEffect(() => {
     const onBeforeInstall = (event: Event) => {
@@ -52,8 +67,9 @@ export function PwaProvider({ children }: { children: ReactNode }) {
     try {
       const previous = window.localStorage.getItem(STORAGE_KEYS.lastKnownVersion);
       if (previous && previous !== APP_VERSION) {
-        setUpdateAvailable(true);
+        setVersionBump(true);
       }
+      window.localStorage.setItem(STORAGE_KEYS.lastKnownVersion, APP_VERSION);
     } catch {
       // ignore
     }
@@ -78,31 +94,34 @@ export function PwaProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const dismissUpdate = useCallback(() => {
-    setUpdateAvailable(false);
-    try {
-      window.localStorage.setItem(STORAGE_KEYS.lastKnownVersion, APP_VERSION);
-    } catch {
-      // ignore
-    }
-  }, []);
+    setNeedRefresh(false);
+    setVersionBump(false);
+  }, [setNeedRefresh]);
+
+  const applyUpdate = useCallback(() => {
+    void updateServiceWorker(true);
+  }, [updateServiceWorker]);
 
   const value = useMemo(
     () => ({
       appVersion: APP_VERSION,
       canInstall: Boolean(deferredPrompt) && !installDismissed,
       installDismissed,
-      updateAvailable,
+      updateAvailable: needRefresh || versionBump,
       promptInstall,
       dismissInstall,
       dismissUpdate,
+      applyUpdate,
     }),
     [
       deferredPrompt,
       installDismissed,
-      updateAvailable,
+      needRefresh,
+      versionBump,
       promptInstall,
       dismissInstall,
       dismissUpdate,
+      applyUpdate,
     ],
   );
 

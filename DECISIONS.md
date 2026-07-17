@@ -47,16 +47,19 @@ Format inspired by [Michael Nygard’s ADR model](https://cognitect.com/blog/201
 
 ## ADR-002 — Progressive Web App (PWA) preparation
 
-**Status:** Accepted
+**Status:** Superseded in part by Phase 9.1 (service worker shipped)
 
 **Context:** Field and office users need installable, resilient web access; Saki Sync will require offline capabilities later.
 
-**Decision:** Prepare PWA assets now (`manifest.json`, icons, `offline.html`, robots). Defer service worker implementation until Sync requirements are approved.
+**Decision (original):** Prepare PWA assets now (`manifest.json`, icons, `offline.html`, robots). Defer service worker implementation until Sync requirements are approved.
+
+**Update (2026-07-15 / v0.9.1):** Service worker + offline asset precache + install/update UX shipped via `vite-plugin-pwa` to close audit H-05. Operational **background data sync** remains deferred to Phase 9.2 (Saki Sync).
 
 **Consequences:**
 
-- Installability metadata ready early
-- Avoid premature caching bugs before Sync design lands
+- Chromium installability available when served over HTTPS
+- Asset caching must not interfere with API (`NetworkOnly` for `/api/`)
+- Sync of operations sessions remains out of SW scope until 9.2
 
 ---
 

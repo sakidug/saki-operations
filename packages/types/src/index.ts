@@ -26,16 +26,22 @@ export type Paginated<T> = {
 export type AppRole = 'driver' | 'assistant' | 'office' | 'admin';
 
 /**
- * Fine-grained permissions for the operations platform.
- * Trip / evidence permissions will be reintroduced with Trips Ops phases.
+ * Fine-grained permissions for the operations platform (Phase 9.1).
+ * Server RolesGuard / PermissionsGuard and web RequirePermission enforce these.
  */
 export type AppPermission =
-  | 'employees.manage'
+  | 'operations.tours'
+  | 'operations.hhco'
+  | 'leave.view'
+  | 'leave.manage'
+  | 'vehicles.view'
   | 'vehicles.manage'
+  | 'employees.view'
+  | 'employees.manage'
+  | 'office.view'
   | 'reports.view'
   | 'payroll.manage'
   | 'settings.manage';
-
 export type AuthUser = {
   id: string;
   employeeId: string;
@@ -47,7 +53,11 @@ export type AuthUser = {
 
 export type AuthTokens = {
   accessToken: string;
-  refreshToken: string;
+  /**
+   * Omitted from production login/refresh JSON (HttpOnly cookie is SoT).
+   * Optional for clients after Phase 9.4 / H-01.
+   */
+  refreshToken?: string;
   tokenType: 'Bearer';
   expiresIn: number;
 };

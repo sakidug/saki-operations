@@ -378,16 +378,19 @@ export class OperationsSessionEngine {
       mimeType: reading.photo.mimeType,
       fileName: reading.photo.fileName,
       timestamp: reading.photo.capturedAt,
+      ocr: {
+        ocrValue: reading.ocrDetectedValue ?? reading.ocr.value,
+        finalValue: reading.value,
+        confidence: reading.confidence,
+        manuallyEdited: reading.manuallyEdited,
+      },
       metadata: {
         ...(input.metadata ?? {}),
         clientLocalId: reading.photo.clientLocalId,
         ocrProvider: reading.ocr.meta?.providerId ?? null,
-      },
-      ocr: {
-        ocrValue: reading.ocr.value,
-        finalValue: reading.value,
-        confidence: reading.confidence,
-        manuallyEdited: reading.manuallyEdited,
+        source: reading.source,
+        verifiedManually: reading.verifiedManually,
+        ocrDetectedValue: reading.ocrDetectedValue,
       },
     });
 

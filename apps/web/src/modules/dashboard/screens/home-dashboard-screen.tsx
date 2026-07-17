@@ -6,6 +6,7 @@ import { FadeIn } from '@/app/screens/loading/fade-in';
 import { DashboardSkeleton } from '@/app/screens/loading/dashboard-skeleton';
 import { HomeHeader } from '@/modules/dashboard/components/home-header';
 import { HomeModuleCards } from '@/modules/dashboard/components/home-module-cards';
+import { HomeOperationsTools } from '@/modules/dashboard/components/home-operations-tools';
 import { HomeQuickActions } from '@/modules/dashboard/components/home-quick-actions';
 import { HomeStatusArea } from '@/modules/dashboard/components/home-status-area';
 
@@ -31,8 +32,9 @@ export function HomeDashboardScreen() {
         displayName={user.displayName}
         roleLabel={t(roleLabelKey(user.role))}
       />
-      <HomeStatusArea pendingSyncCount={0} />
+      <HomeStatusArea />
       <HomeModuleCards />
+      <HomeOperationsTools />
       <HomeQuickActions />
     </FadeIn>
   );

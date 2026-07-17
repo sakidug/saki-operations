@@ -1,0 +1,31 @@
+{
+  "name": "@saki-operations/build-info",
+  "version": "0.0.1",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "generate": "node ../../scripts/generate-build-meta.mjs",
+    "build": "node ../../scripts/generate-build-meta.mjs && tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "clean": "rm -rf dist .turbo"
+  },
+  "devDependencies": {
+    "@saki-operations/eslint-config": "workspace:*",
+    "@saki-operations/typescript-config": "workspace:*",
+    "eslint": "^9.22.0",
+    "typescript": "^5.8.2"
+  }
+}

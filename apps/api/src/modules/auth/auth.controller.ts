@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { AuthUser } from '@saki-operations/types';
+import type { AuthSession, AuthUser } from '@saki-operations/types';
 import type { Request, Response } from 'express';
 
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -41,8 +41,9 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const session = await this.auth.login(dto);
-    this.setRefreshCookie(res, session.tokens.refreshToken, Boolean(dto.rememberMe));
-    return { data: session };
+    this.setRefreshCookie(res, requireRefreshToken(session), Boolean(dto.rememberMe));
+    // H-01 — never return refreshToken in JSON; HttpOnly cookie is SoT.
+    return { data: toPublicSession(session) };
   }
 
   @Public()
@@ -57,8 +58,8 @@ export class AuthController {
       throw new UnauthorizedException('Refresh token required');
     }
     const session = await this.auth.refresh(token);
-    this.setRefreshCookie(res, session.tokens.refreshToken, true);
-    return { data: session };
+    this.setRefreshCookie(res, requireRefreshToken(session), true);
+    return { data: toPublicSession(session) };
   }
 
   @Post('logout')
@@ -80,12 +81,14 @@ export class AuthController {
   }
 
   @Public()
+  @UseGuards(LoginRateLimitGuard)
   @Post('forgot-password')
   forgotPassword(@Body() dto: ForgotPasswordDto) {
     return this.auth.forgotPassword(dto).then((data) => ({ data }));
   }
 
   @Public()
+  @UseGuards(LoginRateLimitGuard)
   @Post('reset-password')
   resetPassword(@Body() dto: ResetPasswordDto) {
     return this.auth.resetPassword(dto).then((data) => ({ data }));
@@ -115,4 +118,24 @@ export class AuthController {
 function readCookie(req: Request, name: string): string | undefined {
   const cookies = (req as Request & { cookies?: Record<string, string> }).cookies;
   return cookies?.[name];
+}
+
+function requireRefreshToken(session: AuthSession): string {
+  const token = session.tokens.refreshToken;
+  if (!token) {
+    throw new UnauthorizedException('Refresh token missing from session issue');
+  }
+  return token;
+}
+
+/** Strip refreshToken from API responses (Phase 9.4 / H-01). */
+function toPublicSession(session: AuthSession): AuthSession {
+  return {
+    user: session.user,
+    tokens: {
+      accessToken: session.tokens.accessToken,
+      tokenType: session.tokens.tokenType,
+      expiresIn: session.tokens.expiresIn,
+    },
+  };
 }

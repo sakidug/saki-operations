@@ -13,6 +13,7 @@ export type {
   OcrSyncStatus,
   OdometerKind,
   OdometerPhotoEvidence,
+  OdometerValueSource,
 } from './types';
 export { OCR_LOW_CONFIDENCE_THRESHOLD } from './types';
 
@@ -52,7 +53,18 @@ export {
   parseOdometerCandidates,
   pickBestCandidate,
   stripToDigits,
+  mergeOcrCandidates,
+  scoreCandidateWithHints,
+  repairDigitConfusions,
 } from './parse/odometer-parse';
+
+export {
+  validateOdometerReading,
+  UNUSUAL_JUMP_KM,
+  type OdometerValidationCode,
+  type OdometerValidationResult,
+} from './parse/odometer-validate';
 
 export { useOdometerCapture, type UseOdometerCaptureOptions, type OdometerCapturePhase } from './hooks/use-odometer-capture';
 export { OdometerCapture, type OdometerCaptureProps } from './components/odometer-capture';
+export { NumericKeypad } from './components/numeric-keypad';

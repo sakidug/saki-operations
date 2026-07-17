@@ -13,6 +13,7 @@ import type {
   OcrProgressEvent,
   OdometerKind,
   OdometerPhotoEvidence,
+  OdometerValueSource,
 } from '../types';
 import { OCR_LOW_CONFIDENCE_THRESHOLD } from '../types';
 
@@ -28,8 +29,11 @@ export type OdometerOcrServiceOptions = {
 export type CaptureAndRecognizeOptions = {
   kind?: OdometerKind;
   attachmentKey?: string | null;
+  previousOdometerKm?: number | null;
   signal?: AbortSignal;
   onProgress?: (event: OcrProgressEvent) => void;
+  /** Called as soon as the original photo is durable / preview-ready (before OCR). */
+  onPhotoReady?: (photo: OdometerPhotoEvidence) => void;
 };
 
 function createClientLocalId(): string {
@@ -55,8 +59,6 @@ export class OdometerOcrService {
 
   constructor(options: OdometerOcrServiceOptions = {}) {
     this.registry = options.registry ?? createOcrProviderRegistry();
-    // Auto gallery download is intrusive on mobile and raced camera teardown;
-    // callers can opt in. Offline queue remains on by default.
     this.saveToGalleryEnabled = options.saveToGallery === true;
     this.enqueueOfflineEnabled = options.enqueueOffline !== false;
     this.lowConfidenceThreshold =
@@ -72,8 +74,8 @@ export class OdometerOcrService {
   }
 
   /**
-   * Full flow: camera → optional gallery save → preprocess/OCR → offline queue.
-   * Does not accept/edit — UI calls {@link acceptReading} after user review.
+   * Full flow: camera → persist original photo → OCR → offline queue update.
+   * Does not accept/edit — UI calls {@link acceptReading} after driver confirmation.
    */
   async captureAndRecognize(options: CaptureAndRecognizeOptions = {}): Promise<{
     photo: OdometerPhotoEvidence;
@@ -92,9 +94,46 @@ export class OdometerOcrService {
     const fileName = buildFileName(capturedAt);
     const mimeType = captured.file.type || 'image/jpeg';
 
+    const photo: OdometerPhotoEvidence = {
+      clientLocalId,
+      blob: captured.file,
+      mimeType,
+      byteSize: captured.file.size,
+      capturedAt: capturedAt.toISOString(),
+      previewUrl: captured.previewUrl,
+      fileName,
+      syncStatus: 'local',
+      attachmentKey: options.attachmentKey ?? null,
+    };
+
+    // Persist the original photo immediately — before OCR — so a failed/slow OCR
+    // never drops evidence the driver already captured.
+    onProgress?.({ phase: 'persisting', message: 'original_photo' });
+    if (this.enqueueOfflineEnabled) {
+      try {
+        const dataUrl = await blobToDataUrl(captured.file);
+        await enqueueEvidence({
+          clientLocalId,
+          fileName,
+          mimeType,
+          byteSize: captured.file.size,
+          capturedAt: photo.capturedAt,
+          attachmentKey: options.attachmentKey ?? null,
+          dataUrl,
+          odometerValue: null,
+          confidence: null,
+          syncStatus: 'queued',
+        });
+        photo.syncStatus = 'queued';
+      } catch {
+        photo.syncStatus = 'local';
+      }
+    }
+
+    options.onPhotoReady?.(photo);
+
     let gallerySaved = false;
     if (this.saveToGalleryEnabled) {
-      onProgress?.({ phase: 'persisting', message: 'gallery' });
       try {
         const gallery = await savePhotoToGallery(captured.file, fileName);
         gallerySaved = gallery.ok;
@@ -110,24 +149,12 @@ export class OdometerOcrService {
     const ocr = await provider.recognize({
       image: captured.file,
       kind,
+      previousOdometerKm: options.previousOdometerKm,
       signal: options.signal,
       onProgress: (progress) => onProgress?.({ phase: 'recognizing', progress }),
     });
 
-    const photo: OdometerPhotoEvidence = {
-      clientLocalId,
-      blob: captured.file,
-      mimeType,
-      byteSize: captured.file.size,
-      capturedAt: capturedAt.toISOString(),
-      previewUrl: captured.previewUrl,
-      fileName,
-      syncStatus: 'local',
-      attachmentKey: options.attachmentKey ?? null,
-    };
-
-    if (this.enqueueOfflineEnabled) {
-      onProgress?.({ phase: 'persisting', message: 'offline_queue' });
+    if (this.enqueueOfflineEnabled && photo.syncStatus === 'queued') {
       try {
         const dataUrl = await blobToDataUrl(captured.file);
         await enqueueEvidence({
@@ -142,10 +169,8 @@ export class OdometerOcrService {
           confidence: ocr.ok ? ocr.confidence : null,
           syncStatus: 'queued',
         });
-        photo.syncStatus = 'queued';
       } catch {
-        // Capture + OCR must still succeed offline even if durable queue write fails.
-        photo.syncStatus = 'local';
+        /* photo already queued without OCR meta */
       }
     }
 
@@ -153,15 +178,18 @@ export class OdometerOcrService {
     return { photo, ocr, gallerySaved };
   }
 
-  /**
-   * Recognize an existing photo (re-process / alternate provider).
-   */
   async recognizeBlob(
     blob: Blob,
     kind: OdometerKind = 'digital',
     signal?: AbortSignal,
+    previousOdometerKm?: number | null,
   ): Promise<OcrEngineResult> {
-    return this.registry.get(kind).recognize({ image: blob, kind, signal });
+    return this.registry.get(kind).recognize({
+      image: blob,
+      kind,
+      signal,
+      previousOdometerKm,
+    });
   }
 
   acceptReading(input: {
@@ -172,13 +200,16 @@ export class OdometerOcrService {
   }): AcceptedOdometerReading {
     const digits = input.value.replace(/\D/g, '');
     const low = this.isLowConfidence(input.ocr.confidence) || !input.ocr.ok;
+    const source: OdometerValueSource = input.manuallyEdited ? 'manual' : 'ocr';
 
     return {
       value: digits,
       displayValue: formatOdometerKm(digits),
       confidence: input.ocr.confidence,
+      ocrDetectedValue: input.ocr.value,
       manuallyEdited: input.manuallyEdited,
       verifiedManually: low || input.manuallyEdited,
+      source,
       photo: input.photo,
       ocr: input.ocr,
     };

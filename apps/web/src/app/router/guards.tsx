@@ -1,5 +1,7 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { hasPermission } from '@saki-operations/constants';
 import { useAppTranslation } from '@saki-operations/i18n';
+import type { AppPermission } from '@saki-operations/types';
 
 import { useBootstrap } from '@/app/bootstrap/bootstrap-provider';
 import { STORAGE_KEYS } from '@/app/bootstrap/constants';
@@ -48,6 +50,33 @@ export function RequireAuth() {
 
   if (!isAuthenticated) {
     return <Navigate to={paths.login} replace state={{ from: location.pathname }} />;
+  }
+
+  return <Outlet />;
+}
+
+/**
+ * Requires one or more AppPermission values from the authenticated session (Phase 9.1).
+ * Server ModulesController enforces the same permissions on API gates.
+ */
+export function RequirePermission({
+  permission,
+}: {
+  permission: AppPermission | AppPermission[];
+}) {
+  const { status, isAuthenticated, user } = useSession();
+  const location = useLocation();
+
+  if (status === 'loading') {
+    return <AuthCheckLoadingScreen />;
+  }
+
+  if (!isAuthenticated || !user) {
+    return <Navigate to={paths.login} replace state={{ from: location.pathname }} />;
+  }
+
+  if (!hasPermission(user.permissions, permission)) {
+    return <Navigate to={paths.home} replace />;
   }
 
   return <Outlet />;

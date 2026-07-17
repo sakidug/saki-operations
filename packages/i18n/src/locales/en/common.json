@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "Saki Operations",
-    "tagline": "Powered by Saki Tours & Weddings"
+    "tagline": "Saki Tours & Weddings (Pvt) Ltd"
   },
   "languages": {
     "en": "English",
@@ -21,7 +21,8 @@
     "search": "Search",
     "clear": "Clear",
     "retry": "Retry",
-    "loading": "Loading"
+    "loading": "Loading",
+    "dismiss": "Dismiss"
   },
   "status": {
     "online": "Online",
@@ -69,7 +70,15 @@
       "version": "App version",
       "connection": "Connection",
       "connectionOnline": "Connected",
-      "connectionOffline": "Disconnected"
+      "connectionOffline": "Disconnected",
+      "neverSynced": "Never synced",
+      "syncPanelTitle": "Saki Sync",
+      "lastSync": "Last sync: {{time}}",
+      "failedCount": "{{count}} failed",
+      "conflictCount": "{{count}} conflicts",
+      "syncing": "Syncing…",
+      "syncNow": "Sync now",
+      "retryFailed": "Retry failed"
     },
     "modules": {
       "region": "Main modules",
@@ -95,6 +104,31 @@
       "region": "Quick actions",
       "title": "Quick actions"
     },
+    "operationsTools": {
+      "region": "Operations tools",
+      "title": "Operations tools",
+      "description": "Leave, fleet, employee records, office overview, and reports on this device.",
+      "leave": {
+        "title": "Leave",
+        "hint": "Balances and requests"
+      },
+      "vehicles": {
+        "title": "Vehicles",
+        "hint": "Fleet and service"
+      },
+      "employees": {
+        "title": "Employees",
+        "hint": "Profiles and contacts"
+      },
+      "officeDashboard": {
+        "title": "Office dashboard",
+        "hint": "Live ops and sync"
+      },
+      "reports": {
+        "title": "Reports",
+        "hint": "Daily and monthly"
+      }
+    },
     "topBar": {
       "notifications": "Notifications",
       "notificationsUnread": "Notifications, {{count}} unread",
@@ -119,7 +153,8 @@
       "installDescription": "Add the app to your home screen for faster access.",
       "installAction": "Install app",
       "updateTitle": "Update available",
-      "updateDescription": "Version {{version}} is ready. Reload when convenient."
+      "updateDescription": "Version {{version}} is ready. Reload when convenient.",
+      "updateAction": "Update now"
     },
     "language": {
       "title": "Choose your language",
@@ -185,6 +220,59 @@
         "body": "Use the language control in the top bar for now. Expanded settings arrive with later operations phases."
       }
     }
+  },
+  "buildInfo": {
+    "subtitle": "Build information",
+    "version": "Version",
+    "build": "Build",
+    "environment": "Environment",
+    "built": "Built",
+    "released": "Released",
+    "syncEngine": "Sync Engine",
+    "platform": "Platform",
+    "copy": "Copy build information",
+    "copied": "Copied"
+  },
+  "settingsAbout": {
+    "title": "Settings",
+    "description": "Application identity, build details, and live service status.",
+    "services": "Services",
+    "api": "API",
+    "database": "Database",
+    "sync": "Sync",
+    "stack": "Technology stack",
+    "support": "Support",
+    "license": "License",
+    "logoAlt": "Saki Operations logo",
+    "systemInformation": "System information",
+    "systemDescription": "Device and browser diagnostics for support.",
+    "copySystem": "Copy system information",
+    "browser": "Browser",
+    "platformLabel": "Platform",
+    "operatingSystem": "Operating System",
+    "deviceType": "Device Type",
+    "language": "Language",
+    "timezone": "Timezone",
+    "connectionType": "Connection Type",
+    "pwaInstalled": "PWA Installed",
+    "storageUsage": "Storage Usage",
+    "indexedDb": "IndexedDB",
+    "cameraPermission": "Camera Permission",
+    "notifications": "Notifications",
+    "screenSize": "Screen Size",
+    "yes": "Yes",
+    "no": "No",
+    "checking": "Checking...",
+    "unavailable": "Unavailable",
+    "available": "Available",
+    "statusOnline": "Online",
+    "statusOffline": "Offline",
+    "statusConnected": "Connected",
+    "statusDisconnected": "Disconnected",
+    "statusHealthy": "Healthy",
+    "statusAttention": "Needs attention",
+    "statusUnknown": "Unknown",
+    "copyright": "Copyright © {{year}} {{company}}"
   },
   "toursOps": {
     "badge": "Saki Tours",
@@ -363,21 +451,31 @@
     },
     "odometer": {
       "title": "Start odometer",
-      "description": "Take a photo. OCR suggests a reading — accept, edit, or retake. Manual entry is always allowed.",
+      "description": "Take a photo of the dashboard. OCR suggests a reading — you always confirm the final kilometres. Manual entry keeps the photo.",
       "capture": "Take photo",
       "processing": "Reading odometer…",
+      "photoSaved": "Photo saved. Running OCR…",
       "detected": "Detected",
       "confidence": "Confidence",
-      "lowConfidence": "Low confidence — please verify the reading manually.",
-      "failed": "Could not read the odometer. Enter the value manually. Your photo is still attached.",
+      "lowConfidence": "Confidence is below 95%. Verify against the photo and enter the correct value if needed.",
+      "failed": "Could not read the odometer reliably. Enter the value manually — your photo stays attached.",
       "accept": "Accept",
       "edit": "Edit",
-      "saveEdit": "Save value",
+      "enterManually": "Enter Manually",
+      "saveEdit": "Confirm reading",
+      "confirmReading": "Confirm final reading",
       "cancelEdit": "Cancel",
-      "retake": "Retake",
+      "retake": "Retake photo",
       "unit": "KM",
       "saved": "Saved",
-      "editedSuffix": "(edited)"
+      "editedSuffix": "(manual)",
+      "photoAlt": "Odometer evidence photo",
+      "previousReading": "Previous reading",
+      "warningBelowPrevious": "This reading is lower than the previous odometer. Confirm only if correct.",
+      "warningLargeJump": "This is an unusually large increase. Confirm only if the reading is correct.",
+      "warningTooShort": "Enter a complete odometer reading (at least 4 digits).",
+      "acknowledgeWarning": "I have checked the photo and confirm this reading",
+      "backspace": "Backspace"
     },
     "startTime": {
       "title": "Start time",
@@ -416,18 +514,28 @@
     },
     "endOdometer": {
       "title": "End odometer",
-      "description": "Take a photo. OCR suggests a reading — accept, edit, or retake. Manual entry is always allowed.",
+      "description": "Take a photo of the dashboard. OCR suggests a reading — you always confirm the final kilometres. Manual entry keeps the photo.",
       "capture": "Take photo",
       "processing": "Reading odometer…",
       "detected": "Detected",
       "confidence": "Confidence",
-      "lowConfidence": "Low confidence — please verify the reading manually.",
-      "failed": "Could not read the odometer. Enter the value manually. Your photo is still attached.",
+      "lowConfidence": "Confidence is below 95%. Verify against the photo and enter the correct value if needed.",
+      "failed": "Could not read the odometer reliably. Enter the value manually — your photo stays attached.",
       "accept": "Accept",
       "edit": "Edit manually",
       "saveEdit": "Save value",
       "cancelEdit": "Cancel",
-      "retake": "Retake photo"
+      "retake": "Retake photo",
+      "photoSaved": "Photo saved. Running OCR…",
+      "enterManually": "Enter Manually",
+      "confirmReading": "Confirm final reading",
+      "photoAlt": "Odometer evidence photo",
+      "previousReading": "Previous reading",
+      "warningBelowPrevious": "This reading is lower than the previous odometer. Confirm only if correct.",
+      "warningLargeJump": "This is an unusually large increase. Confirm only if the reading is correct.",
+      "warningTooShort": "Enter a complete odometer reading (at least 4 digits).",
+      "acknowledgeWarning": "I have checked the photo and confirm this reading",
+      "backspace": "Backspace"
     },
     "endTime": {
       "title": "End work time",
@@ -577,6 +685,591 @@
       "confirmPassword": "Confirm new password",
       "submit": "Update password",
       "success": "Password updated. Please sign in again."
+    }
+  },
+  "hhcoOps": {
+    "badge": "HHCO",
+    "home": {
+      "title": "HHCO Deliveries",
+      "description": "Start or continue a helmet delivery. Complete the active delivery before starting another.",
+      "actionsRegion": "HHCO delivery actions",
+      "startNew": "Start New Delivery",
+      "startNewHint": "Select vehicle, dealer, capture odometer and start time.",
+      "viewPrevious": "View Previous Deliveries",
+      "viewPreviousHint": "Browse completed deliveries on this device."
+    },
+    "current": {
+      "title": "Current Delivery",
+      "vehicle": "Vehicle",
+      "started": "Started",
+      "status": "Status",
+      "continue": "Continue Delivery",
+      "dealer": "Dealer"
+    },
+    "active": {
+      "blockedTitle": "Active Delivery Found",
+      "blockedDescription": "You already have a delivery in progress. Please complete it before starting another delivery.",
+      "vehicle": "Vehicle",
+      "started": "Started",
+      "continue": "Continue Delivery",
+      "cancel": "Cancel",
+      "dealer": "Dealer"
+    },
+    "continue": {
+      "title": "Continue Delivery",
+      "description": "Review this session, then end the delivery when the delivery is finished.",
+      "vehicle": "Vehicle",
+      "startLocation": "Start location",
+      "destination": "Destination",
+      "endingLocation": "Ending location",
+      "numberOfDays": "Number of days",
+      "startedTime": "Started time",
+      "status": "Current status",
+      "endOperation": "End Delivery",
+      "backHome": "Back to HHCO Deliveries",
+      "notActive": "This session is not an active delivery on this device.",
+      "dealer": "Dealer"
+    },
+    "history": {
+      "title": "Previous Deliverys",
+      "description": "Read-only history of completed HHCO delivery stored on this device.",
+      "backHome": "Back to HHCO Deliveries",
+      "backList": "Back to previous deliverys",
+      "listRegion": "Previous deliverys",
+      "searchPlaceholder": "Search by vehicle or dealer",
+      "searchClear": "Clear search",
+      "emptyTitle": "No previous deliverys",
+      "emptyDescription": "Completed deliverys will appear here. Queued and synced sessions stay available offline.",
+      "stats": {
+        "title": "This Month",
+        "operations": "Deliverys",
+        "workingHours": "Working Hours",
+        "totalKm": "Total KM"
+      },
+      "filters": {
+        "month": "Month",
+        "year": "Year",
+        "sync": "Sync status",
+        "allMonths": "All months",
+        "allYears": "All years",
+        "allSync": "All sync statuses",
+        "months": {
+          "1": "January",
+          "2": "February",
+          "3": "March",
+          "4": "April",
+          "5": "May",
+          "6": "June",
+          "7": "July",
+          "8": "August",
+          "9": "September",
+          "10": "October",
+          "11": "November",
+          "12": "December"
+        }
+      },
+      "sync": {
+        "waiting": "Waiting to Synchronize",
+        "uploading": "Uploading",
+        "synced": "Synchronized",
+        "failed": "Failed"
+      },
+      "card": {
+        "singleDay": "Single Day",
+        "multiDay": "Multi-Day",
+        "vehicle": "Vehicle",
+        "timeRange": "Time range",
+        "hours": "Working hours",
+        "km": "Total KM",
+        "daysCount": "{{count}} Days",
+        "open": "View details"
+      },
+      "detail": {
+        "summary": "Delivery details",
+        "readOnly": "This record is read-only and cannot be edited.",
+        "startOdometer": "Start odometer",
+        "endOdometer": "End odometer",
+        "missingTitle": "Delivery not found",
+        "missingDescription": "This completed delivery is not available on this device."
+      },
+      "timeline": {
+        "title": "Timeline",
+        "started": "Delivery Started",
+        "startOdometer": "Start Odometer",
+        "endOdometer": "End Odometer",
+        "completed": "Delivery Completed",
+        "day": "Day {{day}}",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "done": "Done"
+      },
+      "photos": {
+        "title": "Photo evidence",
+        "readOnly": "Tap a photo to view full screen. Read only.",
+        "close": "Close photo",
+        "startOdometer": "Start Odometer",
+        "endOdometer": "End Odometer",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "dayStartTime": "Day {{day}} Start Time",
+        "dayEndTime": "Day {{day}} End Time",
+        "delivery": "Delivery photo",
+        "generic": "Evidence photo"
+      },
+      "filterEmptyTitle": "No matching deliverys",
+      "filterEmptyDescription": "Try clearing search or filters to see more deliverys.",
+      "clearFilters": "Clear filters"
+    },
+    "wizard": {
+      "title": "Start Delivery",
+      "stepOf": "Step {{current}} of {{total}}",
+      "stepVehicle": "Select the vehicle for this delivery.",
+      "stepTrip": "Enter route and number of days.",
+      "stepOdometer": "Capture the start odometer.",
+      "stepStartTime": "Capture start time with a photo.",
+      "stepConfirm": "Review and start the delivery.",
+      "back": "Back",
+      "next": "Next",
+      "cancel": "Cancel",
+      "startOperation": "Start Delivery",
+      "startFailed": "Could not start the delivery. Your photos are still on this device — try again.",
+      "missingUser": "Sign in again to start an delivery.",
+      "stepDealer": "Choose the dealer."
+    },
+    "vehicle": {
+      "label": "Vehicle",
+      "description": "Choose an available vehicle. Unavailable options stay disabled."
+    },
+    "trip": {
+      "title": "Trip details",
+      "description": "Locations and duration for this session.",
+      "startLocation": "Start location",
+      "startLocationPlaceholder": "Where work starts",
+      "destination": "Destination",
+      "destinationPlaceholder": "Main destination",
+      "endingLocation": "Ending location",
+      "endingLocationPlaceholder": "Where the delivery ends",
+      "numberOfDays": "Number of days",
+      "singleDayHint": "Single-day delivery.",
+      "multiDayBadge": "Multi-day delivery"
+    },
+    "odometer": {
+      "title": "Start odometer",
+      "description": "Take a photo of the dashboard. OCR suggests a reading — you always confirm the final kilometres. Manual entry keeps the photo.",
+      "capture": "Take photo",
+      "processing": "Reading odometer…",
+      "photoSaved": "Photo saved. Running OCR…",
+      "detected": "Detected",
+      "confidence": "Confidence",
+      "lowConfidence": "Confidence is below 95%. Verify against the photo and enter the correct value if needed.",
+      "failed": "Could not read the odometer reliably. Enter the value manually — your photo stays attached.",
+      "accept": "Accept",
+      "edit": "Edit",
+      "enterManually": "Enter Manually",
+      "saveEdit": "Confirm reading",
+      "confirmReading": "Confirm final reading",
+      "cancelEdit": "Cancel",
+      "retake": "Retake photo",
+      "unit": "KM",
+      "saved": "Saved",
+      "editedSuffix": "(manual)",
+      "photoAlt": "Odometer evidence photo",
+      "previousReading": "Previous reading",
+      "warningBelowPrevious": "This reading is lower than the previous odometer. Confirm only if correct.",
+      "warningLargeJump": "This is an unusually large increase. Confirm only if the reading is correct.",
+      "warningTooShort": "Enter a complete odometer reading (at least 4 digits).",
+      "acknowledgeWarning": "I have checked the photo and confirm this reading",
+      "backspace": "Backspace"
+    },
+    "startTime": {
+      "title": "Start time",
+      "description": "Take a photo. The device clock is recorded automatically.",
+      "capture": "Take photo",
+      "capturing": "Opening camera…",
+      "retake": "Retake",
+      "photoAlt": "Start time evidence photo",
+      "readOnlyHint": "Drivers cannot edit start time. Office correction comes later.",
+      "captureFailed": "Could not capture the photo. Try again."
+    },
+    "confirm": {
+      "title": "Ready to start",
+      "description": "Starting creates an offline session on this device immediately.",
+      "vehicle": "Vehicle",
+      "route": "Route",
+      "days": "Days",
+      "startOdometer": "Start odometer",
+      "startTime": "Start time",
+      "offlineNote": "Works offline — the session is saved locally and syncs when online.",
+      "dealer": "Dealer"
+    },
+    "success": {
+      "title": "Delivery Started Successfully",
+      "description": "Your session is live and stored on this device.",
+      "vehicle": "Vehicle",
+      "startTime": "Start time",
+      "status": "Current session status",
+      "inProgress": "In Progress",
+      "backHome": "Back to HHCO Deliveries",
+      "dashboard": "Home dashboard",
+      "missingTitle": "Session not found",
+      "missingDescription": "This delivery session is not available on this device.",
+      "dealer": "Dealer",
+      "unknownDealer": "Dealer"
+    },
+    "endOdometer": {
+      "title": "End odometer",
+      "description": "Take a photo of the dashboard. OCR suggests a reading — you always confirm the final kilometres. Manual entry keeps the photo.",
+      "capture": "Take photo",
+      "processing": "Reading odometer…",
+      "detected": "Detected",
+      "confidence": "Confidence",
+      "lowConfidence": "Confidence is below 95%. Verify against the photo and enter the correct value if needed.",
+      "failed": "Could not read the odometer reliably. Enter the value manually — your photo stays attached.",
+      "accept": "Accept",
+      "edit": "Edit manually",
+      "saveEdit": "Save value",
+      "cancelEdit": "Cancel",
+      "retake": "Retake photo",
+      "photoSaved": "Photo saved. Running OCR…",
+      "enterManually": "Enter Manually",
+      "confirmReading": "Confirm final reading",
+      "photoAlt": "Odometer evidence photo",
+      "previousReading": "Previous reading",
+      "warningBelowPrevious": "This reading is lower than the previous odometer. Confirm only if correct.",
+      "warningLargeJump": "This is an unusually large increase. Confirm only if the reading is correct.",
+      "warningTooShort": "Enter a complete odometer reading (at least 4 digits).",
+      "acknowledgeWarning": "I have checked the photo and confirm this reading",
+      "backspace": "Backspace"
+    },
+    "endTime": {
+      "title": "End work time",
+      "description": "Take a photo. The device clock is recorded automatically.",
+      "capture": "Take photo",
+      "capturing": "Opening camera…",
+      "retake": "Retake",
+      "photoAlt": "End time evidence photo",
+      "readOnlyHint": "Drivers cannot edit end time. Office correction comes later.",
+      "captureFailed": "Could not capture the photo. Try again."
+    },
+    "deliveryPhotos": {
+      "title": "Delivery photos",
+      "description": "Capture at least one photo of the delivery. You can add up to five.",
+      "capture": "Add photo",
+      "capturing": "Opening camera…",
+      "retake": "Retake",
+      "photoAlt": "Delivery evidence photo {{index}}",
+      "captureFailed": "Could not capture the photo. Try again.",
+      "count": "{{count}} of {{max}} photos",
+      "minRequired": "Add at least one delivery photo to continue."
+    },
+    "endTotals": {
+      "title": "Totals",
+      "description": "Working hours and total KM are calculated from start and end captures.",
+      "workingHours": "Total working hours",
+      "totalKm": "Total KM",
+      "calcFailed": "Could not calculate totals. Check that end time is after start and end odometer is not lower than start."
+    },
+    "endReview": {
+      "title": "Review",
+      "description": "Confirm details before finishing this delivery.",
+      "vehicle": "Vehicle",
+      "startTime": "Start time",
+      "endTime": "End time",
+      "workingHours": "Working hours",
+      "startOdometer": "Start odometer",
+      "endOdometer": "End odometer",
+      "totalKm": "Total KM",
+      "offlineNote": "You are offline — the completed session will wait to synchronize.",
+      "onlineNote": "You are online — finishing prepares immediate synchronization.",
+      "dealer": "Dealer",
+      "dealerId": "Dealer"
+    },
+    "endWizard": {
+      "title": "End Delivery",
+      "stepOdometer": "Capture the end odometer.",
+      "stepEndTime": "Capture end work time with a photo.",
+      "stepDeliveryPhotos": "Capture delivery photos (1–5).",
+      "stepTotals": "Review calculated working hours and KM.",
+      "stepReview": "Confirm and finish the delivery.",
+      "finish": "Finish Delivery",
+      "finishFailed": "Could not finish the delivery. Your photos are still on this device — try again.",
+      "notActive": "This session cannot be ended. It may already be completed."
+    },
+    "completed": {
+      "title": "Delivery Completed Successfully",
+      "description": "This session is closed and stored on this device.",
+      "vehicle": "Vehicle",
+      "workingHours": "Working hours",
+      "totalKm": "Total KM",
+      "syncStatus": "Sync status",
+      "syncWaiting": "Waiting to Synchronize",
+      "syncSynced": "Successfully Synchronized",
+      "returnHome": "Return Home",
+      "viewOperation": "View Delivery",
+      "missingDescription": "This completed session is not available on this device."
+    },
+    "multiDay": {
+      "dayOf": "Day {{current}} of {{total}}",
+      "dayLabel": "Day {{day}}",
+      "finalDay": "Final Day",
+      "percentComplete": "{{percent}}% Complete",
+      "todaysTasks": "Today's Tasks",
+      "taskDone": "Completed",
+      "taskPending": "Pending",
+      "hoursTitle": "Working hours",
+      "totalHours": "Total working hours",
+      "continueDescription": "Complete today's tasks for this multi-day delivery. One session spans all days.",
+      "continueTasks": "Continue Today's Tasks",
+      "continueFinish": "Finish Delivery",
+      "noPendingTask": "No pending capture for today. Return to the delivery overview.",
+      "backToContinue": "Back to delivery",
+      "captureFailed": "Could not save today's capture. Your photo is still on this device — try again.",
+      "finishFailed": "Could not finish the multi-day delivery. Try again.",
+      "tasks": {
+        "startWorkTime": "Capture Start Work Time",
+        "startOdometer": "Capture Start Odometer",
+        "endWorkTime": "Capture End Work Time",
+        "endOdometer": "Capture End Odometer",
+        "finish": "Finish Delivery"
+      },
+      "captureTitle": {
+        "start_work_time": "Start work time",
+        "end_work_time": "End work time",
+        "end_odometer": "End odometer & finish",
+        "finish": "Finish delivery",
+        "start_odometer": "Start odometer"
+      },
+      "captureHint": {
+        "start_work_time": "Take a photo. Device time is recorded automatically.",
+        "end_work_time": "Take a photo to close out today's work.",
+        "end_odometer": "Capture the end odometer, then finish this multi-day delivery.",
+        "finish": "Confirm totals and finish the delivery.",
+        "start_odometer": "Start odometer was captured when the delivery began."
+      },
+      "endOdometerAlreadySaved": "End odometer already saved: {{value}} {{unit}}",
+      "tripLabel": "{{days}}-Day {{hire}}"
+    },
+    "dealer": {
+      "title": "Dealer",
+      "description": "Select the dealer for this helmet delivery. No booking or customer details are needed.",
+      "colombo": "Colombo Dealer",
+      "colomboHint": "Greater Colombo delivery route.",
+      "kandy": "Kandy Dealer",
+      "kandyHint": "Kandy region delivery route.",
+      "galle": "Galle Dealer",
+      "galleHint": "Southern region delivery route."
+    }
+  },
+  "leaveOps": {
+    "badge": "Leave",
+    "types": {
+      "sick": "Sick",
+      "casual": "Casual",
+      "annual": "Annual"
+    },
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "home": {
+      "title": "Leave",
+      "description": "Check your balances, apply for leave, and track requests on this device.",
+      "balancesRegion": "Leave balances",
+      "daysRemaining": "days left",
+      "applyCta": "Apply for leave",
+      "calendarTitle": "This month",
+      "calendarEmpty": "No approved leave this month.",
+      "historyRegion": "Leave history",
+      "historyTitle": "History",
+      "historyEmpty": "No leave requests yet.",
+      "noReason": "No reason given",
+      "pendingRegion": "Pending approvals",
+      "pendingTitle": "Pending approvals"
+    },
+    "apply": {
+      "title": "Apply for leave",
+      "description": "Submit a request. Office or admin can approve it from the detail screen.",
+      "formTitle": "Request details",
+      "typeLabel": "Leave type",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "dayCount": "{{count}} day(s)",
+      "reason": "Reason",
+      "reasonPlaceholder": "Brief reason for leave",
+      "cancel": "Cancel",
+      "submit": "Submit request",
+      "errors": {
+        "datesRequired": "Start and end dates are required.",
+        "invalidRange": "End date must be on or after the start date.",
+        "reasonRequired": "Please enter a reason."
+      }
+    },
+    "detail": {
+      "title": "Leave request",
+      "missing": "This leave request is not available on this device.",
+      "back": "Back to leave",
+      "employee": "Employee",
+      "start": "Starts",
+      "end": "Ends",
+      "days": "Days",
+      "reason": "Reason",
+      "decided": "Decision by {{by}} · {{at}}",
+      "approve": "Approve",
+      "reject": "Reject"
+    }
+  },
+  "vehicleOps": {
+    "badge": "Fleet",
+    "availability": {
+      "available": "Available",
+      "unavailable": "Unavailable"
+    },
+    "list": {
+      "title": "Vehicles",
+      "description": "Fleet overview with service and compliance dates stored locally.",
+      "odometer": "{{km}} km",
+      "nextService": "Service {{date}}",
+      "empty": "No vehicles on this device."
+    },
+    "detail": {
+      "missing": "Vehicle not found on this device.",
+      "back": "Back to vehicles",
+      "seats": "seats",
+      "odometer": "Current odometer",
+      "km": "km",
+      "nextService": "Next service",
+      "nextServiceKm": "Due at {{km}} km",
+      "insurance": "Insurance expiry",
+      "license": "Revenue license expiry",
+      "notesTitle": "Maintenance notes",
+      "notesEmpty": "No maintenance notes yet.",
+      "saveNotes": "Save notes",
+      "documentsTitle": "Documents & photos",
+      "documentsHint": "Uploads stay on this device (offline-friendly).",
+      "documentsEmpty": "No documents uploaded yet.",
+      "upload": "Upload file",
+      "removeDoc": "Remove document"
+    }
+  },
+  "employeeOps": {
+    "badge": "Team",
+    "roles": {
+      "driver": "Driver",
+      "office": "Office",
+      "admin": "Admin"
+    },
+    "list": {
+      "title": "Employees",
+      "description": "Filter drivers and office staff. Profiles are stored on this device.",
+      "descriptionDriver": "Your profile and emergency contacts.",
+      "filterRegion": "Filter by role",
+      "filters": {
+        "all": "All",
+        "driver": "Drivers",
+        "office": "Office"
+      },
+      "empty": "No employees match this filter.",
+      "backHome": "Return home"
+    },
+    "detail": {
+      "missing": "Employee profile is not available, or you do not have access.",
+      "back": "Back to employees",
+      "uploadPhoto": "Upload profile photo",
+      "contactTitle": "Contact",
+      "phone": "Phone",
+      "email": "Email",
+      "emergencyTitle": "Emergency contact",
+      "emergencyName": "Name",
+      "emergencyPhone": "Phone",
+      "permissionsTitle": "Permissions"
+    }
+  },
+  "officeDash": {
+    "badge": "Office",
+    "title": "Office dashboard",
+    "description": "Live field operations overview from data stored on this device.",
+    "loading": "Loading office metrics…",
+    "openReports": "Open reports",
+    "kpiRegion": "Today’s KPIs",
+    "liveRegion": "Live status",
+    "activityRegion": "Recent activity",
+    "activityTitle": "Recent completed activity",
+    "activityEmpty": "No completed Tours or HHCO sessions on this device yet.",
+    "km": "{{km}} km",
+    "module": {
+      "tours": "Tours",
+      "hhco": "HHCO"
+    },
+    "kpi": {
+      "operationsToday": "Ops today",
+      "deliveriesToday": "Deliveries today",
+      "pendingSync": "Pending sync",
+      "multiDayActive": "Multi-day active"
+    },
+    "live": {
+      "liveOperations": "Live operations",
+      "liveDeliveries": "Live deliveries",
+      "employeesOnline": "Employees online",
+      "vehiclesActive": "Vehicles active"
+    }
+  },
+  "reportsOps": {
+    "badge": "Reports",
+    "home": {
+      "title": "Reports",
+      "description": "Build daily and monthly summaries from offline operations sessions on this device.",
+      "typesRegion": "Report types",
+      "typesTitle": "Choose a report",
+      "periodHint": "On each report you can switch daily or monthly period, then export PDF or Excel (CSV).",
+      "backOffice": "Back to office dashboard"
+    },
+    "period": {
+      "daily": "Daily",
+      "monthly": "Monthly"
+    },
+    "types": {
+      "daily": "Daily summary",
+      "monthly": "Monthly summary",
+      "employee": "Employee report",
+      "vehicle": "Vehicle report",
+      "tours": "Tours report",
+      "hhco": "HHCO report"
+    },
+    "typesHint": {
+      "daily": "Completed sessions for today",
+      "monthly": "Completed sessions for this month",
+      "employee": "Hours and km by employee",
+      "vehicle": "Hours and km by vehicle",
+      "tours": "Saki Tours sessions only",
+      "hhco": "HHCO delivery sessions only"
+    },
+    "columns": {
+      "module": "Module",
+      "employee": "Employee",
+      "employeeId": "Employee ID",
+      "vehicle": "Vehicle",
+      "registration": "Registration",
+      "sessions": "Sessions",
+      "hours": "Hours",
+      "km": "Km",
+      "ended": "Ended",
+      "sync": "Sync"
+    },
+    "detail": {
+      "back": "Back to reports",
+      "missing": "This report type is not available.",
+      "loading": "Building report…",
+      "empty": "No matching sessions for this period.",
+      "summary": "Summary",
+      "generated": "Generated",
+      "periodRegion": "Report period",
+      "switchMonthly": "Switch to monthly summary",
+      "switchDaily": "Switch to daily summary"
+    },
+    "export": {
+      "pdf": "Export PDF",
+      "excel": "Export Excel"
     }
   }
 }

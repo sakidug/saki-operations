@@ -5,6 +5,8 @@ export type OcrRecognizeInput = {
   kind: OdometerKind;
   signal?: AbortSignal;
   onProgress?: (progress: number) => void;
+  /** Bias candidate selection toward continuity with the last known reading */
+  previousOdometerKm?: number | null;
 };
 
 /**

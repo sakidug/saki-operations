@@ -41,6 +41,7 @@ export type OcrEngineResult = {
     providerId: string;
     durationMs: number;
     rawText?: string;
+    passes?: number;
   };
 };
 
@@ -59,25 +60,45 @@ export type OdometerPhotoEvidence = {
   attachmentKey?: string | null;
 };
 
+/**
+ * How the final confirmed kilometres were produced.
+ * Calculations / reports must use {@link AcceptedOdometerReading.value} only.
+ */
+export type OdometerValueSource = 'ocr' | 'manual';
+
 export type AcceptedOdometerReading = {
-  /** Canonical numeric kilometres (integer string without separators) */
+  /** Canonical numeric kilometres (integer string without separators) — FINAL confirmed */
   value: string;
   /** User-facing formatted value, e.g. "156,482" */
   displayValue: string;
+  /** OCR engine confidence for the detected suggestion (0–100) */
   confidence: number;
+  /** Value OCR proposed before confirmation (may differ from `value`) */
+  ocrDetectedValue: string | null;
   /** true when the user typed/edited rather than accepting OCR as-is */
   manuallyEdited: boolean;
-  /** true when OCR failed or confidence was low and user confirmed */
+  /** true when OCR failed or confidence was below threshold and user confirmed */
   verifiedManually: boolean;
+  /** Whether the final confirmed value came from OCR accept or manual entry */
+  source: OdometerValueSource;
   photo: OdometerPhotoEvidence;
   ocr: OcrEngineResult;
 };
 
 export type OcrProgressEvent = {
-  phase: 'opening_camera' | 'capturing' | 'preprocessing' | 'recognizing' | 'persisting' | 'done';
+  phase:
+    | 'opening_camera'
+    | 'capturing'
+    | 'persisting'
+    | 'preprocessing'
+    | 'recognizing'
+    | 'done';
   progress?: number;
   message?: string;
 };
 
-/** Default warning threshold — below this, UI must nudge manual verification. */
-export const OCR_LOW_CONFIDENCE_THRESHOLD = 75;
+/**
+ * Below this confidence the UI must never treat OCR as trusted:
+ * Accept stays disabled until the driver edits / confirms manually.
+ */
+export const OCR_LOW_CONFIDENCE_THRESHOLD = 95;

@@ -1,14 +1,17 @@
 import { Link } from 'react-router-dom';
+import { canAccessModule, type ModuleAccessKey } from '@saki-operations/constants';
 import { useAppTranslation } from '@saki-operations/i18n';
 import { cn } from '@saki-operations/ui';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Car, HardHat } from 'lucide-react';
 
+import { useSession } from '@/app/bootstrap/session-provider';
 import { paths } from '@/app/router/paths';
 import { fadeUpTransition } from '@/lib/motion';
 
 type ModuleDef = {
   key: 'tours' | 'hhco';
+  module: ModuleAccessKey;
   to: string;
   brand: 'tours' | 'hhco';
   icon: typeof Car;
@@ -18,6 +21,7 @@ type ModuleDef = {
 const MODULES: ModuleDef[] = [
   {
     key: 'tours',
+    module: 'tours',
     to: paths.sakiTours,
     brand: 'tours',
     icon: Car,
@@ -29,6 +33,7 @@ const MODULES: ModuleDef[] = [
   },
   {
     key: 'hhco',
+    module: 'hhco',
     to: paths.hhco,
     brand: 'hhco',
     icon: HardHat,
@@ -38,7 +43,14 @@ const MODULES: ModuleDef[] = [
 
 export function HomeModuleCards() {
   const { t } = useAppTranslation();
+  const { user } = useSession();
   const reduceMotion = useReducedMotion();
+  // H-05 — same permission filter as operations tools / route guards.
+  const visible = MODULES.filter((mod) =>
+    user ? canAccessModule(user.permissions, mod.module) : false,
+  );
+
+  if (visible.length === 0) return null;
 
   return (
     <motion.section
@@ -48,7 +60,7 @@ export function HomeModuleCards() {
       animate={{ opacity: 1, y: 0 }}
       transition={fadeUpTransition(reduceMotion, 0.06)}
     >
-      {MODULES.map((mod, index) => {
+      {visible.map((mod, index) => {
         const Icon = mod.icon;
         return (
           <motion.div

@@ -54,20 +54,32 @@ That desktop system remains the **only** booking and office management system fo
 | 7.0.1 | Foundation QA / UX / Performance polish   | Completed |
 | 7.0.5 | OCR Foundation (odometer engine)          | Completed |
 | 7.1   | Operations Session Engine                 | Completed |
-| 7.2A  | Saki Tours Operations — Start Operation   | Completed |
-| 7.2B  | Saki Tours Operations — End Operation     | Completed |
-| 7.2C  | Saki Tours Operations — Multi-Day         | Completed |
-| 7.2D  | Saki Tours Operations — Previous Ops      | Completed |
-| 7.2E  | Saki Tours Operations — Polish & QA       | Completed |
-| 7.2F  | Saki Tours Operations — Production QA     | Completed |
+| 7.2A–F| Saki Tours Operations                     | Completed |
 | 7.2   | Saki Tours Operations (module complete)   | Completed |
-| 7.3 / 8 | HHCO Helmet Delivery Operations         | Pending   |
-| 9     | Photo Evidence & Offline Sync (Saki Sync) | Pending   |
-| 10    | Vehicle Full-Service Tracking             | Pending   |
-| 11    | Operational History & OT Surfaces         | Pending   |
-| 12    | Production Release                        | Pending   |
+| 7.3   | HHCO Helmet Delivery Operations           | Completed |
+| 7.4   | Leave Management                          | Completed |
+| 7.5   | Vehicle Management                        | Completed |
+| 7.6   | Employee Management                       | Completed |
+| 7.7   | Office Dashboard                          | Completed |
+| 7.8   | Reports                                   | Completed |
+| 7.9   | Application Polish                        | Completed |
+| 8     | Production QA (application-wide)          | Completed |
+| 9     | Production Hardening                      | Completed |
+| 9.1   | Production Blockers (audit Critical/High) | Completed |
+| 9.2   | Enterprise Saki Sync                        | Completed |
+| 9.3   | Final Production Audit                      | Completed — was DO NOT RELEASE |
+| 9.4   | Production Blocker Fixes (C/H from 9.3)     | Completed |
+| 9.5   | Final Release Re-Audit                      | Completed — **READY FOR v1.0.0** |
+| 10.0  | Automated Application Versioning            | Completed |
+| 10.1  | Enterprise Build Information                | Completed |
+| 10.2  | Production Polish (identity / confidence)   | Completed |
+| —     | **v1.0.0 Production Release**             | **Awaiting leadership approval** |
 
-> Do not start **HHCO Operations** until Tours Production QA (7.2F) is accepted and leadership approves.
+> Phase 10.2 is polish-only (branding, splash, icons, About, health, diagnostics, docs). No business workflow changes.  
+> Phase 9.5 on **v0.9.3** recommends **READY FOR v1.0.0**. Prior Critical/High blockers verified closed. Tag only after leadership approval.  
+> See [FINAL_RELEASE_RE_AUDIT.md](./docs/FINAL_RELEASE_RE_AUDIT.md) and [PRODUCTION_POLISH_REPORT.md](./docs/PRODUCTION_POLISH_REPORT.md).
+
+See also: [Production Readiness Report](./docs/PRODUCTION_READINESS_REPORT.md), [Phase 8 QA](./docs/PHASE_8_QA.md), [Phase 9 Hardening](./docs/PHASE_9_HARDENING.md).
 
 ---
 
@@ -351,7 +363,7 @@ Domain models for Trip Logs consume the Session Engine + OCR foundation.
 
 ## Phase 7.3 / Phase 8 — HHCO Helmet Delivery Operations
 
-**Status:** Pending (awaiting approval)
+**Status:** In Progress
 
 Driver logs a delivery operations record:
 
@@ -365,6 +377,66 @@ Driver logs a delivery operations record:
 - Vehicle parked location
 
 **App calculates:** working hours, total KM.
+
+---
+
+## Phase 7.4 — Leave (local-first)
+
+**Status:** Completed
+
+Offline leave module on the web app (localStorage):
+
+- Balance cards (sick 7 / casual 7 / annual 14 defaults)
+- Apply leave → pending; office/admin approve or reject
+- Calendar month summary + history for the signed-in employee
+- Routes: `/modules/leave`, apply, detail `:id`
+
+## Phase 7.5 — Vehicles (local-first)
+
+**Status:** Completed
+
+Fleet list/detail seeded from Tours fleet catalog with richer local records:
+
+- Odometer, next service, insurance, license, maintenance notes
+- Document/photo uploads persisted as data URLs on device
+- Routes: `/modules/vehicles`, detail `:vehicleId`
+
+## Phase 7.6 — Employees (local-first)
+
+**Status:** Completed
+
+Employee directory seeded from known EMP ids:
+
+- Filter drivers vs office; drivers see own profile only for list/detail access rules
+- Contact, emergency contact, role, permission tags; optional local photo
+- Routes: `/modules/employees`, detail `:employeeId`
+
+Home dashboard **Operations tools** links Leave / Vehicles / Employees for all roles (simplified access).
+
+## Phase 7.7 — Office Dashboard (local)
+
+**Status:** Completed
+
+Local-first office overview aggregated from IndexedDB operations sessions + employee/vehicle stores:
+
+- Live unfinished Tours (`saki_tours`) and HHCO (`hhco`) sessions
+- Employees online (store `status: available` when present, else active-session / seed approximate)
+- Vehicles active (assigned/busy/unavailable or on live sessions)
+- Pending sync, today KPIs, multi-day active, last 10 completed activities
+- Route: `/modules/office-dashboard` · `data-brand="office"` · EN/SI `officeDash.*`
+
+## Phase 7.8 — Reports (local)
+
+**Status:** Completed
+
+Offline report builders from IndexedDB sessions:
+
+- Daily / monthly summaries, employee (hours/km), vehicle, Tours, HHCO
+- Period switch via `?period=daily|monthly`
+- Export PDF (print / printable HTML) and Export Excel (UTF-8 CSV) — no heavy PDF libs
+- Routes: `/modules/reports`, `/modules/reports/:reportType` · EN/SI `reportsOps.*`
+
+Home dashboard **Operations tools** also links Office Dashboard and Reports.
 
 ---
 

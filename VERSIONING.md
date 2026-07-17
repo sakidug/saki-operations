@@ -4,11 +4,11 @@
 
 Format: `MAJOR.MINOR.PATCH` → `vMAJOR.MINOR.PATCH`
 
-**Current version:** **v0.7.8** — Saki Tours Polish & Production QA (Phases 7.2E + 7.2F)
+**Current version:** **v0.9.3** — Phase 9.5 Final Release Re-Audit: **READY FOR v1.0.0**. Tag **v1.0.0** only after leadership sign-off.
 
 **Product direction:** Operations & Workforce Management PWA — see [ROADMAP.md](./ROADMAP.md) and [ARCHITECTURE.md](./ARCHITECTURE.md)
 
-> Next implementation gate: **Phase 7.3 / Phase 8 — HHCO Helmet Delivery Operations** (awaiting approval). Do not ship booking features under any version.
+> Do not ship booking features under any version. Do not tag **v1.0.0** until leadership approves the [Production Readiness Report](./docs/PRODUCTION_READINESS_REPORT.md).
 
 ---
 
@@ -29,8 +29,9 @@ Format: `MAJOR.MINOR.PATCH` → `vMAJOR.MINOR.PATCH`
 | Tours Multi-Day | `v0.7.6` | Phase 7.2C multi-day daily records |
 | Tours History | `v0.7.7` | Phase 7.2D Previous Operations |
 | Tours Ops polish | `v0.7.8` | Phase 7.2E Polish & QA + 7.2F Production QA |
-| HHCO Ops | planned | Phase 7.3 / Phase 8 |
-| First production | `v1.0.0` | Hardened ops PWA on sakitours.app |
+| Platform complete | `v0.9.0` | HHCO + Leave + Vehicles + Employees + Office + Reports + QA/hardening docs |
+| Production blockers | `v0.9.1` | Phase 9.1 — JWT fail-closed, module ACL, cookie refresh, PWA SW |
+| First production | `v1.0.0` | **Pending approval** — after Phase 9.2 Sync + sign-off |
 
 Saki Operations is **not** versioned as a booking management product. Desktop Saki Tours remains booking/customer/finance SoT.
 
@@ -41,7 +42,7 @@ Saki Operations is **not** versioned as a booking management product. Desktop Sa
 | Range     | Meaning |
 | --------- | ------- |
 | `v0.x.x`  | **Development** — foundation and pre-production delivery |
-| `v1.0.0`  | **First production release** (ops PWA) |
+| `v1.0.0`  | **First production release** (ops PWA) — **approval required** |
 | `v1.x.x`  | Backward-compatible production improvements |
 | `v2.x.x`  | **Major feature releases** / breaking platform changes |
 
@@ -72,32 +73,11 @@ During `v0.x.x`, `MINOR` bumps may include structural foundation changes (e.g. `
 3. Tag release: `vX.Y.Z`
 4. Build and deploy via approved pipeline/scripts under `scripts/release/`
 
+**v1.0.0 special rule:** Only after the Production Readiness Report is accepted.
+
 ---
 
 ## Changelog policy
 
 - **Required** on every development phase delivery
 - Use Keep a Changelog sections: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`
-- Do not bury breaking changes — call them out under `Changed` / `Removed` with migration notes
-
----
-
-## Pre-release labels (optional)
-
-When needed for staging:
-
-| Label | Use |
-| ----- | --- |
-| `-alpha.N` | Internal unstable builds |
-| `-beta.N`  | Feature-complete candidate |
-| `-rc.N`    | Release candidate |
-
-Example: `v1.0.0-rc.1`
-
----
-
-## Package versions inside the monorepo
-
-- Root version is the **product version** (source of truth for releases).
-- Internal workspace packages may remain `0.0.1` until independently versioned publication is required.
-- Do not publish private packages to public registries.

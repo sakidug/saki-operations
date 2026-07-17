@@ -6,10 +6,10 @@ import { useAppTranslation } from '@saki-operations/i18n';
 import { useBootstrap } from '@/app/bootstrap/bootstrap-provider';
 import { usePwa } from '@/app/bootstrap/pwa-provider';
 
-/** Future update notification slot — ready for service worker updates later. */
+/** Service-worker update notification (Phase 9.1). */
 export function UpdateBanner() {
   const { snapshot, appVersion } = useBootstrap();
-  const { updateAvailable, dismissUpdate } = usePwa();
+  const { updateAvailable, dismissUpdate, applyUpdate } = usePwa();
   const { t } = useAppTranslation();
   const [dismissed, setDismissed] = useState(false);
 
@@ -29,17 +29,29 @@ export function UpdateBanner() {
             </p>
           </div>
         </div>
-        <Button
-          type="button"
-          size="sm"
-          variant="secondary"
-          onClick={() => {
-            dismissUpdate();
-            setDismissed(true);
-          }}
-        >
-          {t('actions.confirm')}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            size="sm"
+            onClick={() => {
+              applyUpdate();
+              setDismissed(true);
+            }}
+          >
+            {t('shell.pwa.updateAction')}
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="secondary"
+            onClick={() => {
+              dismissUpdate();
+              setDismissed(true);
+            }}
+          >
+            {t('actions.dismiss')}
+          </Button>
+        </div>
       </div>
     </div>
   );

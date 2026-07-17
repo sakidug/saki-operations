@@ -3,7 +3,8 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { ApplicationLayout } from '@/app/layouts/application-layout';
 import { AuthenticationLayout } from '@/app/layouts/shell-layouts';
-import { RedirectIfAuthenticated, RequireAuth, RequireBootstrap } from '@/app/router/guards';
+import { RedirectIfAuthenticated, RequireAuth, RequireBootstrap, RequirePermission } from '@/app/router/guards';
+import { MODULE_ACCESS_PERMISSION } from '@saki-operations/constants';
 import { paths } from '@/app/router/paths';
 import { AuthCheckLoadingScreen, LoadingScreen } from '@/app/screens/loading/loading-experience';
 import { SplashScreen } from '@/app/screens/splash/splash-screen';
@@ -34,14 +35,14 @@ const HomeDashboardScreen = lazy(() =>
     default: m.HomeDashboardScreen,
   })),
 );
-const RoutePlaceholder = lazy(() =>
-  import('@/app/screens/placeholders/route-placeholder').then((m) => ({
-    default: m.RoutePlaceholder,
-  })),
-);
 const ShellReadyScreen = lazy(() =>
   import('@/app/screens/placeholders/shell-ready-screen').then((m) => ({
     default: m.ShellReadyScreen,
+  })),
+);
+const SettingsAboutScreen = lazy(() =>
+  import('@/modules/settings/screens/settings-about-screen').then((m) => ({
+    default: m.SettingsAboutScreen,
   })),
 );
 const SakiToursHomeScreen = lazy(() =>
@@ -87,6 +88,101 @@ const MultiDayDayCaptureScreen = lazy(() =>
 const OperationCompletedScreen = lazy(() =>
   import('@/modules/saki-tours/screens/operation-completed-screen').then((m) => ({
     default: m.OperationCompletedScreen,
+  })),
+);
+const HhcoHomeScreen = lazy(() =>
+  import('@/modules/hhco/screens/hhco-home-screen').then((m) => ({
+    default: m.HhcoHomeScreen,
+  })),
+);
+const HhcoStartWizardScreen = lazy(() =>
+  import('@/modules/hhco/screens/start-operation-wizard-screen').then((m) => ({
+    default: m.StartOperationWizardScreen,
+  })),
+);
+const HhcoPreviousOperationsScreen = lazy(() =>
+  import('@/modules/hhco/screens/previous-operations-screen').then((m) => ({
+    default: m.PreviousOperationsScreen,
+  })),
+);
+const HhcoPreviousOperationDetailScreen = lazy(() =>
+  import('@/modules/hhco/screens/previous-operation-detail-screen').then((m) => ({
+    default: m.PreviousOperationDetailScreen,
+  })),
+);
+const HhcoContinueOperationScreen = lazy(() =>
+  import('@/modules/hhco/screens/continue-operation-screen').then((m) => ({
+    default: m.ContinueOperationScreen,
+  })),
+);
+const HhcoOperationStartedScreen = lazy(() =>
+  import('@/modules/hhco/screens/operation-started-screen').then((m) => ({
+    default: m.OperationStartedScreen,
+  })),
+);
+const HhcoEndOperationWizardScreen = lazy(() =>
+  import('@/modules/hhco/screens/end-operation-wizard-screen').then((m) => ({
+    default: m.EndOperationWizardScreen,
+  })),
+);
+const HhcoMultiDayDayCaptureScreen = lazy(() =>
+  import('@/modules/hhco/screens/multi-day-day-capture-screen').then((m) => ({
+    default: m.MultiDayDayCaptureScreen,
+  })),
+);
+const HhcoOperationCompletedScreen = lazy(() =>
+  import('@/modules/hhco/screens/operation-completed-screen').then((m) => ({
+    default: m.OperationCompletedScreen,
+  })),
+);
+const LeaveHomeScreen = lazy(() =>
+  import('@/modules/leave/screens/leave-home-screen').then((m) => ({
+    default: m.LeaveHomeScreen,
+  })),
+);
+const ApplyLeaveScreen = lazy(() =>
+  import('@/modules/leave/screens/apply-leave-screen').then((m) => ({
+    default: m.ApplyLeaveScreen,
+  })),
+);
+const LeaveDetailScreen = lazy(() =>
+  import('@/modules/leave/screens/leave-detail-screen').then((m) => ({
+    default: m.LeaveDetailScreen,
+  })),
+);
+const VehicleListScreen = lazy(() =>
+  import('@/modules/vehicles/screens/vehicle-list-screen').then((m) => ({
+    default: m.VehicleListScreen,
+  })),
+);
+const VehicleDetailScreen = lazy(() =>
+  import('@/modules/vehicles/screens/vehicle-detail-screen').then((m) => ({
+    default: m.VehicleDetailScreen,
+  })),
+);
+const EmployeeListScreen = lazy(() =>
+  import('@/modules/employees/screens/employee-list-screen').then((m) => ({
+    default: m.EmployeeListScreen,
+  })),
+);
+const EmployeeDetailScreen = lazy(() =>
+  import('@/modules/employees/screens/employee-detail-screen').then((m) => ({
+    default: m.EmployeeDetailScreen,
+  })),
+);
+const OfficeDashboardScreen = lazy(() =>
+  import('@/modules/office-dashboard/screens/office-dashboard-screen').then((m) => ({
+    default: m.OfficeDashboardScreen,
+  })),
+);
+const ReportsHomeScreen = lazy(() =>
+  import('@/modules/reports/screens/reports-home-screen').then((m) => ({
+    default: m.ReportsHomeScreen,
+  })),
+);
+const ReportDetailScreen = lazy(() =>
+  import('@/modules/reports/screens/report-detail-screen').then((m) => ({
+    default: m.ReportDetailScreen,
   })),
 );
 const NotFoundScreen = lazy(() =>
@@ -199,89 +295,268 @@ export const appRouter = createBrowserRouter([
                 path: paths.settings,
                 element: (
                   <Suspend>
-                    <ShellReadyScreen kind="settings" />
+                    <SettingsAboutScreen />
                   </Suspend>
                 ),
               },
               {
-                path: paths.sakiTours,
-                element: (
-                  <Suspend>
-                    <SakiToursHomeScreen />
-                  </Suspend>
-                ),
+                element: <RequirePermission permission={MODULE_ACCESS_PERMISSION.tours} />,
+                children: [
+                  {
+                    path: paths.sakiTours,
+                    element: (
+                      <Suspend>
+                        <SakiToursHomeScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.sakiToursStart,
+                    element: (
+                      <Suspend>
+                        <StartOperationWizardScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.sakiToursHistoryDetail,
+                    element: (
+                      <Suspend>
+                        <PreviousOperationDetailScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.sakiToursHistory,
+                    element: (
+                      <Suspend>
+                        <PreviousOperationsScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.sakiToursOperationStarted,
+                    element: (
+                      <Suspend>
+                        <OperationStartedScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.sakiToursOperationEnd,
+                    element: (
+                      <Suspend>
+                        <EndOperationWizardScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.sakiToursOperationDay,
+                    element: (
+                      <Suspend>
+                        <MultiDayDayCaptureScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.sakiToursOperationCompleted,
+                    element: (
+                      <Suspend>
+                        <OperationCompletedScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.sakiToursOperation,
+                    element: (
+                      <Suspend>
+                        <ContinueOperationScreen />
+                      </Suspend>
+                    ),
+                  },
+                ],
               },
               {
-                path: paths.sakiToursStart,
-                element: (
-                  <Suspend>
-                    <StartOperationWizardScreen />
-                  </Suspend>
-                ),
+                element: <RequirePermission permission={MODULE_ACCESS_PERMISSION.hhco} />,
+                children: [
+                  {
+                    path: paths.hhco,
+                    element: (
+                      <Suspend>
+                        <HhcoHomeScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.hhcoStart,
+                    element: (
+                      <Suspend>
+                        <HhcoStartWizardScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.hhcoHistoryDetail,
+                    element: (
+                      <Suspend>
+                        <HhcoPreviousOperationDetailScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.hhcoHistory,
+                    element: (
+                      <Suspend>
+                        <HhcoPreviousOperationsScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.hhcoDeliveryStarted,
+                    element: (
+                      <Suspend>
+                        <HhcoOperationStartedScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.hhcoDeliveryEnd,
+                    element: (
+                      <Suspend>
+                        <HhcoEndOperationWizardScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.hhcoDeliveryDay,
+                    element: (
+                      <Suspend>
+                        <HhcoMultiDayDayCaptureScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.hhcoDeliveryCompleted,
+                    element: (
+                      <Suspend>
+                        <HhcoOperationCompletedScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.hhcoDelivery,
+                    element: (
+                      <Suspend>
+                        <HhcoContinueOperationScreen />
+                      </Suspend>
+                    ),
+                  },
+                ],
               },
               {
-                path: paths.sakiToursHistoryDetail,
-                element: (
-                  <Suspend>
-                    <PreviousOperationDetailScreen />
-                  </Suspend>
-                ),
+                element: <RequirePermission permission={MODULE_ACCESS_PERMISSION.leave} />,
+                children: [
+                  {
+                    path: paths.leave,
+                    element: (
+                      <Suspend>
+                        <LeaveHomeScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.leaveApply,
+                    element: (
+                      <Suspend>
+                        <ApplyLeaveScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.leaveDetail,
+                    element: (
+                      <Suspend>
+                        <LeaveDetailScreen />
+                      </Suspend>
+                    ),
+                  },
+                ],
               },
               {
-                path: paths.sakiToursHistory,
-                element: (
-                  <Suspend>
-                    <PreviousOperationsScreen />
-                  </Suspend>
-                ),
+                element: <RequirePermission permission={MODULE_ACCESS_PERMISSION.vehicles} />,
+                children: [
+                  {
+                    path: paths.vehicles,
+                    element: (
+                      <Suspend>
+                        <VehicleListScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.vehicleDetail,
+                    element: (
+                      <Suspend>
+                        <VehicleDetailScreen />
+                      </Suspend>
+                    ),
+                  },
+                ],
               },
               {
-                path: paths.sakiToursOperationStarted,
-                element: (
-                  <Suspend>
-                    <OperationStartedScreen />
-                  </Suspend>
-                ),
+                element: <RequirePermission permission={MODULE_ACCESS_PERMISSION.employees} />,
+                children: [
+                  {
+                    path: paths.employees,
+                    element: (
+                      <Suspend>
+                        <EmployeeListScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.employeeDetail,
+                    element: (
+                      <Suspend>
+                        <EmployeeDetailScreen />
+                      </Suspend>
+                    ),
+                  },
+                ],
               },
               {
-                path: paths.sakiToursOperationEnd,
-                element: (
-                  <Suspend>
-                    <EndOperationWizardScreen />
-                  </Suspend>
-                ),
+                element: <RequirePermission permission={MODULE_ACCESS_PERMISSION.officeDashboard} />,
+                children: [
+                  {
+                    path: paths.officeDashboard,
+                    element: (
+                      <Suspend>
+                        <OfficeDashboardScreen />
+                      </Suspend>
+                    ),
+                  },
+                ],
               },
               {
-                path: paths.sakiToursOperationDay,
-                element: (
-                  <Suspend>
-                    <MultiDayDayCaptureScreen />
-                  </Suspend>
-                ),
-              },
-              {
-                path: paths.sakiToursOperationCompleted,
-                element: (
-                  <Suspend>
-                    <OperationCompletedScreen />
-                  </Suspend>
-                ),
-              },
-              {
-                path: paths.sakiToursOperation,
-                element: (
-                  <Suspend>
-                    <ContinueOperationScreen />
-                  </Suspend>
-                ),
-              },
-              {
-                path: paths.hhco,
-                element: (
-                  <Suspend>
-                    <RoutePlaceholder titleKey="shell.placeholder.hhco" />
-                  </Suspend>
-                ),
+                element: <RequirePermission permission={MODULE_ACCESS_PERMISSION.reports} />,
+                children: [
+                  {
+                    path: paths.reportDetail,
+                    element: (
+                      <Suspend>
+                        <ReportDetailScreen />
+                      </Suspend>
+                    ),
+                  },
+                  {
+                    path: paths.reports,
+                    element: (
+                      <Suspend>
+                        <ReportsHomeScreen />
+                      </Suspend>
+                    ),
+                  },
+                ],
               },
               {
                 path: paths.changePassword,

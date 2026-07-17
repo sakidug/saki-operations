@@ -1,6 +1,6 @@
 {
   "name": "saki-operations",
-  "version": "0.7.8",
+  "version": "1.0.0",
   "private": true,
   "description": "Saki Operations — Operations & Workforce Management PWA for Saki Tours & Weddings and HHCO",
   "packageManager": "pnpm@9.15.4",
@@ -25,6 +25,7 @@
     "db:seed": "pnpm --filter=@saki-operations/database db:seed",
     "db:studio": "turbo run db:studio --filter=@saki-operations/database",
     "create-admin": "pnpm db:generate && pnpm --filter=@saki-operations/database exec tsx ../scripts/create-admin.ts",
+    "build:meta": "node scripts/generate-build-meta.mjs",
     "clean": "turbo run clean && rm -rf node_modules"
   },
   "devDependencies": {

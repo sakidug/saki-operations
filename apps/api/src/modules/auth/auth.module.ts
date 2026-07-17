@@ -21,12 +21,22 @@ import { AuthService } from './auth.service';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('app.jwt.secret', 'change-me'),
-        signOptions: {
-          expiresIn: config.get('app.jwt.accessExpiresIn', '15m') as `${number}${'s' | 'm' | 'h' | 'd'}`,
-        },
-      }),
+      useFactory: (config: ConfigService) => {
+        const secret = config.get<string>('app.jwt.secret');
+        if (!secret) {
+          throw new Error('[FATAL] app.jwt.secret is not configured');
+        }
+        return {
+          secret,
+          signOptions: {
+            expiresIn: config.get('app.jwt.accessExpiresIn', '15m') as `${number}${
+              | 's'
+              | 'm'
+              | 'h'
+              | 'd'}`,
+          },
+        };
+      },
     }),
   ],
   controllers: [AuthController],

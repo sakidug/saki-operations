@@ -58,9 +58,10 @@ export const authApi = {
   },
 
   refresh(refreshToken?: string) {
+    // Prefer HttpOnly cookie (omit body token). Legacy optional body kept for migration.
     return request<AuthSession>('/auth/refresh', {
       method: 'POST',
-      body: JSON.stringify({ refreshToken }),
+      body: JSON.stringify(refreshToken ? { refreshToken } : {}),
     });
   },
 
@@ -68,7 +69,7 @@ export const authApi = {
     return request<{ success: boolean }>('/auth/logout', {
       method: 'POST',
       accessToken,
-      body: JSON.stringify({ refreshToken }),
+      body: JSON.stringify(refreshToken ? { refreshToken } : {}),
     });
   },
 

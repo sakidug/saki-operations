@@ -1,20 +1,25 @@
 import type { OcrProvider, OcrRecognizeInput } from './ocr-provider';
-import { preprocessForDigitalOdometer } from '../image/preprocess';
-import { parseOdometerCandidates, pickBestCandidate } from '../parse/odometer-parse';
-import type { OcrEngineResult } from '../types';
+import { buildDigitalOcrVariants } from '../image/preprocess';
+import {
+  mergeOcrCandidates,
+  parseOdometerCandidates,
+  pickBestCandidate,
+} from '../parse/odometer-parse';
+import type { OcrEngineResult, OcrRawCandidate } from '../types';
+import { OCR_LOW_CONFIDENCE_THRESHOLD } from '../types';
 
 /**
  * Default digital-odometer provider powered by Tesseract.js.
- * Replace by registering another `OcrProvider` — no app code changes required.
+ * Multi-pass preprocess (band / LCD / full) — accuracy over speed.
  */
 export function createDigitalOdometerProvider(): OcrProvider {
   return {
-    id: 'tesseract-digital-v1',
+    id: 'tesseract-digital-v2',
     supportedKinds: ['digital'],
 
     async recognize(input: OcrRecognizeInput): Promise<OcrEngineResult> {
       const started = performance.now();
-      const providerId = 'tesseract-digital-v1';
+      const providerId = 'tesseract-digital-v2';
 
       if (input.kind !== 'digital') {
         return {
@@ -32,23 +37,19 @@ export function createDigitalOdometerProvider(): OcrProvider {
         input.signal?.throwIfAborted();
         input.onProgress?.(0.05);
 
-        let canvas: HTMLCanvasElement;
-        if (input.image instanceof HTMLCanvasElement) {
-          canvas = input.image;
-        } else if (input.image instanceof ImageBitmap) {
-          canvas = await preprocessForDigitalOdometer(input.image);
-        } else {
-          canvas = await preprocessForDigitalOdometer(input.image);
-        }
+        const canvases =
+          input.image instanceof HTMLCanvasElement
+            ? [input.image]
+            : await buildDigitalOcrVariants(input.image);
 
-        input.onProgress?.(0.25);
+        input.onProgress?.(0.2);
         input.signal?.throwIfAborted();
 
-        const { createWorker } = await import('tesseract.js');
+        const { createWorker, PSM } = await import('tesseract.js');
         const worker = await createWorker('eng', 1, {
           logger: (message) => {
             if (message.status === 'recognizing text' && typeof message.progress === 'number') {
-              input.onProgress?.(0.25 + message.progress * 0.7);
+              input.onProgress?.(0.2 + message.progress * 0.75);
             }
           },
         });
@@ -56,16 +57,45 @@ export function createDigitalOdometerProvider(): OcrProvider {
         try {
           input.signal?.throwIfAborted();
           await worker.setParameters({
-            tessedit_char_whitelist: '0123456789,.',
+            tessedit_char_whitelist: '0123456789',
+            tessedit_pageseg_mode: PSM.SINGLE_LINE,
           });
 
-          const {
-            data: { text, confidence },
-          } = await worker.recognize(canvas);
+          const groups: OcrRawCandidate[][] = [];
+          const rawParts: string[] = [];
 
-          const base = typeof confidence === 'number' && confidence > 0 ? confidence : 65;
-          const candidates = parseOdometerCandidates(text ?? '', base);
-          const best = pickBestCandidate(candidates);
+          for (let i = 0; i < canvases.length; i++) {
+            input.signal?.throwIfAborted();
+            const canvas = canvases[i]!;
+            const {
+              data: { text, confidence },
+            } = await worker.recognize(canvas);
+            rawParts.push(text ?? '');
+            const base = typeof confidence === 'number' && confidence > 0 ? confidence : 60;
+            groups.push(parseOdometerCandidates(text ?? '', base));
+          }
+
+          // Second pass: sparse word mode can recover clipped leading digits.
+          await worker.setParameters({
+            tessedit_char_whitelist: '0123456789',
+            tessedit_pageseg_mode: PSM.SINGLE_WORD,
+          });
+          const primary = canvases[0]!;
+          const {
+            data: { text: textWord, confidence: confWord },
+          } = await worker.recognize(primary);
+          rawParts.push(textWord ?? '');
+          groups.push(
+            parseOdometerCandidates(
+              textWord ?? '',
+              typeof confWord === 'number' && confWord > 0 ? confWord : 55,
+            ),
+          );
+
+          const merged = mergeOcrCandidates(groups);
+          const best = pickBestCandidate(merged, {
+            previousKm: input.previousOdometerKm,
+          });
 
           if (!best) {
             return {
@@ -73,12 +103,13 @@ export function createDigitalOdometerProvider(): OcrProvider {
               kind: 'digital',
               value: null,
               confidence: 0,
-              candidates: [],
+              candidates: merged,
               failureReason: 'no_digits_found',
               meta: {
                 providerId,
                 durationMs: Math.round(performance.now() - started),
-                rawText: text,
+                rawText: rawParts.join('\n---\n'),
+                passes: canvases.length + 1,
               },
             };
           }
@@ -90,12 +121,14 @@ export function createDigitalOdometerProvider(): OcrProvider {
             kind: 'digital',
             value: best.value,
             confidence: best.confidence,
-            candidates,
-            failureReason: best.confidence < 75 ? 'low_confidence' : undefined,
+            candidates: merged,
+            failureReason:
+              best.confidence < OCR_LOW_CONFIDENCE_THRESHOLD ? 'low_confidence' : undefined,
             meta: {
               providerId,
               durationMs: Math.round(performance.now() - started),
-              rawText: text,
+              rawText: rawParts.join('\n---\n'),
+              passes: canvases.length + 1,
             },
           };
         } finally {

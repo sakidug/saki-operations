@@ -10,6 +10,7 @@ import { NetworkProvider } from '@/app/bootstrap/network-provider';
 import { PwaProvider } from '@/app/bootstrap/pwa-provider';
 import { SessionProvider } from '@/app/bootstrap/session-provider';
 import { appRouter } from '@/app/router';
+import { SyncProvider } from '@/modules/sync/sync-provider';
 
 export type AppProvidersProps = {
   children?: ReactNode;
@@ -32,12 +33,14 @@ export function AppProviders({
         <ThemeProvider defaultTheme={defaultTheme} defaultBrand={defaultBrand}>
           <NetworkProvider>
             <SessionProvider>
-              <PwaProvider>
-                <BootstrapProvider>
-                  <RouterProvider router={appRouter} />
-                  <Toaster />
-                </BootstrapProvider>
-              </PwaProvider>
+              <SyncProvider>
+                <PwaProvider>
+                  <BootstrapProvider>
+                    <RouterProvider router={appRouter} />
+                    <Toaster />
+                  </BootstrapProvider>
+                </PwaProvider>
+              </SyncProvider>
             </SessionProvider>
           </NetworkProvider>
         </ThemeProvider>

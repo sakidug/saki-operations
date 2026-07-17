@@ -81,3 +81,82 @@ model Vehicle {
 
   @@map("vehicles")
 }
+
+// ---------------------------------------------------------------------------
+// Saki Sync (Phase 9.2) — event log as multi-device source of truth
+// ---------------------------------------------------------------------------
+
+enum SyncAckStatus {
+  accepted
+  duplicate
+  conflict
+  rejected
+}
+
+/// Durable sync event received from a device. Idempotent on eventId.
+model SyncEventRecord {
+  id         String        @id @default(cuid())
+  eventId    String        @unique @map("event_id")
+  entityType String        @map("entity_type")
+  entityId   String        @map("entity_id")
+  eventType  String        @map("event_type")
+  deviceId   String        @map("device_id")
+  userId     String        @map("user_id")
+  occurredAt DateTime      @map("occurred_at")
+  payload    Json
+  version    Int           @default(1)
+  ackStatus  SyncAckStatus @default(accepted) @map("ack_status")
+  createdAt  DateTime      @default(now()) @map("created_at")
+
+  @@index([entityType, entityId])
+  @@index([userId, occurredAt])
+  @@index([eventType])
+  @@map("sync_events")
+}
+
+/// Optimistic concurrency cursor per entity.
+model SyncEntityState {
+  id           String   @id @default(cuid())
+  entityType   String   @map("entity_type")
+  entityId     String   @map("entity_id")
+  version      Int      @default(1)
+  lastEventId  String?  @map("last_event_id")
+  lastDeviceId String?  @map("last_device_id")
+  lastUserId   String?  @map("last_user_id")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@unique([entityType, entityId])
+  @@map("sync_entity_states")
+}
+
+model SyncAuditLog {
+  id            String   @id @default(cuid())
+  eventId       String   @map("event_id")
+  userId        String   @map("user_id")
+  deviceId      String   @map("device_id")
+  action        String
+  result        String
+  previousValue Json?    @map("previous_value")
+  newValue      Json?    @map("new_value")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@index([eventId])
+  @@index([userId, createdAt])
+  @@map("sync_audit_logs")
+}
+
+model SyncBlob {
+  id         String   @id @default(cuid())
+  localId    String   @unique @map("local_id")
+  userId     String   @map("user_id")
+  mimeType   String   @map("mime_type")
+  fileName   String   @map("file_name")
+  byteSize   Int      @map("byte_size")
+  storageKey String   @map("storage_key")
+  publicUrl  String?  @map("public_url")
+  eventId    String?  @map("event_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@map("sync_blobs")
+}

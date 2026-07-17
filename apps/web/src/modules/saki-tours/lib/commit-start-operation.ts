@@ -4,6 +4,8 @@ import {
   type OperationsSession,
 } from '@saki-operations/operations-session';
 
+import { emitSyncEvent, operationEventType } from '@/modules/sync/emit';
+
 import type { StartOperationDraft } from '../types';
 import { isMultiDay } from '../types';
 import { createInitialMultiDayRecords } from './multi-day';
@@ -88,6 +90,22 @@ export async function commitStartOperation(input: {
       totalDailyWorkingMs: null,
     });
   }
+
+  await emitSyncEvent({
+    entityType: 'operation',
+    entityId: session.id,
+    eventType: operationEventType('started', 'saki_tours'),
+    employeeId: employeeId,
+    version: session.revision,
+    payload: {
+      moduleId: 'saki_tours',
+      vehicleId: draft.vehicleId,
+      hireType: draft.hireType,
+      startTime: draft.startTime.capturedAt,
+      startOdometer: draft.startOdometer.value,
+      numberOfDays: draft.numberOfDays,
+    },
+  });
 
   return session;
 }
