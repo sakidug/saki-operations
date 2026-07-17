@@ -22,8 +22,12 @@ export {
   BUILTIN_EVIDENCE_TYPES,
   SESSION_STATUS_TRANSITIONS,
   UNFINISHED_SESSION_STATUSES,
+  VEHICLE_OCCUPYING_SESSION_STATUSES,
   canTransitionSessionStatus,
   isUnfinishedSessionStatus,
+  isVehicleOccupyingSessionStatus,
+  normalizeOperationsSession,
+  sessionOccupiesVehicle,
 } from './types';
 
 export {
@@ -44,6 +48,7 @@ export {
 
 export {
   createIndexedDbSessionRepository,
+  type SessionListFilter,
   type SessionRepository,
 } from './storage/indexed-db-repository';
 

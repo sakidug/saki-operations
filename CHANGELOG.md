@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Operations V2 — **Phase 1 data model foundation** (no UI / wizard / routing / auth / sync / reports changes)
+  - Temporary company catalog (`apps/web/src/modules/companies/data/company-catalog.ts`: Saki Tours, HHCO) + `CompanySelectorItem`
+  - Session fields: `companyId`, `driverId`, `assistantIds`, `operatorId`, `distanceKm` on `OperationsSession` / `CreateSessionInput`
+  - Vehicle operational status: `VehicleOperationalStatus` (`AVAILABLE` | `ON_TRIP` | `SERVICE`) on local vehicle store + Prisma `Vehicle.status` (migration `20260717100000_vehicle_status`)
+  - Vehicle occupancy support (not enforced): `VEHICLE_OCCUPYING_SESSION_STATUSES`, `listActiveByVehicle` / `listVehicleOccupying`, IndexedDB `vehicleId` index, `sessionOccupiesVehicle`
+  - Backward-compatible normalization for legacy sessions and vehicle records
+
 - Phase 10.2 — **Production Polish** (identity / professionalism only; no business logic)
   - Branded splash with logo, version, build, environment, and reduced-motion-aware fade
   - Full PWA / Apple / Android / maskable / Windows tile icon set under `apps/web/public/icons`

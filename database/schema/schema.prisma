@@ -68,17 +68,28 @@ model PasswordResetToken {
 // Fleet registry (kept for Tours Ops, HHCO, and Service Records)
 // ---------------------------------------------------------------------------
 
+/// Fleet operational status — Operations V2 (one active op → ON_TRIP).
+enum VehicleStatus {
+  AVAILABLE
+  ON_TRIP
+  SERVICE
+}
+
 /// Fleet vehicle — no booking assignments. Service fields added in a later phase.
 model Vehicle {
-  id                 String   @id @default(uuid())
-  registrationNumber String   @unique @map("registration_number")
+  id                 String        @id @default(uuid())
+  registrationNumber String        @unique @map("registration_number")
   label              String?
   make               String?
   model              String?
-  isActive           Boolean  @default(true) @map("is_active")
-  createdAt          DateTime @default(now()) @map("created_at")
-  updatedAt          DateTime @updatedAt @map("updated_at")
+  /// Soft registry flag (retired / not selectable)
+  isActive           Boolean       @default(true) @map("is_active")
+  /// Operational status for V2 (independent of isActive)
+  status             VehicleStatus @default(AVAILABLE)
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
 
+  @@index([status])
   @@map("vehicles")
 }
 

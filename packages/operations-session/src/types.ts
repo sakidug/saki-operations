@@ -76,8 +76,20 @@ export type OperationsSession = {
   id: string;
   status: OperationsSessionStatus;
   moduleId: OperationsModuleId;
+  /**
+   * Authenticated operator / session owner (JWT user workforce id).
+   * Distinct from V2 selectable `driverId` when an admin starts an op for a crew.
+   */
   employeeId: string;
   vehicleId: string | null;
+  /** Operations V2 — company scope for the operation */
+  companyId: string | null;
+  /** Operations V2 — selected driver (may differ from `employeeId`) */
+  driverId: string | null;
+  /** Operations V2 — selected assistant employee ids */
+  assistantIds: string[];
+  /** Operations V2 — logged-in admin/operator who started the operation */
+  operatorId: string | null;
   startTime: string | null;
   endTime: string | null;
   /** Milliseconds; null until computable */
@@ -86,6 +98,8 @@ export type OperationsSession = {
   endOdometer: number | null;
   /** Total KM; null until computable */
   totalKm: number | null;
+  /** Operations V2 — distance in KM, calculated when the operation completes */
+  distanceKm: number | null;
   customFields: SessionCustomFields;
   evidenceIds: string[];
   offlineStatus: OfflineStatus;
@@ -100,8 +114,41 @@ export type CreateSessionInput = {
   moduleId: OperationsModuleId;
   employeeId: string;
   vehicleId?: string | null;
+  companyId?: string | null;
+  driverId?: string | null;
+  assistantIds?: readonly string[];
+  operatorId?: string | null;
   customFields?: SessionCustomFields;
 };
+
+/**
+ * Statuses that occupy a vehicle for Operations V2.
+ * Model support for “one active operation per vehicle” — enforcement is deferred.
+ */
+export const VEHICLE_OCCUPYING_SESSION_STATUSES: readonly OperationsSessionStatus[] = [
+  'started',
+  'in_progress',
+];
+
+export function isVehicleOccupyingSessionStatus(
+  status: OperationsSessionStatus,
+): boolean {
+  return (VEHICLE_OCCUPYING_SESSION_STATUSES as readonly string[]).includes(status);
+}
+
+/** Normalize legacy IndexedDB rows that predate V2 crew / company fields. */
+export function normalizeOperationsSession(
+  session: OperationsSession,
+): OperationsSession {
+  return {
+    ...session,
+    companyId: session.companyId ?? null,
+    driverId: session.driverId ?? null,
+    assistantIds: Array.isArray(session.assistantIds) ? [...session.assistantIds] : [],
+    operatorId: session.operatorId ?? null,
+    distanceKm: session.distanceKm ?? session.totalKm ?? null,
+  };
+}
 
 export type SessionTransition =
   | 'start'
@@ -136,4 +183,14 @@ export const UNFINISHED_SESSION_STATUSES: readonly OperationsSessionStatus[] = [
 
 export function isUnfinishedSessionStatus(status: OperationsSessionStatus): boolean {
   return (UNFINISHED_SESSION_STATUSES as readonly string[]).includes(status);
+}
+
+/**
+ * Whether a session currently occupies its vehicle (V2 uniqueness candidate).
+ * Does not enforce uniqueness — callers decide when to block starts.
+ */
+export function sessionOccupiesVehicle(session: OperationsSession): boolean {
+  return (
+    Boolean(session.vehicleId) && isVehicleOccupyingSessionStatus(session.status)
+  );
 }

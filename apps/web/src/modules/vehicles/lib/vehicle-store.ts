@@ -1,5 +1,6 @@
 import { TOURS_FLEET_CATALOG } from '@/modules/saki-tours/data/fleet-catalog';
 import { createLocalId, readJson, writeJson } from '@/lib/local-persist';
+import type { VehicleOperationalStatus } from '@saki-operations/types';
 
 export type VehicleDocument = {
   id: string;
@@ -16,7 +17,18 @@ export type VehicleRecord = {
   make: string;
   model: string;
   capacity: number;
+  /**
+   * Operations V2 operational status (`AVAILABLE` | `ON_TRIP` | `SERVICE`).
+   * `ON_TRIP` = vehicle currently on an active operation.
+   */
+  status: VehicleOperationalStatus;
+  /**
+   * Legacy list/detail badge field (`available` | `unavailable`).
+   * Derived from `status` for existing screens — use `status` for V2 logic.
+   */
   availability: 'available' | 'unavailable';
+  /** Optional company scope (Operations V2) */
+  companyId: string | null;
   currentOdometerKm: number;
   nextServiceKm: number;
   nextServiceDate: string;
@@ -34,7 +46,15 @@ const STORAGE_KEY = 'saki.ops.vehicles.v1';
 
 const SEED_EXTRAS: Omit<
   VehicleRecord,
-  'id' | 'name' | 'registrationNumber' | 'make' | 'model' | 'capacity' | 'availability'
+  | 'id'
+  | 'name'
+  | 'registrationNumber'
+  | 'make'
+  | 'model'
+  | 'capacity'
+  | 'availability'
+  | 'status'
+  | 'companyId'
 >[] = [
   {
     currentOdometerKm: 84_220,
@@ -74,11 +94,35 @@ const SEED_EXTRAS: Omit<
   },
 ];
 
+function legacyAvailabilityFromStatus(
+  status: VehicleOperationalStatus,
+): 'available' | 'unavailable' {
+  return status === 'AVAILABLE' ? 'available' : 'unavailable';
+}
+
+/** Map legacy stored values (any casing / old vocabulary) onto V2 status. */
+function coerceVehicleStatus(
+  raw: { status?: string; availability?: string },
+): VehicleOperationalStatus {
+  const value = String(raw.status ?? '').toLowerCase();
+  if (value === 'on_trip' || value === 'in_operation' || value === 'assigned') return 'ON_TRIP';
+  if (value === 'service' || value === 'unavailable') return 'SERVICE';
+  if (value === 'available') return 'AVAILABLE';
+  const availability = String(raw.availability ?? '').toLowerCase();
+  if (availability === 'assigned') return 'ON_TRIP';
+  if (availability === 'unavailable') return 'SERVICE';
+  return 'AVAILABLE';
+}
+
 function seedVehicles(): VehicleRecord[] {
   return TOURS_FLEET_CATALOG.map((item, index) => {
     const extras = SEED_EXTRAS[index] ?? SEED_EXTRAS[0]!;
-    const availability: VehicleRecord['availability'] =
-      item.availability === 'unavailable' ? 'unavailable' : 'available';
+    const status: VehicleOperationalStatus =
+      item.availability === 'unavailable'
+        ? 'SERVICE'
+        : item.availability === 'assigned'
+          ? 'ON_TRIP'
+          : 'AVAILABLE';
     return {
       id: item.id,
       name: item.name,
@@ -86,7 +130,9 @@ function seedVehicles(): VehicleRecord[] {
       make: item.make ?? '',
       model: item.model ?? '',
       capacity: item.capacity,
-      availability,
+      status,
+      availability: legacyAvailabilityFromStatus(status),
+      companyId: item.companyId ?? null,
       currentOdometerKm: extras.currentOdometerKm,
       nextServiceKm: extras.nextServiceKm,
       nextServiceDate: extras.nextServiceDate,
@@ -98,10 +144,23 @@ function seedVehicles(): VehicleRecord[] {
   });
 }
 
+function normalizeVehicleRecord(
+  raw: VehicleRecord & { status?: string },
+): VehicleRecord {
+  const status = coerceVehicleStatus(raw);
+  return {
+    ...raw,
+    status,
+    availability: legacyAvailabilityFromStatus(status),
+    companyId: raw.companyId ?? null,
+    documents: [...(raw.documents ?? [])],
+  };
+}
+
 function load(): VehicleStoreState {
   const existing = readJson<VehicleStoreState | null>(STORAGE_KEY, null);
   if (existing?.vehicles?.length) {
-    return existing;
+    return { vehicles: existing.vehicles.map(normalizeVehicleRecord) };
   }
   const seeded = { vehicles: seedVehicles() };
   writeJson(STORAGE_KEY, seeded);
@@ -126,7 +185,33 @@ export function updateVehicleNotes(id: string, maintenanceNotes: string): Vehicl
   if (!vehicle) return undefined;
   vehicle.maintenanceNotes = maintenanceNotes;
   save(state);
-  return { ...vehicle, documents: [...vehicle.documents] };
+  return normalizeVehicleRecord(vehicle);
+}
+
+/** Model helper — set operational status (e.g. in_operation). Not wired to UI yet. */
+export function setVehicleStatus(
+  id: string,
+  status: VehicleOperationalStatus,
+): VehicleRecord | undefined {
+  const state = load();
+  const vehicle = state.vehicles.find((v) => v.id === id);
+  if (!vehicle) return undefined;
+  vehicle.status = status;
+  vehicle.availability = legacyAvailabilityFromStatus(status);
+  save(state);
+  return normalizeVehicleRecord(vehicle);
+}
+
+export function setVehicleCompany(
+  id: string,
+  companyId: string | null,
+): VehicleRecord | undefined {
+  const state = load();
+  const vehicle = state.vehicles.find((v) => v.id === id);
+  if (!vehicle) return undefined;
+  vehicle.companyId = companyId;
+  save(state);
+  return normalizeVehicleRecord(vehicle);
 }
 
 export function addVehicleDocument(input: {

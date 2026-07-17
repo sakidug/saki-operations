@@ -92,12 +92,17 @@ export class OperationsSessionEngine {
       moduleId: input.moduleId,
       employeeId: input.employeeId,
       vehicleId: input.vehicleId ?? null,
+      companyId: input.companyId ?? null,
+      driverId: input.driverId ?? null,
+      assistantIds: [...(input.assistantIds ?? [])],
+      operatorId: input.operatorId ?? null,
       startTime: null,
       endTime: null,
       workingDurationMs: null,
       startOdometer: null,
       endOdometer: null,
       totalKm: null,
+      distanceKm: null,
       customFields: { ...(input.customFields ?? {}) },
       evidenceIds: [],
       offlineStatus: 'local',
@@ -125,8 +130,20 @@ export class OperationsSessionEngine {
     status?: OperationsSessionStatus | OperationsSessionStatus[];
     moduleId?: string;
     employeeId?: string;
+    vehicleId?: string;
   }): Promise<OperationsSession[]> {
     return this.repo.listSessions(filter);
+  }
+
+  /**
+   * List sessions that currently occupy a vehicle.
+   * Model support for one-active-per-vehicle — does **not** enforce uniqueness.
+   */
+  async listActiveByVehicle(
+    vehicleId: string,
+    filter?: { moduleId?: string },
+  ): Promise<OperationsSession[]> {
+    return this.repo.listVehicleOccupying(vehicleId, filter);
   }
 
   async setVehicle(sessionId: string, vehicleId: string | null): Promise<OperationsSession> {
@@ -136,6 +153,33 @@ export class OperationsSessionEngine {
       vehicleId,
       updatedAt: nowIso(),
       revision: session.revision + 1,
+    });
+  }
+
+  /**
+   * Set Operations V2 company / crew fields. Does not validate vehicle uniqueness.
+   */
+  async setOperationCrew(
+    sessionId: string,
+    crew: {
+      companyId?: string | null;
+      driverId?: string | null;
+      assistantIds?: readonly string[];
+      operatorId?: string | null;
+    },
+  ): Promise<OperationsSession> {
+    const session = await this.requireSession(sessionId);
+    return this.persist({
+      ...session,
+      companyId: crew.companyId !== undefined ? crew.companyId : session.companyId,
+      driverId: crew.driverId !== undefined ? crew.driverId : session.driverId,
+      assistantIds:
+        crew.assistantIds !== undefined ? [...crew.assistantIds] : session.assistantIds,
+      operatorId: crew.operatorId !== undefined ? crew.operatorId : session.operatorId,
+      updatedAt: nowIso(),
+      revision: session.revision + 1,
+      offlineStatus: session.status === 'synced' ? session.offlineStatus : 'local',
+      uploadStatus: session.status === 'synced' ? session.uploadStatus : 'pending',
     });
   }
 
@@ -198,6 +242,8 @@ export class OperationsSessionEngine {
       endTime,
       workingDurationMs,
       totalKm,
+      // Operations V2 — distance calculated at completion (mirrors totalKm)
+      distanceKm: totalKm ?? session.distanceKm ?? null,
       offlineStatus: 'queued',
       uploadStatus: 'pending',
     }));
