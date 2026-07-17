@@ -15,8 +15,10 @@ import {
 } from '../types';
 
 const DB_NAME = 'saki-operations-sessions';
-/** v2: vehicleId index for Operations V2 one-active-per-vehicle lookups */
-const DB_VERSION = 2;
+/** v2: vehicleId index for Operations V2 one-active-per-vehicle lookups
+ *  v3: drop unused evidence type/uploadStatus indexes (queries use sessionId only)
+ */
+const DB_VERSION = 3;
 const SESSIONS = 'sessions';
 const EVIDENCE = 'evidence';
 
@@ -41,6 +43,19 @@ function ensureSessionIndexes(store: IDBObjectStore): void {
   }
 }
 
+function ensureEvidenceIndexes(store: IDBObjectStore): void {
+  if (!store.indexNames.contains('sessionId')) {
+    store.createIndex('sessionId', 'sessionId', { unique: false });
+  }
+  // Legacy unused indexes from earlier schema versions.
+  if (store.indexNames.contains('type')) {
+    store.deleteIndex('type');
+  }
+  if (store.indexNames.contains('uploadStatus')) {
+    store.deleteIndex('uploadStatus');
+  }
+}
+
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
@@ -55,9 +70,10 @@ function openDb(): Promise<IDBDatabase> {
       }
       if (!db.objectStoreNames.contains(EVIDENCE)) {
         const store = db.createObjectStore(EVIDENCE, { keyPath: 'id' });
-        store.createIndex('sessionId', 'sessionId', { unique: false });
-        store.createIndex('type', 'type', { unique: false });
-        store.createIndex('uploadStatus', 'uploadStatus', { unique: false });
+        ensureEvidenceIndexes(store);
+      } else {
+        const store = request.transaction?.objectStore(EVIDENCE);
+        if (store) ensureEvidenceIndexes(store);
       }
     };
     request.onsuccess = () => resolve(request.result);

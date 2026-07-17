@@ -1,7 +1,8 @@
 import type { OperationsSession } from '@saki-operations/operations-session';
 
 const DB_NAME = 'saki-operations-gps';
-const DB_VERSION = 1;
+/** v2: drop unused timestamp index (points are queried by sessionId only). */
+const DB_VERSION = 2;
 const GPS_POINTS = 'gpsPoints';
 
 export const GPS_POOR_ACCURACY_METERS = 50;
@@ -86,8 +87,9 @@ function ensureGpsIndexes(store: IDBObjectStore): void {
   if (!store.indexNames.contains('sessionId')) {
     store.createIndex('sessionId', 'sessionId', { unique: false });
   }
-  if (!store.indexNames.contains('timestamp')) {
-    store.createIndex('timestamp', 'timestamp', { unique: false });
+  // Remove unused timestamp index from earlier installs (never queried).
+  if (store.indexNames.contains('timestamp')) {
+    store.deleteIndex('timestamp');
   }
 }
 

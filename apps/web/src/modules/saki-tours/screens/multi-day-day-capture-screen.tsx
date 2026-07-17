@@ -10,7 +10,6 @@ import { OdometerCapture, type AcceptedOdometerReading } from '@saki-operations/
 import { useAppTranslation } from '@saki-operations/i18n';
 import { Badge, Button, Card, LoadingSpinner } from '@saki-operations/ui';
 
-import { useNetwork } from '@/app/bootstrap/network-provider';
 import { FadeIn } from '@/app/screens/loading/fade-in';
 import {
   buildSakiToursOperationCompletedPath,
@@ -25,6 +24,7 @@ import {
   commitMultiDayStartTime,
 } from '../lib/commit-multi-day-day';
 import { commitMultiDayFinish } from '../lib/commit-multi-day-finish';
+import { reportOperationError } from '../lib/report-operation-error';
 import {
   createInitialMultiDayRecords,
   getCurrentDayNumber,
@@ -49,7 +49,6 @@ import type { TimeEvidenceCapture } from '../types';
 export function MultiDayDayCaptureScreen() {
   const { sessionId } = useParams<{ sessionId: string }>();
   const { t, i18n } = useAppTranslation();
-  const { isOnline } = useNetwork();
   const navigate = useNavigate();
 
   const [session, setSession] = useState<OperationsSession | null>(null);
@@ -119,7 +118,8 @@ export function MultiDayDayCaptureScreen() {
       const next = await commitMultiDayStartTime({ sessionId, capture });
       setSession(next);
       navigate(buildSakiToursOperationPath(sessionId), { replace: true });
-    } catch {
+    } catch (err) {
+      reportOperationError('multi-day-start-time', err);
       setError(t('toursOps.multiDay.captureFailed'));
     } finally {
       setSaving(false);
@@ -134,7 +134,8 @@ export function MultiDayDayCaptureScreen() {
       const next = await commitMultiDayEndTime({ sessionId, capture });
       setSession(next);
       navigate(buildSakiToursOperationPath(sessionId), { replace: true });
-    } catch {
+    } catch (err) {
+      reportOperationError('multi-day-end-time', err);
       setError(t('toursOps.multiDay.captureFailed'));
     } finally {
       setSaving(false);
@@ -153,7 +154,8 @@ export function MultiDayDayCaptureScreen() {
         employeeId: session!.employeeId,
       });
       navigate(buildSakiToursOperationCompletedPath(sessionId), { replace: true });
-    } catch {
+    } catch (err) {
+      reportOperationError('multi-day-finish', err);
       setError(t('toursOps.multiDay.finishFailed'));
     } finally {
       setSaving(false);

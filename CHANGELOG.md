@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Operations V2 — **Alpha 2 Stabilization** (no new features)
+  - Cleared remaining ESLint unused-variable errors in Tours/HHCO multi-day helpers and day-capture screens
+  - Removed dead old Start workflow UI (`hire-type-step`, `trip-details-step`) and unused Tours wizard/trip i18n keys while keeping hire-type labels for historical records
+  - Aligned Start/Finish wizard sticky footer button spacing (`min-w`, no wrap misalignment) and fixed Confirm step heading indentation
+  - IndexedDB cleanup: GPS store drops unused `timestamp` index (v2); session evidence store drops unused `type`/`uploadStatus` indexes (v3); `sessionId` retained
+  - Operation error catches now log diagnostics in development via `reportOperationError` without changing user-facing messages
+
 - Operations V2 — **Phase 5 GPS Tracking** (local-only; no sync/server/admin map changes)
   - Starts browser GPS tracking immediately after a successful Start Operation and stops it immediately after Finish Operation
   - Stores GPS points locally in IndexedDB with latitude, longitude, timestamp, accuracy, battery level, and online/offline network status

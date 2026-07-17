@@ -10,7 +10,6 @@ import { OdometerCapture, type AcceptedOdometerReading } from '@saki-operations/
 import { useAppTranslation } from '@saki-operations/i18n';
 import { Badge, Button, Card, LoadingSpinner } from '@saki-operations/ui';
 
-import { useNetwork } from '@/app/bootstrap/network-provider';
 import { FadeIn } from '@/app/screens/loading/fade-in';
 import {
   buildHhcoOperationCompletedPath,
@@ -49,7 +48,6 @@ import type { TimeEvidenceCapture } from '../types';
 export function MultiDayDayCaptureScreen() {
   const { sessionId } = useParams<{ sessionId: string }>();
   const { t, i18n } = useAppTranslation();
-  const { isOnline } = useNetwork();
   const navigate = useNavigate();
 
   const [session, setSession] = useState<OperationsSession | null>(null);

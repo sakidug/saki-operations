@@ -115,7 +115,6 @@ export function getRequiredTasksForDay(
 export function getDayTasks(session: OperationsSession, day: number): DayTask[] {
   const record = getMultiDayRecords(session).find((item) => item.day === day);
   const required = getRequiredTasksForDay(session, day);
-  const finalDay = isFinalDay(session, day);
   const hasEndOdometer = session.endOdometer != null;
 
   return required.map((id) => {

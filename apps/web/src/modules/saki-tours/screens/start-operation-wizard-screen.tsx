@@ -34,6 +34,7 @@ import {
   commitStartOperation,
 } from '../lib/commit-start-operation';
 import { findActiveToursSession } from '../lib/find-active-session';
+import { reportOperationError } from '../lib/report-operation-error';
 import {
   resolveToursVehicleStatuses,
   type ToursVehicleStatus,
@@ -301,6 +302,7 @@ export function StartOperationWizardScreen() {
         setError(t('toursOps.vehicleBlocked.title'));
         setStep(2);
       } else {
+        reportOperationError('start-operation', err);
         setError(t('toursOps.wizard.startFailed'));
       }
     } finally {
@@ -497,8 +499,8 @@ export function StartOperationWizardScreen() {
               </div>
               <div>
                 <h2 className="text-xl font-semibold tracking-tight text-foreground">
-                {t('toursOps.confirm.title')}
-              </h2>
+                  {t('toursOps.confirm.title')}
+                </h2>
                 <p className="mt-1 text-sm text-muted-foreground">{t('toursOps.confirm.description')}</p>
               </div>
             </div>
@@ -540,11 +542,12 @@ export function StartOperationWizardScreen() {
           </p>
         ) : null}
 
-        <div className="sticky bottom-0 -mx-6 flex flex-wrap items-center justify-between gap-3 border-t border-border/60 bg-card/95 px-6 py-4 backdrop-blur">
+        <div className="sticky bottom-0 -mx-6 flex items-center justify-between gap-3 border-t border-border/60 bg-card/95 px-6 py-4 backdrop-blur">
           <Button
             type="button"
             variant="secondary"
             size="lg"
+            className="min-w-[7.5rem]"
             disabled={step === 1 || submitting}
             onClick={() => {
               setError(null);
@@ -559,6 +562,7 @@ export function StartOperationWizardScreen() {
             <Button
               type="button"
               size="lg"
+              className="min-w-[7.5rem]"
               disabled={!nextEnabled}
               onClick={() => {
                 setError(null);
@@ -572,6 +576,7 @@ export function StartOperationWizardScreen() {
             <Button
               type="button"
               size="lg"
+              className="min-w-[7.5rem]"
               loading={submitting}
               disabled={!canAdvance(7, draft) || submitting}
               onClick={() => void onStart()}

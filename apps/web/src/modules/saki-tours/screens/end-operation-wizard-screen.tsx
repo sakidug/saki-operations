@@ -25,6 +25,7 @@ import {
 } from '@/app/router/paths';
 
 import { commitEndOperation } from '../lib/commit-end-operation';
+import { reportOperationError } from '../lib/report-operation-error';
 import {
   formatKm,
   getSessionAssistantsLabel,
@@ -203,7 +204,8 @@ export function EndOperationWizardScreen() {
         employeeId: session.employeeId,
       });
       navigate(buildSakiToursOperationCompletedPath(sessionId), { replace: true });
-    } catch {
+    } catch (err) {
+      reportOperationError('finish-operation', err);
       setError(t('toursOps.endWizard.finishFailed'));
     } finally {
       setSubmitting(false);
@@ -386,11 +388,12 @@ export function EndOperationWizardScreen() {
             </p>
           ) : null}
 
-          <div className="sticky bottom-0 -mx-6 flex flex-wrap items-center justify-between gap-3 border-t border-border/60 bg-card/95 px-6 py-4 backdrop-blur">
+          <div className="sticky bottom-0 -mx-6 flex items-center justify-between gap-3 border-t border-border/60 bg-card/95 px-6 py-4 backdrop-blur">
             <Button
               type="button"
               variant="secondary"
               size="lg"
+              className="min-w-[7.5rem]"
               disabled={step === 1 || submitting}
               onClick={() => {
                 setError(null);
@@ -405,6 +408,7 @@ export function EndOperationWizardScreen() {
               <Button
                 type="button"
                 size="lg"
+                className="min-w-[7.5rem]"
                 disabled={!canAdvance(step)}
                 onClick={() => {
                   setError(null);
@@ -418,6 +422,7 @@ export function EndOperationWizardScreen() {
               <Button
                 type="button"
                 size="lg"
+                className="min-w-[7.5rem]"
                 loading={submitting}
                 disabled={!canAdvance(4) || submitting}
                 onClick={() => void onFinish()}

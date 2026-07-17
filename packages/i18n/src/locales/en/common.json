@@ -428,10 +428,6 @@
       "stepDestination": "Enter the destination.",
       "stepOdometerPhoto": "Take the start odometer photo.",
       "stepStartKm": "Confirm the start KM.",
-      "stepHireType": "Choose the hire type.",
-      "stepTrip": "Enter route and number of days.",
-      "stepOdometer": "Capture the start odometer.",
-      "stepStartTime": "Capture start time with a photo.",
       "stepConfirm": "Review and start the operation.",
       "back": "Back",
       "next": "Next",
@@ -448,7 +444,6 @@
       "title": "Select vehicle",
       "label": "Vehicle",
       "description": "Choose the vehicle for this operation.",
-      "selectorDescription": "Choose an available vehicle. Unavailable options stay disabled.",
       "checking": "Checking vehicle availability…",
       "seats": "Seats {{count}}",
       "statusAvailable": "Available",
@@ -492,16 +487,6 @@
       "tourHint": "Day tour or multi-day tour hire."
     },
     "trip": {
-      "title": "Trip details",
-      "description": "Locations and duration for this session.",
-      "startLocation": "Start location",
-      "startLocationPlaceholder": "Where work starts",
-      "destination": "Destination",
-      "destinationPlaceholder": "Main destination",
-      "endingLocation": "Ending location",
-      "endingLocationPlaceholder": "Where the hire ends",
-      "numberOfDays": "Number of days",
-      "singleDayHint": "Single-day operation.",
       "multiDayBadge": "Multi-day operation"
     },
     "odometer": {
@@ -650,11 +635,8 @@
     },
     "endWizard": {
       "title": "Finish Operation",
-      "stepOdometer": "Capture the end odometer.",
       "stepOdometerPhoto": "Take the end odometer photo.",
       "stepEndKm": "Confirm the end KM.",
-      "stepEndTime": "Capture end work time with a photo.",
-      "stepTotals": "Review calculated working hours and KM.",
       "stepReview": "Review operation details.",
       "stepFinish": "Finish the operation.",
       "finish": "Finish Operation",
