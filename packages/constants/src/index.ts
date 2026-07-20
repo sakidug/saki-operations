@@ -13,6 +13,7 @@ export const APP_PERMISSIONS = [
   'employees.manage',
   'office.view',
   'reports.view',
+  'fleet.planner',
   'payroll.manage',
   'settings.manage',
 ] as const satisfies readonly AppPermission[];
@@ -36,6 +37,7 @@ export const ROLE_PERMISSIONS: Record<AppRole, AppPermission[]> = {
     'employees.manage',
     'office.view',
     'reports.view',
+    'fleet.planner',
     'settings.manage',
   ],
   admin: [...APP_PERMISSIONS],
@@ -50,6 +52,7 @@ export const MODULE_ACCESS_PERMISSION = {
   employees: 'employees.view',
   officeDashboard: 'office.view',
   reports: 'reports.view',
+  fleetPlanner: 'fleet.planner',
 } as const satisfies Record<string, AppPermission>;
 
 export type ModuleAccessKey = keyof typeof MODULE_ACCESS_PERMISSION;

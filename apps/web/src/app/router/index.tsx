@@ -191,6 +191,31 @@ const ReportDetailScreen = lazy(() =>
     default: m.ReportDetailScreen,
   })),
 );
+const FleetPlannerShell = lazy(() =>
+  import('@/modules/fleet-planner/screens/fleet-planner-shell').then((m) => ({
+    default: m.FleetPlannerShell,
+  })),
+);
+const FleetPlannerCalendarScreen = lazy(() =>
+  import('@/modules/fleet-planner/screens/fleet-planner-calendar-screen').then((m) => ({
+    default: m.FleetPlannerCalendarScreen,
+  })),
+);
+const FleetPlannerAddScreen = lazy(() =>
+  import('@/modules/fleet-planner/screens/fleet-planner-add-screen').then((m) => ({
+    default: m.FleetPlannerAddScreen,
+  })),
+);
+const FleetPlannerListScreen = lazy(() =>
+  import('@/modules/fleet-planner/screens/fleet-planner-list-screen').then((m) => ({
+    default: m.FleetPlannerListScreen,
+  })),
+);
+const FleetPlannerEditScreen = lazy(() =>
+  import('@/modules/fleet-planner/screens/fleet-planner-edit-screen').then((m) => ({
+    default: m.FleetPlannerEditScreen,
+  })),
+);
 const NotFoundScreen = lazy(() =>
   import('@/app/screens/errors/error-screens').then((m) => ({ default: m.NotFoundScreen })),
 );
@@ -574,6 +599,52 @@ export const appRouter = createBrowserRouter([
                         <ReportsHomeScreen />
                       </Suspend>
                     ),
+                  },
+                ],
+              },
+              {
+                element: <RequirePermission permission={MODULE_ACCESS_PERMISSION.fleetPlanner} />,
+                children: [
+                  {
+                    element: (
+                      <Suspend>
+                        <FleetPlannerShell />
+                      </Suspend>
+                    ),
+                    children: [
+                      {
+                        path: paths.fleetPlanner,
+                        element: (
+                          <Suspend>
+                            <FleetPlannerCalendarScreen />
+                          </Suspend>
+                        ),
+                      },
+                      {
+                        path: paths.fleetPlannerAdd,
+                        element: (
+                          <Suspend>
+                            <FleetPlannerAddScreen />
+                          </Suspend>
+                        ),
+                      },
+                      {
+                        path: paths.fleetPlannerList,
+                        element: (
+                          <Suspend>
+                            <FleetPlannerListScreen />
+                          </Suspend>
+                        ),
+                      },
+                      {
+                        path: paths.fleetPlannerEdit,
+                        element: (
+                          <Suspend>
+                            <FleetPlannerEditScreen />
+                          </Suspend>
+                        ),
+                      },
+                    ],
                   },
                 ],
               },

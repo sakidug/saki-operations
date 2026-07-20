@@ -13,6 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Fleet Planner** (office/admin only) — lightweight vehicle availability planner
+  - Calendar month view highlights Hold (🟡) and Booked (🔴) dates only; day panel lists vehicle, status, and dates
+  - Vehicle filter, Add Availability, Availability List with Edit/Delete
+  - Overlap conflict detection blocks saving with reserved-period messaging
+  - Dedicated local store (`saki.ops.fleet-planner.v1`); permission `fleet.planner` (office + admin)
+  - Sidebar/bottom nav entry for permitted roles; employees do not see the module
+  - Employee entry, Start/Finish Operation, GPS, vehicle locking, session engine, IndexedDB sessions, auth, dashboard, reports, and sync payloads unchanged
+
 - **Employee Entry Experience** (Phase 10.3 / ADR-012) — guest field home; employees do not authenticate
   - New `/entry` landing: Saki Operations / Fleet Operations System with Start Operation, Language, and Admin Login
   - Active device operation replaces Start with Continue Operation (immediate resume)

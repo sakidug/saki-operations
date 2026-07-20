@@ -40,6 +40,7 @@ export type AppPermission =
   | 'employees.manage'
   | 'office.view'
   | 'reports.view'
+  | 'fleet.planner'
   | 'payroll.manage'
   | 'settings.manage';
 export type AuthUser = {

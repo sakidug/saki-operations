@@ -44,6 +44,11 @@ export const paths = {
   officeDashboard: '/modules/office-dashboard',
   reports: '/modules/reports',
   reportDetail: '/modules/reports/:reportType',
+  /** Fleet Planner — office/admin vehicle availability (not bookings) */
+  fleetPlanner: '/modules/fleet-planner',
+  fleetPlannerAdd: '/modules/fleet-planner/add',
+  fleetPlannerList: '/modules/fleet-planner/list',
+  fleetPlannerEdit: '/modules/fleet-planner/:id/edit',
   notFound: '/404',
   offline: '/offline',
   maintenance: '/maintenance',
@@ -127,4 +132,8 @@ export function buildReportDetailPath(
   const base = `/modules/reports/${encodeURIComponent(reportType)}`;
   if (!period) return base;
   return `${base}?period=${encodeURIComponent(period)}`;
+}
+
+export function buildFleetPlannerEditPath(id: string): string {
+  return `/modules/fleet-planner/${encodeURIComponent(id)}/edit`;
 }

@@ -74,8 +74,10 @@ That desktop system remains the **only** booking and office management system fo
 | 10.1  | Enterprise Build Information                | Completed |
 | 10.2  | Production Polish (identity / confidence)   | Completed |
 | 10.3  | Employee Entry Experience (guest home)      | Completed |
+| 10.4  | Fleet Planner (office availability)         | Completed |
 | —     | **v1.0.0 Production Release**             | **Awaiting leadership approval** |
 
+> Phase 10.4 adds office/admin Fleet Planner for vehicle availability (Hold/Booked) only — not bookings. No field-ops, GPS, session, sync, or dashboard changes.  
 > Phase 10.3 is a UX/auth-boundary refactor: guest entry home, driver-owned field sessions, admin/office-only JWT. GPS, vehicle locking, finish, sync, and IndexedDB schema are unchanged.  
 > Phase 10.2 is polish-only (branding, splash, icons, About, health, diagnostics, docs). No business workflow changes.  
 > Phase 9.5 on **v0.9.3** recommends **READY FOR v1.0.0**. Prior Critical/High blockers verified closed. Tag only after leadership approval.  

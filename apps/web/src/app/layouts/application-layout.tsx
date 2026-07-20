@@ -1,8 +1,10 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Bell, Home, Settings, User } from 'lucide-react';
+import { Bell, CalendarDays, Home, Settings, User } from 'lucide-react';
+import { canAccessModule } from '@saki-operations/constants';
 import { useAppTranslation } from '@saki-operations/i18n';
 
+import { useSession } from '@/app/bootstrap/session-provider';
 import { AppBottomNav } from '@/app/navigation/app-bottom-nav';
 import { AppSidebar } from '@/app/navigation/app-sidebar';
 import { AppTopNav } from '@/app/navigation/app-top-nav';
@@ -24,6 +26,7 @@ export type ApplicationLayoutProps = {
  */
 export function ApplicationLayout({ children }: ApplicationLayoutProps) {
   const { t } = useAppTranslation();
+  const { user } = useSession();
   const navigate = useNavigate();
   const location = useLocation();
   const isDesktop = useMediaQuery('(min-width: 1024px)');
@@ -34,36 +37,54 @@ export function ApplicationLayout({ children }: ApplicationLayoutProps) {
     setSidebarOpen(false);
   }, [location.pathname]);
 
-  const navItems = [
-    {
-      key: 'home',
-      label: t('shell.nav.home'),
-      icon: <Home />,
-      href: paths.home,
-      active: location.pathname === paths.home,
-    },
-    {
-      key: 'notifications',
-      label: t('shell.nav.notifications'),
-      icon: <Bell />,
-      href: paths.notifications,
-      active: location.pathname === paths.notifications,
-    },
-    {
-      key: 'profile',
-      label: t('shell.nav.profile'),
-      icon: <User />,
-      href: paths.profile,
-      active: location.pathname === paths.profile,
-    },
-    {
-      key: 'settings',
-      label: t('shell.nav.settings'),
-      icon: <Settings />,
-      href: paths.settings,
-      active: location.pathname === paths.settings,
-    },
-  ];
+  const showFleetPlanner = Boolean(
+    user && canAccessModule(user.permissions, 'fleetPlanner'),
+  );
+
+  const navItems = useMemo(() => {
+    const items = [
+      {
+        key: 'home',
+        label: t('shell.nav.home'),
+        icon: <Home />,
+        href: paths.home,
+        active: location.pathname === paths.home,
+      },
+      ...(showFleetPlanner
+        ? [
+            {
+              key: 'fleetPlanner',
+              label: t('shell.nav.fleetPlanner'),
+              icon: <CalendarDays />,
+              href: paths.fleetPlanner,
+              active: location.pathname.startsWith(paths.fleetPlanner),
+            },
+          ]
+        : []),
+      {
+        key: 'notifications',
+        label: t('shell.nav.notifications'),
+        icon: <Bell />,
+        href: paths.notifications,
+        active: location.pathname === paths.notifications,
+      },
+      {
+        key: 'profile',
+        label: t('shell.nav.profile'),
+        icon: <User />,
+        href: paths.profile,
+        active: location.pathname === paths.profile,
+      },
+      {
+        key: 'settings',
+        label: t('shell.nav.settings'),
+        icon: <Settings />,
+        href: paths.settings,
+        active: location.pathname === paths.settings,
+      },
+    ];
+    return items;
+  }, [location.pathname, showFleetPlanner, t]);
 
   const showSidebar = isTablet;
   const showBottomNav = !isTablet;

@@ -28,6 +28,7 @@ export class ModulesController {
           employees: canAccessModule(user.permissions, 'employees'),
           officeDashboard: canAccessModule(user.permissions, 'officeDashboard'),
           reports: canAccessModule(user.permissions, 'reports'),
+          fleetPlanner: canAccessModule(user.permissions, 'fleetPlanner'),
         },
       },
     };
@@ -75,5 +76,12 @@ export class ModulesController {
   @Roles('office', 'admin')
   reports() {
     return { data: { module: 'reports', allowed: true } };
+  }
+
+  @Get('fleet-planner')
+  @Permissions(MODULE_ACCESS_PERMISSION.fleetPlanner)
+  @Roles('office', 'admin')
+  fleetPlanner() {
+    return { data: { module: 'fleetPlanner', allowed: true } };
   }
 }

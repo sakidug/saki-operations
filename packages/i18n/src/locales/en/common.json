@@ -11,6 +11,60 @@
     "language": "Language",
     "adminLogin": "Admin Login"
   },
+  "fleetPlanner": {
+    "badge": "Office",
+    "title": "Fleet Planner",
+    "description": "Track vehicle availability to prevent double-booking. This is not a booking system.",
+    "tabs": {
+      "region": "Fleet Planner sections",
+      "calendar": "Calendar",
+      "add": "Add Availability",
+      "list": "Availability List"
+    },
+    "fields": {
+      "vehicle": "Vehicle",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "status": "Status"
+    },
+    "status": {
+      "HOLD": "Hold",
+      "BOOKED": "Booked"
+    },
+    "calendar": {
+      "vehicleFilter": "Vehicle",
+      "allVehicles": "All Vehicles",
+      "prevMonth": "Previous month",
+      "nextMonth": "Next month",
+      "dayWithAvailability": "Availability on {{date}}",
+      "dayPanelTitle": "Reservations",
+      "dayPanelEmpty": "No reservations on this date."
+    },
+    "add": {
+      "title": "Add Availability"
+    },
+    "edit": {
+      "title": "Edit Availability"
+    },
+    "list": {
+      "title": "Availability List",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteConfirm": "Delete this availability record?",
+      "emptyTitle": "No availability records",
+      "emptyDescription": "Add a Hold or Booked period for a vehicle to see it here."
+    },
+    "form": {
+      "selectVehicle": "Select a vehicle",
+      "save": "Save",
+      "required": "Please fill in all required fields.",
+      "invalidRange": "End date must be on or after the start date.",
+      "conflict": "This vehicle is already reserved during the selected period.",
+      "saveFailed": "Could not save availability. Try again.",
+      "notFound": "This availability record was not found.",
+      "backToList": "Back to list"
+    }
+  },
   "languages": {
     "en": "English",
     "si": "Sinhala",
@@ -146,6 +200,7 @@
   "shell": {
     "nav": {
       "home": "Home",
+      "fleetPlanner": "Fleet Planner",
       "profile": "Profile",
       "notifications": "Notifications",
       "settings": "Settings",
