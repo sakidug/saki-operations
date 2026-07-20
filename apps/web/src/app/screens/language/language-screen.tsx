@@ -1,11 +1,10 @@
 import { motion, useReducedMotion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, LoadingSpinner } from '@saki-operations/ui';
 import { useAppTranslation, useLocale, type AppLocale } from '@saki-operations/i18n';
 
 import { useBootstrap } from '@/app/bootstrap/bootstrap-provider';
-import { STORAGE_KEYS } from '@/app/bootstrap/constants';
 import { FullScreenLayout } from '@/app/layouts/shell-layouts';
 import { paths } from '@/app/router/paths';
 
@@ -21,30 +20,17 @@ const options: Array<{
 export function LanguageScreen() {
   const { t } = useAppTranslation();
   const { setLocale } = useLocale();
-  const { acknowledgeLanguageSelected, snapshot } = useBootstrap();
+  const { acknowledgeLanguageSelected } = useBootstrap();
   const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
   const [selectingCode, setSelectingCode] = useState<AppLocale | null>(null);
-
-  useEffect(() => {
-    try {
-      const alreadySelected =
-        snapshot?.languageSelected === true ||
-        window.localStorage.getItem(STORAGE_KEYS.languageSelected) === 'true';
-      if (alreadySelected) {
-        navigate(paths.login, { replace: true });
-      }
-    } catch {
-      // ignore storage failures
-    }
-  }, [navigate, snapshot?.languageSelected]);
 
   const choose = async (code: AppLocale) => {
     setSelectingCode(code);
     try {
       await setLocale(code);
       acknowledgeLanguageSelected();
-      navigate(paths.login, { replace: true });
+      navigate(paths.entry, { replace: true });
     } catch {
       setSelectingCode(null);
     }

@@ -1,10 +1,13 @@
 export const paths = {
   splash: '/',
   language: '/language',
+  /** Guest employee landing — Start / Continue Operation (no JWT). */
+  entry: '/entry',
   login: '/login',
   forgotPassword: '/forgot-password',
   resetPassword: '/reset-password',
   changePassword: '/change-password',
+  /** Authenticated admin / office dashboard */
   home: '/home',
   profile: '/profile',
   notifications: '/notifications',

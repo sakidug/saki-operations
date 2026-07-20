@@ -13,6 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Employee Entry Experience** (Phase 10.3 / ADR-012) — guest field home; employees do not authenticate
+  - New `/entry` landing: Saki Operations / Fleet Operations System with Start Operation, Language, and Admin Login
+  - Active device operation replaces Start with Continue Operation (immediate resume)
+  - Field Start/Continue/Finish routes are guest-accessible under a minimal field layout
+  - Selected driver is session owner (`employeeId` / `operatorId`); HHCO Start adds a Driver step for ownership
+  - Company step (Saki Tours / HHCO) routes HHCO into the HHCO wizard (module selector; no extra chooser)
+  - JWT login reserved for office/admin; field-role sign-in is rejected in the SPA; `/home` admin dashboard preserved
+  - GPS, vehicle locking, finish workflow, IndexedDB schema, sync payloads, and admin tools unchanged
+
 - Operations V2 — **Alpha 2 Stabilization** (no new features)
   - Cleared remaining ESLint unused-variable errors in Tours/HHCO multi-day helpers and day-capture screens
   - Removed dead old Start workflow UI (`hire-type-step`, `trip-details-step`) and unused Tours wizard/trip i18n keys while keeping hire-type labels for historical records

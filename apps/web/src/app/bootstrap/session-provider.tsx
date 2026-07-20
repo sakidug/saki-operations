@@ -25,7 +25,7 @@ type SessionContextValue = {
   status: SessionStatus;
   user: AuthUser | null;
   isAuthenticated: boolean;
-  login: (input: LoginRequest) => Promise<void>;
+  login: (input: LoginRequest) => Promise<AuthUser>;
   logout: () => Promise<void>;
   refresh: () => Promise<boolean>;
   restore: () => Promise<void>;
@@ -118,6 +118,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     async (input: LoginRequest) => {
       const session = await authApi.login(input);
       applySession(session, Boolean(input.rememberMe));
+      return session.user;
     },
     [applySession],
   );

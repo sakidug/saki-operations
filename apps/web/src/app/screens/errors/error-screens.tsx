@@ -72,7 +72,7 @@ export function NotFoundScreen() {
     <ErrorPageShell
       title={t('shell.errors.notFoundTitle')}
       description={t('shell.errors.notFoundDescription')}
-      primaryAction={{ label: t('shell.errors.goHome'), href: paths.home }}
+      primaryAction={{ label: t('shell.errors.goHome'), href: paths.entry }}
     />
   );
 }
@@ -87,7 +87,7 @@ export function OfflineScreen() {
         label: t('actions.retry'),
         onClick: () => window.location.reload(),
       }}
-      secondaryAction={{ label: t('shell.errors.goHome'), href: paths.home }}
+      secondaryAction={{ label: t('shell.errors.goHome'), href: paths.entry }}
     />
   );
 }
@@ -110,7 +110,7 @@ export function GenericErrorScreen() {
       title={t('shell.errors.genericTitle')}
       description={t('shell.errors.genericDescription')}
       primaryAction={{ label: t('actions.retry'), onClick: () => window.location.reload() }}
-      secondaryAction={{ label: t('shell.errors.goHome'), href: paths.home }}
+      secondaryAction={{ label: t('shell.errors.goHome'), href: paths.entry }}
     />
   );
 }

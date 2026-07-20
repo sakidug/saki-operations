@@ -22,7 +22,8 @@ Format inspired by [Michael Nygard’s ADR model](https://cognitect.com/blog/201
 | ADR-008 | Dark-default multi-brand design tokens    | Accepted | 2026-07-13 |
 | ADR-009 | i18next for English + Sinhala             | Accepted | 2026-07-13 |
 | ADR-010 | Prisma + dedicated database package       | Accepted | 2026-07-13 |
-| ADR-011 | JWT auth with refresh rotation + roles    | Accepted | 2026-07-14 |
+| ADR-011 | JWT auth with refresh rotation + roles    | Accepted (field auth superseded by ADR-012) | 2026-07-14 |
+| ADR-012 | Guest employee entry; admin/office auth only | Accepted | 2026-07-20 |
 
 ---
 
@@ -202,7 +203,7 @@ Format inspired by [Michael Nygard’s ADR model](https://cognitect.com/blog/201
 
 ## ADR-011 — JWT auth with refresh rotation + roles
 
-**Status:** Accepted
+**Status:** Accepted (field-staff authentication path superseded by ADR-012)
 
 **Context:** Every employee role needs secure authentication before business modules.
 
@@ -218,3 +219,30 @@ Format inspired by [Michael Nygard’s ADR model](https://cognitect.com/blog/201
 - Local login requires Postgres + `pnpm db:migrate` and optional `ALLOW_DEV_SEED=true pnpm db:seed`
 - Production cannot accidentally receive demo credentials from application bootstrap
 - Permission UI deferred; guards are ready for future routes
+- **Update (ADR-012):** Drivers and assistants no longer authenticate for field operations; JWT login is reserved for office and admin.
+
+---
+
+## ADR-012 — Guest employee entry; admin/office auth only
+
+**Status:** Accepted
+
+**Context:** Field staff needed a frictionless device home. Requiring JWT login before Start/Continue Operation conflicted with offline-first crew selection (driver chosen in the wizard).
+
+**Decision:**
+- App launch lands on a guest **Employee Entry** screen (`/entry`), not login
+- Employees do **not** authenticate; Start / Continue Operation are guest-accessible
+- Selected **driver** is the operations session `employeeId` / `operatorId` (and `driverId`)
+- Company step (Saki Tours / HHCO) remains the module selector — choosing HHCO routes into the HHCO start wizard
+- JWT authentication is retained for **office** and **admin** only; successful field-role login is rejected in the SPA
+- Authenticated admin/office dashboard at `/home` is unchanged
+
+**Consequences:**
+- Field operation routes live outside `RequireAuth`
+- Device-wide active-operation detection powers Continue on the entry screen
+- Legacy sessions that used JWT `employeeId` remain readable; new sessions are owned by the selected driver
+- Admin tools, sync payloads, GPS tracking internals, vehicle locking, finish workflow, and IndexedDB schema are unchanged
+
+**Alternatives considered:** Cosmetic entry screen that still required JWT (rejected — does not meet “employees do not log in”); separate module chooser before Start (rejected — Company step already selects the module).
+
+---

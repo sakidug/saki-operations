@@ -7,15 +7,15 @@ import { ACTIVE_OPERATION_STATUSES } from './session-display';
 
 /**
  * Find the employee's active Tours operation (started | in_progress).
- * At most one should exist — callers enforce that invariant.
+ * When `employeeId` is omitted, returns the newest active Tours session on this device.
  */
 export async function findActiveToursSession(
-  employeeId: string,
+  employeeId?: string | null,
 ): Promise<OperationsSession | null> {
   const engine = getDefaultOperationsSessionEngine();
   const unfinished = await engine.resumeUnfinished({
     moduleId: 'saki_tours',
-    employeeId,
+    ...(employeeId ? { employeeId } : {}),
   });
 
   const active = unfinished.filter((session) =>

@@ -172,7 +172,7 @@ export function MultiDayDayCaptureScreen() {
         <Card variant="glass" padding="lg" className="space-y-3" data-brand="hhco">
           <h1 className="font-display text-xl font-semibold">{t('hhcoOps.success.missingTitle')}</h1>
           <Button asChild>
-            <Link to={paths.hhco}>{t('hhcoOps.success.backHome')}</Link>
+            <Link to={paths.entry}>{t('hhcoOps.success.backHome')}</Link>
           </Button>
         </Card>
       </FadeIn>

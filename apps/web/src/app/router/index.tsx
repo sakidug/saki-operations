@@ -2,6 +2,7 @@ import { Suspense, type ReactNode, lazy } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { ApplicationLayout } from '@/app/layouts/application-layout';
+import { FieldOperationsLayout } from '@/app/layouts/field-operations-layout';
 import { AuthenticationLayout } from '@/app/layouts/shell-layouts';
 import { RedirectIfAuthenticated, RequireAuth, RequireBootstrap, RequirePermission } from '@/app/router/guards';
 import { MODULE_ACCESS_PERMISSION } from '@saki-operations/constants';
@@ -9,6 +10,11 @@ import { paths } from '@/app/router/paths';
 import { AuthCheckLoadingScreen, LoadingScreen } from '@/app/screens/loading/loading-experience';
 import { SplashScreen } from '@/app/screens/splash/splash-screen';
 
+const EmployeeEntryScreen = lazy(() =>
+  import('@/app/screens/entry/employee-entry-screen').then((m) => ({
+    default: m.EmployeeEntryScreen,
+  })),
+);
 const LanguageScreen = lazy(() =>
   import('@/app/screens/language/language-screen').then((m) => ({ default: m.LanguageScreen })),
 );
@@ -233,6 +239,14 @@ export const appRouter = createBrowserRouter([
     element: <RequireBootstrap />,
     children: [
       {
+        path: paths.entry,
+        element: (
+          <Suspend>
+            <EmployeeEntryScreen />
+          </Suspend>
+        ),
+      },
+      {
         element: <RedirectIfAuthenticated />,
         children: [
           {
@@ -257,6 +271,107 @@ export const appRouter = createBrowserRouter([
               <AuthGate>
                 <ResetPasswordScreen />
               </AuthGate>
+            ),
+          },
+        ],
+      },
+      {
+        element: <FieldOperationsLayout />,
+        children: [
+          {
+            path: paths.sakiToursStart,
+            element: (
+              <Suspend>
+                <StartOperationWizardScreen />
+              </Suspend>
+            ),
+          },
+          {
+            path: paths.sakiToursOperationStarted,
+            element: (
+              <Suspend>
+                <OperationStartedScreen />
+              </Suspend>
+            ),
+          },
+          {
+            path: paths.sakiToursOperationEnd,
+            element: (
+              <Suspend>
+                <EndOperationWizardScreen />
+              </Suspend>
+            ),
+          },
+          {
+            path: paths.sakiToursOperationDay,
+            element: (
+              <Suspend>
+                <MultiDayDayCaptureScreen />
+              </Suspend>
+            ),
+          },
+          {
+            path: paths.sakiToursOperationCompleted,
+            element: (
+              <Suspend>
+                <OperationCompletedScreen />
+              </Suspend>
+            ),
+          },
+          {
+            path: paths.sakiToursOperation,
+            element: (
+              <Suspend>
+                <ContinueOperationScreen />
+              </Suspend>
+            ),
+          },
+          {
+            path: paths.hhcoStart,
+            element: (
+              <Suspend>
+                <HhcoStartWizardScreen />
+              </Suspend>
+            ),
+          },
+          {
+            path: paths.hhcoDeliveryStarted,
+            element: (
+              <Suspend>
+                <HhcoOperationStartedScreen />
+              </Suspend>
+            ),
+          },
+          {
+            path: paths.hhcoDeliveryEnd,
+            element: (
+              <Suspend>
+                <HhcoEndOperationWizardScreen />
+              </Suspend>
+            ),
+          },
+          {
+            path: paths.hhcoDeliveryDay,
+            element: (
+              <Suspend>
+                <HhcoMultiDayDayCaptureScreen />
+              </Suspend>
+            ),
+          },
+          {
+            path: paths.hhcoDeliveryCompleted,
+            element: (
+              <Suspend>
+                <HhcoOperationCompletedScreen />
+              </Suspend>
+            ),
+          },
+          {
+            path: paths.hhcoDelivery,
+            element: (
+              <Suspend>
+                <HhcoContinueOperationScreen />
+              </Suspend>
             ),
           },
         ],
@@ -311,14 +426,6 @@ export const appRouter = createBrowserRouter([
                     ),
                   },
                   {
-                    path: paths.sakiToursStart,
-                    element: (
-                      <Suspend>
-                        <StartOperationWizardScreen />
-                      </Suspend>
-                    ),
-                  },
-                  {
                     path: paths.sakiToursHistoryDetail,
                     element: (
                       <Suspend>
@@ -331,46 +438,6 @@ export const appRouter = createBrowserRouter([
                     element: (
                       <Suspend>
                         <PreviousOperationsScreen />
-                      </Suspend>
-                    ),
-                  },
-                  {
-                    path: paths.sakiToursOperationStarted,
-                    element: (
-                      <Suspend>
-                        <OperationStartedScreen />
-                      </Suspend>
-                    ),
-                  },
-                  {
-                    path: paths.sakiToursOperationEnd,
-                    element: (
-                      <Suspend>
-                        <EndOperationWizardScreen />
-                      </Suspend>
-                    ),
-                  },
-                  {
-                    path: paths.sakiToursOperationDay,
-                    element: (
-                      <Suspend>
-                        <MultiDayDayCaptureScreen />
-                      </Suspend>
-                    ),
-                  },
-                  {
-                    path: paths.sakiToursOperationCompleted,
-                    element: (
-                      <Suspend>
-                        <OperationCompletedScreen />
-                      </Suspend>
-                    ),
-                  },
-                  {
-                    path: paths.sakiToursOperation,
-                    element: (
-                      <Suspend>
-                        <ContinueOperationScreen />
                       </Suspend>
                     ),
                   },
@@ -388,14 +455,6 @@ export const appRouter = createBrowserRouter([
                     ),
                   },
                   {
-                    path: paths.hhcoStart,
-                    element: (
-                      <Suspend>
-                        <HhcoStartWizardScreen />
-                      </Suspend>
-                    ),
-                  },
-                  {
                     path: paths.hhcoHistoryDetail,
                     element: (
                       <Suspend>
@@ -408,46 +467,6 @@ export const appRouter = createBrowserRouter([
                     element: (
                       <Suspend>
                         <HhcoPreviousOperationsScreen />
-                      </Suspend>
-                    ),
-                  },
-                  {
-                    path: paths.hhcoDeliveryStarted,
-                    element: (
-                      <Suspend>
-                        <HhcoOperationStartedScreen />
-                      </Suspend>
-                    ),
-                  },
-                  {
-                    path: paths.hhcoDeliveryEnd,
-                    element: (
-                      <Suspend>
-                        <HhcoEndOperationWizardScreen />
-                      </Suspend>
-                    ),
-                  },
-                  {
-                    path: paths.hhcoDeliveryDay,
-                    element: (
-                      <Suspend>
-                        <HhcoMultiDayDayCaptureScreen />
-                      </Suspend>
-                    ),
-                  },
-                  {
-                    path: paths.hhcoDeliveryCompleted,
-                    element: (
-                      <Suspend>
-                        <HhcoOperationCompletedScreen />
-                      </Suspend>
-                    ),
-                  },
-                  {
-                    path: paths.hhcoDelivery,
-                    element: (
-                      <Suspend>
-                        <HhcoContinueOperationScreen />
                       </Suspend>
                     ),
                   },

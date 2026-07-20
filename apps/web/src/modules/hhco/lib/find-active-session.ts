@@ -6,16 +6,16 @@ import {
 import { ACTIVE_OPERATION_STATUSES } from './session-display';
 
 /**
- * Find the employee's active Tours operation (started | in_progress).
- * At most one should exist — callers enforce that invariant.
+ * Find the employee's active HHCO delivery (started | in_progress).
+ * When `employeeId` is omitted, returns the newest active HHCO session on this device.
  */
 export async function findActiveHhcoSession(
-  employeeId: string,
+  employeeId?: string | null,
 ): Promise<OperationsSession | null> {
   const engine = getDefaultOperationsSessionEngine();
   const unfinished = await engine.resumeUnfinished({
     moduleId: 'hhco',
-    employeeId,
+    ...(employeeId ? { employeeId } : {}),
   });
 
   const active = unfinished.filter((session) =>

@@ -101,7 +101,7 @@ export function ContinueOperationScreen() {
           <h1 className="font-display text-xl font-semibold">{t('toursOps.success.missingTitle')}</h1>
           <p className="text-sm text-muted-foreground">{t('toursOps.continue.notActive')}</p>
           <Button asChild>
-            <Link to={paths.sakiTours}>{t('toursOps.success.backHome')}</Link>
+            <Link to={paths.entry}>{t('toursOps.success.backHome')}</Link>
           </Button>
         </Card>
       </FadeIn>
@@ -205,7 +205,7 @@ export function ContinueOperationScreen() {
               </Button>
             )}
             <Button asChild variant="secondary">
-              <Link to={paths.sakiTours}>{t('toursOps.continue.backHome')}</Link>
+              <Link to={paths.entry}>{t('toursOps.continue.backHome')}</Link>
             </Button>
           </div>
         </Card>

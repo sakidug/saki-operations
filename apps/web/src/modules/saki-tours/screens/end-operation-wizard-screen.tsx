@@ -227,7 +227,7 @@ export function EndOperationWizardScreen() {
           <h1 className="font-display text-xl font-semibold">{t('toursOps.success.missingTitle')}</h1>
           <p className="text-sm text-muted-foreground">{t('toursOps.endWizard.notActive')}</p>
           <Button asChild>
-            <Link to={paths.sakiTours}>{t('toursOps.success.backHome')}</Link>
+            <Link to={paths.entry}>{t('toursOps.success.backHome')}</Link>
           </Button>
         </Card>
       </FadeIn>

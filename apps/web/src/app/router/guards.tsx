@@ -82,15 +82,15 @@ export function RequirePermission({
   return <Outlet />;
 }
 
-/** Redirects authenticated users away from guest-only screens. */
+/** Redirects authenticated office/admin users away from guest-only screens. */
 export function RedirectIfAuthenticated() {
-  const { status, isAuthenticated } = useSession();
+  const { status, isAuthenticated, user } = useSession();
 
   if (status === 'loading') {
     return <AuthCheckLoadingScreen />;
   }
 
-  if (isAuthenticated) {
+  if (isAuthenticated && (user?.role === 'office' || user?.role === 'admin')) {
     return <Navigate to={paths.home} replace />;
   }
 

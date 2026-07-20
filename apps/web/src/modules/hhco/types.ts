@@ -1,5 +1,5 @@
 import type { AcceptedOdometerReading } from '@saki-operations/ocr';
-import type { VehicleSelectorItem } from '@saki-operations/types';
+import type { EmployeeSelectorItem, VehicleSelectorItem } from '@saki-operations/types';
 
 export type HhcoDealerId = 'dealer_colombo' | 'dealer_kandy' | 'dealer_galle';
 
@@ -13,6 +13,8 @@ export type TimeEvidenceCapture = {
 };
 
 export type StartOperationDraft = {
+  driverId: string | null;
+  driver: EmployeeSelectorItem | null;
   vehicleId: string | null;
   vehicle: VehicleSelectorItem | null;
   dealerId: HhcoDealerId | null;
@@ -32,6 +34,8 @@ export type EndOperationDraft = {
 
 export function createEmptyStartDraft(): StartOperationDraft {
   return {
+    driverId: null,
+    driver: null,
     vehicleId: null,
     vehicle: null,
     dealerId: null,

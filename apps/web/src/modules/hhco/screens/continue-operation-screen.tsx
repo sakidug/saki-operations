@@ -98,7 +98,7 @@ export function ContinueOperationScreen() {
           <h1 className="font-display text-xl font-semibold">{t('hhcoOps.success.missingTitle')}</h1>
           <p className="text-sm text-muted-foreground">{t('hhcoOps.continue.notActive')}</p>
           <Button asChild>
-            <Link to={paths.hhco}>{t('hhcoOps.success.backHome')}</Link>
+            <Link to={paths.entry}>{t('hhcoOps.success.backHome')}</Link>
           </Button>
         </Card>
       </FadeIn>
@@ -200,7 +200,7 @@ export function ContinueOperationScreen() {
               </Button>
             )}
             <Button asChild variant="secondary">
-              <Link to={paths.hhco}>{t('hhcoOps.continue.backHome')}</Link>
+              <Link to={paths.entry}>{t('hhcoOps.continue.backHome')}</Link>
             </Button>
           </div>
         </Card>

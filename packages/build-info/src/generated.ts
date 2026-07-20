@@ -4,9 +4,9 @@ import type { BuildInfo } from './types.js';
 export const GENERATED_BUILD_META = {
   "name": "Saki Operations",
   "version": "1.0.0",
-  "build": "837e6f5",
-  "builtAt": "2026-07-17T08:46:59.893Z",
-  "environment": "development",
+  "build": "3bf7c48",
+  "builtAt": "2026-07-20T12:36:27.003Z",
+  "environment": "production",
   "syncEngine": "1",
   "company": "Saki Tours & Weddings (Pvt) Ltd",
   "website": "https://sakitours.com",

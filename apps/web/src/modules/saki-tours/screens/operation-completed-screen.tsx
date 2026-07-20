@@ -66,7 +66,7 @@ export function OperationCompletedScreen() {
             {t('toursOps.completed.missingDescription')}
           </p>
           <Button asChild>
-            <Link to={paths.sakiTours}>{t('toursOps.success.backHome')}</Link>
+            <Link to={paths.entry}>{t('toursOps.success.backHome')}</Link>
           </Button>
         </Card>
       </FadeIn>
@@ -148,7 +148,7 @@ export function OperationCompletedScreen() {
 
         <div className="flex flex-wrap gap-3 pt-1">
           <Button asChild>
-            <Link to={paths.sakiTours}>{t('toursOps.completed.returnHome')}</Link>
+            <Link to={paths.entry}>{t('toursOps.completed.returnHome')}</Link>
           </Button>
           <Button asChild variant="secondary">
             <Link to={buildSakiToursHistoryDetailPath(session.id)}>

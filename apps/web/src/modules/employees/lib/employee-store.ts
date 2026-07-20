@@ -32,7 +32,7 @@ const SEED_EMPLOYEES: EmployeeRecord[] = [
     displayName: 'Demo Driver',
     phone: '0770000001',
     email: 'driver@saki.local',
-    role: 'assistant',
+    role: 'driver',
     permissions: ['operations.start', 'operations.end', 'leave.apply', 'profile.view'],
     emergencyContactName: 'Nimal Perera',
     emergencyContactPhone: '0771111001',
@@ -43,7 +43,7 @@ const SEED_EMPLOYEES: EmployeeRecord[] = [
     displayName: 'Demo Assistant',
     phone: '0770000002',
     email: 'assistant@saki.local',
-    role: 'driver',
+    role: 'assistant',
     permissions: ['operations.assist', 'leave.apply', 'profile.view'],
     emergencyContactName: 'Kamala Silva',
     emergencyContactPhone: '0771111002',
@@ -86,7 +86,10 @@ const SEED_EMPLOYEES: EmployeeRecord[] = [
 ];
 
 function normalizeEmployee(record: EmployeeRecord): EmployeeRecord {
-  if (record.employeeId === 'EMP-AST-001' && record.role === 'driver') {
+  if (record.employeeId === 'EMP-DRV-001' && record.role !== 'driver') {
+    return { ...record, role: 'driver' };
+  }
+  if (record.employeeId === 'EMP-AST-001' && record.role !== 'assistant') {
     return { ...record, role: 'assistant' };
   }
   return { ...record };

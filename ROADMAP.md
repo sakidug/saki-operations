@@ -73,8 +73,10 @@ That desktop system remains the **only** booking and office management system fo
 | 10.0  | Automated Application Versioning            | Completed |
 | 10.1  | Enterprise Build Information                | Completed |
 | 10.2  | Production Polish (identity / confidence)   | Completed |
+| 10.3  | Employee Entry Experience (guest home)      | Completed |
 | —     | **v1.0.0 Production Release**             | **Awaiting leadership approval** |
 
+> Phase 10.3 is a UX/auth-boundary refactor: guest entry home, driver-owned field sessions, admin/office-only JWT. GPS, vehicle locking, finish, sync, and IndexedDB schema are unchanged.  
 > Phase 10.2 is polish-only (branding, splash, icons, About, health, diagnostics, docs). No business workflow changes.  
 > Phase 9.5 on **v0.9.3** recommends **READY FOR v1.0.0**. Prior Critical/High blockers verified closed. Tag only after leadership approval.  
 > See [FINAL_RELEASE_RE_AUDIT.md](./docs/FINAL_RELEASE_RE_AUDIT.md) and [PRODUCTION_POLISH_REPORT.md](./docs/PRODUCTION_POLISH_REPORT.md).

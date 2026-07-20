@@ -20,11 +20,18 @@ import { createInitialMultiDayRecords } from './multi-day';
  */
 export async function commitStartOperation(input: {
   employeeId: string;
+  operatorId?: string | null;
   draft: StartOperationDraft;
 }): Promise<OperationsSession> {
-  const { draft, employeeId } = input;
+  const { draft, employeeId, operatorId } = input;
 
-  if (!draft.vehicleId || !draft.dealerId || !draft.startOdometer || !draft.startTime) {
+  if (
+    !draft.driverId ||
+    !draft.vehicleId ||
+    !draft.dealerId ||
+    !draft.startOdometer ||
+    !draft.startTime
+  ) {
     throw new Error('Start Operation draft is incomplete');
   }
 
@@ -35,8 +42,11 @@ export async function commitStartOperation(input: {
     moduleId: 'hhco',
     employeeId,
     vehicleId: draft.vehicleId,
+    driverId: draft.driverId,
+    operatorId: operatorId ?? employeeId,
     customFields: {
       dealerId: draft.dealerId,
+      driverName: draft.driver?.displayName ?? null,
       startLocation: draft.startLocation.trim(),
       destination: draft.destination.trim(),
       endingLocation: draft.endingLocation.trim(),

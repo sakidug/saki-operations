@@ -4,7 +4,8 @@ import { useAppTranslation } from '@saki-operations/i18n';
 import { Button, Card } from '@saki-operations/ui';
 import { TriangleAlert } from 'lucide-react';
 
-import { buildSakiToursOperationPath, paths } from '@/app/router/paths';
+import { buildActiveOperationContinuePath } from '@/app/operations/find-active-operation';
+import { paths } from '@/app/router/paths';
 
 import {
   formatOperationTime,
@@ -61,12 +62,12 @@ export function ActiveOperationBlocked({ session }: ActiveOperationBlockedProps)
 
       <div className="flex flex-wrap gap-3">
         <Button asChild size="lg">
-          <Link to={buildSakiToursOperationPath(session.id)}>
+          <Link to={buildActiveOperationContinuePath(session)}>
             {t('toursOps.active.continue')}
           </Link>
         </Button>
         <Button asChild variant="secondary" size="lg">
-          <Link to={paths.sakiTours}>{t('toursOps.active.cancel')}</Link>
+          <Link to={paths.entry}>{t('toursOps.active.cancel')}</Link>
         </Button>
       </div>
     </Card>

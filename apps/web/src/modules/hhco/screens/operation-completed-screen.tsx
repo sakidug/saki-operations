@@ -66,7 +66,7 @@ export function OperationCompletedScreen() {
             {t('hhcoOps.completed.missingDescription')}
           </p>
           <Button asChild>
-            <Link to={paths.hhco}>{t('hhcoOps.success.backHome')}</Link>
+            <Link to={paths.entry}>{t('hhcoOps.success.backHome')}</Link>
           </Button>
         </Card>
       </FadeIn>
@@ -148,7 +148,7 @@ export function OperationCompletedScreen() {
 
         <div className="flex flex-wrap gap-3 pt-1">
           <Button asChild>
-            <Link to={paths.hhco}>{t('hhcoOps.completed.returnHome')}</Link>
+            <Link to={paths.entry}>{t('hhcoOps.completed.returnHome')}</Link>
           </Button>
           <Button asChild variant="secondary">
             <Link to={buildHhcoHistoryDetailPath(session.id)}>

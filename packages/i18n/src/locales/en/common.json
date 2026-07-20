@@ -3,6 +3,14 @@
     "name": "Saki Operations",
     "tagline": "Saki Tours & Weddings (Pvt) Ltd"
   },
+  "entry": {
+    "title": "Saki Operations",
+    "subtitle": "Fleet Operations System",
+    "startOperation": "Start Operation",
+    "continueOperation": "Continue Operation",
+    "language": "Language",
+    "adminLogin": "Admin Login"
+  },
   "languages": {
     "en": "English",
     "si": "Sinhala",
@@ -434,7 +442,8 @@
       "cancel": "Cancel",
       "startOperation": "Start Operation",
       "startFailed": "Could not start the operation. Your photos are still on this device — try again.",
-      "missingUser": "Sign in again to start an operation."
+      "missingUser": "Sign in again to start an operation.",
+      "missingDriver": "Select a driver before starting the operation."
     },
     "company": {
       "title": "Select company",
@@ -708,11 +717,12 @@
       "generic": "Unable to complete authentication. Please try again.",
       "passwordMismatch": "Passwords do not match.",
       "passwordLength": "Password must be at least {{min}} characters.",
-      "sessionExpired": "Your session has expired. Please sign in again."
+      "sessionExpired": "Your session has expired. Please sign in again.",
+      "fieldStaffNoLogin": "Field staff do not sign in. Use Start Operation from the home screen."
     },
     "login": {
-      "title": "Welcome back",
-      "subtitle": "Sign in with your Employee ID or phone number.",
+      "title": "Admin Login",
+      "subtitle": "Sign in with your office or admin account.",
       "identifier": "Employee ID or phone number",
       "identifierPlaceholder": "Employee ID or phone",
       "password": "Password",
@@ -721,7 +731,8 @@
       "hidePassword": "Hide password",
       "rememberMe": "Remember me",
       "forgotPassword": "Forgot password?",
-      "submit": "Sign in"
+      "submit": "Sign in",
+      "backToEntry": "Back to home"
     },
     "forgot": {
       "title": "Forgot password",
@@ -888,6 +899,7 @@
     "wizard": {
       "title": "Start Delivery",
       "stepOf": "Step {{current}} of {{total}}",
+      "stepDriver": "Select the driver.",
       "stepVehicle": "Select the vehicle for this delivery.",
       "stepTrip": "Enter route and number of days.",
       "stepOdometer": "Capture the start odometer.",
@@ -899,7 +911,12 @@
       "startOperation": "Start Delivery",
       "startFailed": "Could not start the delivery. Your photos are still on this device — try again.",
       "missingUser": "Sign in again to start an delivery.",
+      "missingDriver": "Select a driver before starting the delivery.",
       "stepDealer": "Choose the dealer."
+    },
+    "driver": {
+      "label": "Driver",
+      "selectorDescription": "The selected driver owns this delivery session."
     },
     "vehicle": {
       "label": "Vehicle",
@@ -959,6 +976,7 @@
     "confirm": {
       "title": "Ready to start",
       "description": "Starting creates an offline session on this device immediately.",
+      "driver": "Driver",
       "vehicle": "Vehicle",
       "route": "Route",
       "days": "Days",

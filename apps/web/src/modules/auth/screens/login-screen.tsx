@@ -17,9 +17,11 @@ import { fadeUpTransition } from '@/lib/motion';
 import { paths } from '@/app/router/paths';
 import { AuthApiError } from '@/modules/auth/api/auth-api';
 
+const OFFICE_ADMIN_ROLES = new Set(['office', 'admin']);
+
 export function LoginScreen() {
   const { t } = useAppTranslation();
-  const { login } = useSession();
+  const { login, logout } = useSession();
   const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
 
@@ -46,7 +48,12 @@ export function LoginScreen() {
     setFieldErrors({});
     setLoading(true);
     try {
-      await login({ identifier: identifier.trim(), password, rememberMe });
+      const user = await login({ identifier: identifier.trim(), password, rememberMe });
+      if (!OFFICE_ADMIN_ROLES.has(user.role)) {
+        await logout();
+        setError(t('auth.errors.fieldStaffNoLogin'));
+        return;
+      }
       navigate(paths.home, { replace: true });
     } catch (cause) {
       if (cause instanceof AuthApiError) {
@@ -167,6 +174,10 @@ export function LoginScreen() {
             {t('auth.login.submit')}
           </Button>
         </form>
+
+        <Button asChild variant="ghost" size="sm" className="w-full text-muted-foreground">
+          <Link to={paths.entry}>{t('auth.login.backToEntry')}</Link>
+        </Button>
 
         {loading ? (
           <div

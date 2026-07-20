@@ -176,7 +176,7 @@ export function MultiDayDayCaptureScreen() {
         <Card variant="glass" padding="lg" className="space-y-3" data-brand="tours">
           <h1 className="font-display text-xl font-semibold">{t('toursOps.success.missingTitle')}</h1>
           <Button asChild>
-            <Link to={paths.sakiTours}>{t('toursOps.success.backHome')}</Link>
+            <Link to={paths.entry}>{t('toursOps.success.backHome')}</Link>
           </Button>
         </Card>
       </FadeIn>

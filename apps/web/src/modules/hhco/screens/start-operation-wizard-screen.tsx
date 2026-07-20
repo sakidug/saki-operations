@@ -1,21 +1,23 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { VehicleSelector } from '@saki-operations/forms';
+import { EmployeeSelector, VehicleSelector } from '@saki-operations/forms';
 import { OdometerCapture } from '@saki-operations/ocr';
 import { useAppTranslation } from '@saki-operations/i18n';
+import type { EmployeeSelectorItem } from '@saki-operations/types';
 import { Badge, Button, Card, cn, LoadingSpinner } from '@saki-operations/ui';
 import { ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
 
-import { useSession } from '@/app/bootstrap/session-provider';
+import { findAnyActiveOperation } from '@/app/operations/find-active-operation';
+import { useAnyActiveOperation } from '@/app/operations/use-any-active-operation';
 import { FadeIn } from '@/app/screens/loading/fade-in';
 import { paths, buildHhcoOperationStartedPath } from '@/app/router/paths';
+import { listEmployees } from '@/modules/employees/lib/employee-store';
 
 import { ActiveOperationBlocked } from '../components/active-operation-blocked';
 import { DealerSelectStep } from '../components/dealer-select-step';
 import { StartTimeCaptureStep } from '../components/start-time-capture-step';
 import { RouteDetailsStep } from '../components/route-details-step';
 import { TOURS_FLEET_CATALOG } from '../data/fleet-catalog';
-import { useActiveHhcoSession } from '../hooks/use-active-hhco-session';
 import { commitStartOperation } from '../lib/commit-start-operation';
 import { findActiveHhcoSession } from '../lib/find-active-session';
 import {
@@ -25,26 +27,39 @@ import {
   type StartOperationDraft,
 } from '../types';
 
-const STEP_COUNT = 6;
+const STEP_COUNT = 7;
+
+function employeeItems(role: 'driver' | 'assistant'): EmployeeSelectorItem[] {
+  return listEmployees(role).map((employee) => ({
+    id: employee.employeeId,
+    employeeId: employee.employeeId,
+    displayName: employee.displayName,
+    phone: employee.phone || null,
+    role: employee.role,
+    available: true,
+  }));
+}
 
 function canAdvance(step: number, draft: StartOperationDraft): boolean {
   switch (step) {
     case 1:
-      return Boolean(draft.vehicleId);
+      return Boolean(draft.driverId);
     case 2:
-      return Boolean(draft.dealerId);
+      return Boolean(draft.vehicleId);
     case 3:
+      return Boolean(draft.dealerId);
+    case 4:
       return (
         draft.startLocation.trim().length > 0 &&
         draft.destination.trim().length > 0 &&
         draft.endingLocation.trim().length > 0 &&
         draft.numberOfDays >= 1
       );
-    case 4:
-      return Boolean(draft.startOdometer);
     case 5:
-      return Boolean(draft.startTime);
+      return Boolean(draft.startOdometer);
     case 6:
+      return Boolean(draft.startTime);
+    case 7:
       return true;
     default:
       return false;
@@ -53,30 +68,31 @@ function canAdvance(step: number, draft: StartOperationDraft): boolean {
 
 /**
  * Phase 7.2A — Start Operation wizard (offline-capable).
+ * Session owner is the selected driver (no JWT required).
  */
 export function StartOperationWizardScreen() {
   const { t } = useAppTranslation();
-  const { user } = useSession();
   const navigate = useNavigate();
-  const { session: activeSession, loading: activeLoading } = useActiveHhcoSession(
-    user?.employeeId,
-  );
+  const { session: activeSession, loading: activeLoading } = useAnyActiveOperation();
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState<StartOperationDraft>(createEmptyStartDraft);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const drivers = useMemo(() => employeeItems('driver'), []);
 
   const stepTitle = useMemo(() => {
     switch (step) {
       case 1:
-        return t('hhcoOps.wizard.stepVehicle');
+        return t('hhcoOps.wizard.stepDriver');
       case 2:
-        return t('hhcoOps.wizard.stepDealer');
+        return t('hhcoOps.wizard.stepVehicle');
       case 3:
-        return t('hhcoOps.wizard.stepTrip');
+        return t('hhcoOps.wizard.stepDealer');
       case 4:
-        return t('hhcoOps.wizard.stepOdometer');
+        return t('hhcoOps.wizard.stepTrip');
       case 5:
+        return t('hhcoOps.wizard.stepOdometer');
+      case 6:
         return t('hhcoOps.wizard.stepStartTime');
       default:
         return t('hhcoOps.wizard.stepConfirm');
@@ -86,20 +102,26 @@ export function StartOperationWizardScreen() {
   const nextEnabled = canAdvance(step, draft);
 
   const onStart = async () => {
-    if (!user) {
-      setError(t('hhcoOps.wizard.missingUser'));
+    if (!draft.driverId) {
+      setError(t('hhcoOps.wizard.missingDriver'));
       return;
     }
     setSubmitting(true);
     setError(null);
     try {
-      const existing = await findActiveHhcoSession(user.employeeId);
+      const deviceActive = await findAnyActiveOperation();
+      if (deviceActive) {
+        setError(t('hhcoOps.active.blockedDescription'));
+        return;
+      }
+      const existing = await findActiveHhcoSession(draft.driverId);
       if (existing) {
         setError(t('hhcoOps.active.blockedDescription'));
         return;
       }
       const session = await commitStartOperation({
-        employeeId: user.employeeId,
+        employeeId: draft.driverId,
+        operatorId: draft.driverId,
         draft,
       });
       navigate(buildHhcoOperationStartedPath(session.id), { replace: true });
@@ -140,7 +162,7 @@ export function StartOperationWizardScreen() {
           <p className="text-sm text-muted-foreground">{stepTitle}</p>
         </div>
         <Button asChild variant="ghost" size="sm">
-          <Link to={paths.hhco}>{t('hhcoOps.wizard.cancel')}</Link>
+          <Link to={paths.entry}>{t('hhcoOps.wizard.cancel')}</Link>
         </Button>
       </div>
 
@@ -161,6 +183,24 @@ export function StartOperationWizardScreen() {
 
       <Card variant="glass" padding="lg" className="space-y-5">
         {step === 1 ? (
+          <EmployeeSelector
+            items={drivers}
+            value={draft.driverId}
+            roleFilter="driver"
+            availabilityFilter="available"
+            onChange={(driverId, employees) =>
+              setDraft((prev) => ({
+                ...prev,
+                driverId: typeof driverId === 'string' ? driverId : null,
+                driver: employees?.[0] ?? null,
+              }))
+            }
+            label={t('hhcoOps.driver.label')}
+            description={t('hhcoOps.driver.selectorDescription')}
+          />
+        ) : null}
+
+        {step === 2 ? (
           <VehicleSelector
             items={TOURS_FLEET_CATALOG}
             value={draft.vehicleId}
@@ -176,14 +216,14 @@ export function StartOperationWizardScreen() {
           />
         ) : null}
 
-        {step === 2 ? (
+        {step === 3 ? (
           <DealerSelectStep
             value={draft.dealerId}
             onChange={(dealerId) => setDraft((prev) => ({ ...prev, dealerId }))}
           />
         ) : null}
 
-        {step === 3 ? (
+        {step === 4 ? (
           <RouteDetailsStep
             startLocation={draft.startLocation}
             destination={draft.destination}
@@ -193,7 +233,7 @@ export function StartOperationWizardScreen() {
           />
         ) : null}
 
-        {step === 4 ? (
+        {step === 5 ? (
           <OdometerCapture
             kind="digital"
             labels={{
@@ -228,14 +268,14 @@ export function StartOperationWizardScreen() {
           />
         ) : null}
 
-        {step === 5 ? (
+        {step === 6 ? (
           <StartTimeCaptureStep
             value={draft.startTime}
             onChange={(startTime) => setDraft((prev) => ({ ...prev, startTime }))}
           />
         ) : null}
 
-        {step === 6 ? (
+        {step === 7 ? (
           <div className="space-y-4">
             <div>
               <h2 className="text-base font-semibold text-foreground">
@@ -244,6 +284,14 @@ export function StartOperationWizardScreen() {
               <p className="mt-1 text-sm text-muted-foreground">{t('hhcoOps.confirm.description')}</p>
             </div>
             <dl className="grid gap-3 text-sm sm:grid-cols-2">
+              <div className="rounded-xl bg-muted/40 px-3 py-2.5">
+                <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+                  {t('hhcoOps.confirm.driver')}
+                </dt>
+                <dd className="mt-1 font-medium text-foreground">
+                  {draft.driver?.displayName ?? '—'}
+                </dd>
+              </div>
               <div className="rounded-xl bg-muted/40 px-3 py-2.5">
                 <dt className="text-xs uppercase tracking-wide text-muted-foreground">
                   {t('hhcoOps.confirm.vehicle')}
@@ -352,7 +400,7 @@ export function StartOperationWizardScreen() {
               type="button"
               size="lg"
               loading={submitting}
-              disabled={!canAdvance(5, draft) || submitting}
+              disabled={!canAdvance(STEP_COUNT, draft) || submitting}
               onClick={() => void onStart()}
             >
               {t('hhcoOps.wizard.startOperation')}

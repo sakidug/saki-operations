@@ -138,7 +138,7 @@ export function EndOperationWizardScreen() {
           <h1 className="font-display text-xl font-semibold">{t('hhcoOps.success.missingTitle')}</h1>
           <p className="text-sm text-muted-foreground">{t('hhcoOps.endWizard.notActive')}</p>
           <Button asChild>
-            <Link to={paths.hhco}>{t('hhcoOps.success.backHome')}</Link>
+            <Link to={paths.entry}>{t('hhcoOps.success.backHome')}</Link>
           </Button>
         </Card>
       </FadeIn>

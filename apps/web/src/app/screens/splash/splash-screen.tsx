@@ -16,7 +16,7 @@ export function SplashScreen() {
   const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
   const { splashComplete, snapshot, status } = useBootstrap();
-  const { status: sessionStatus, isAuthenticated } = useSession();
+  const { status: sessionStatus, isAuthenticated, user } = useSession();
   const buildInfo = getClientBuildInfo();
 
   const waitingOnSession = sessionStatus === 'loading';
@@ -34,8 +34,11 @@ export function SplashScreen() {
       return;
     }
 
-    navigate(isAuthenticated ? paths.home : paths.login, { replace: true });
-  }, [splashComplete, snapshot, status, sessionStatus, isAuthenticated, navigate]);
+    const isOfficeOrAdmin =
+      isAuthenticated && (user?.role === 'office' || user?.role === 'admin');
+
+    navigate(isOfficeOrAdmin ? paths.home : paths.entry, { replace: true });
+  }, [splashComplete, snapshot, status, sessionStatus, isAuthenticated, user?.role, navigate]);
 
   return (
     <FullScreenLayout className="dark flex items-center justify-center">

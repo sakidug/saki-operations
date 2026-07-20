@@ -65,7 +65,7 @@ export function HomeQuickActions() {
             variant="outline"
             className="h-auto min-h-12 justify-start gap-2 px-3 py-3"
             onClick={() => {
-              void logout().then(() => navigate(paths.login, { replace: true }));
+              void logout().then(() => navigate(paths.entry, { replace: true }));
             }}
           >
             <LogOut className="size-4" aria-hidden />

@@ -19,16 +19,19 @@ import {
   UsersRound,
 } from 'lucide-react';
 
-import { useSession } from '@/app/bootstrap/session-provider';
 import { FadeIn } from '@/app/screens/loading/fade-in';
 import { paths, buildSakiToursOperationStartedPath } from '@/app/router/paths';
-import { listCompanies } from '@/modules/companies/data/company-catalog';
+import {
+  COMPANY_ID_HHCO,
+  listCompanies,
+} from '@/modules/companies/data/company-catalog';
 import { listEmployees } from '@/modules/employees/lib/employee-store';
+import { findAnyActiveOperation } from '@/app/operations/find-active-operation';
+import { useAnyActiveOperation } from '@/app/operations/use-any-active-operation';
 
 import { ActiveOperationBlocked } from '../components/active-operation-blocked';
 import { ToursVehicleStep } from '../components/tours-vehicle-step';
 import { TOURS_FLEET_CATALOG } from '../data/fleet-catalog';
-import { useActiveToursSession } from '../hooks/use-active-tours-session';
 import {
   VehicleActiveOperationError,
   commitStartOperation,
@@ -217,11 +220,8 @@ function ReviewItem({ label, value }: { label: string; value: string }) {
  */
 export function StartOperationWizardScreen() {
   const { t } = useAppTranslation();
-  const { user } = useSession();
   const navigate = useNavigate();
-  const { session: activeSession, loading: activeLoading } = useActiveToursSession(
-    user?.employeeId,
-  );
+  const { session: activeSession, loading: activeLoading } = useAnyActiveOperation();
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState<StartOperationDraft>(createEmptyStartDraft);
   const [submitting, setSubmitting] = useState(false);
@@ -279,21 +279,26 @@ export function StartOperationWizardScreen() {
   const nextEnabled = canAdvance(step, draft, { vehicleAvailable: selectedVehicleAvailable });
 
   const onStart = async () => {
-    if (!user) {
-      setError(t('toursOps.wizard.missingUser'));
+    if (!draft.driverId) {
+      setError(t('toursOps.wizard.missingDriver'));
       return;
     }
     setSubmitting(true);
     setError(null);
     try {
-      const existing = await findActiveToursSession(user.employeeId);
+      const deviceActive = await findAnyActiveOperation();
+      if (deviceActive) {
+        setError(t('toursOps.active.blockedDescription'));
+        return;
+      }
+      const existing = await findActiveToursSession(draft.driverId);
       if (existing) {
         setError(t('toursOps.active.blockedDescription'));
         return;
       }
       const session = await commitStartOperation({
-        employeeId: user.employeeId,
-        operatorId: user.employeeId,
+        employeeId: draft.driverId,
+        operatorId: draft.driverId,
         draft,
       });
       navigate(buildSakiToursOperationStartedPath(session.id), { replace: true });
@@ -340,7 +345,7 @@ export function StartOperationWizardScreen() {
           <p className="text-sm text-muted-foreground">{stepTitle}</p>
         </div>
         <Button asChild variant="ghost" size="sm">
-          <Link to={paths.sakiTours}>{t('toursOps.wizard.cancel')}</Link>
+          <Link to={paths.entry}>{t('toursOps.wizard.cancel')}</Link>
         </Button>
       </div>
 
@@ -566,6 +571,10 @@ export function StartOperationWizardScreen() {
               disabled={!nextEnabled}
               onClick={() => {
                 setError(null);
+                if (step === 1 && draft.companyId === COMPANY_ID_HHCO) {
+                  navigate(paths.hhcoStart);
+                  return;
+                }
                 setStep((s) => Math.min(STEP_COUNT, s + 1));
               }}
             >
